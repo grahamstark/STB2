@@ -1,0 +1,13 @@
+name = "STBV1"
+uuid = "abab7cfe-5b94-4cd7-85a3-06ae7a1f8a93"
+authors = ["Graham Stark <graham.stark@virtual-worlds.biz>"]
+version = "0.1.0"
+
+[deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Genie = "c43c736e-a2d1-11e8-161f-af95117fbd1e"
+GenieSession = "03cc5b98-4f21-4eb6-99f2-22eced81f962"
+GenieSessionFileSession = "5c4fdc26-39e3-47cf-9034-e533e09961c2"
+Inflector = "6d011eab-0732-4556-8808-e463c76bf3b6"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
