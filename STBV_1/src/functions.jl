@@ -1,16 +1,8 @@
 using JSON3
 using GenieSession 
 using GenieSessionFileSession
+using ScottishTaxBenefitModel
 import Genie.Renderer.Json: json
-
-mutable struct SimpleParams
-    taxrates 
-    taxbands
-    nirates
-    nibands
-    taxallowance
-end
-
 
 
 function getparams()::SimpleParams
@@ -19,25 +11,15 @@ function getparams()::SimpleParams
     if( GenieSession.isset( session, :pars ))
         return GenieSession.get( session, :pars )
     else
-        pars = SimpleParams( [20,34,56],[1000,4000],[2,3,4],[2002,3044,2020],66000)
+        pars = deepcopy( DEFAULT_SIMPLE_PARAMS )
         GenieSession.set!( session, :pars, pars )
         return pars
     end
 end
 
 function handlesubmit( req )
-    resp = Genie.Responses.getresponse()
-    session = GenieSession.session()
-    # if session === nothing 
-    #     session, resp = GenieSession.start( id, req, resp )
-    # end
-    pars = nothing
-    if( ! GenieSession.isset( session, :pars ))
-        pars = SimpleParams( [20,34,56],[1000,4000],[2,3,4],[2002,3044,2020],66000)
-        GenieSession.set!( session, :pars, pars )
-    else
-        pars = GenieSession.get( session, :pars )
-    end
+
+    pars = getparams()
     (:pars=>pars) |> json
 end
 
@@ -113,7 +95,7 @@ end
 function addtax( n :: Int ) 
     pars = getparams()
     addonerb!( pars.taxrates, pars.taxbands, n )
-    (:rates=>pars.taxrates, :bands=>pars.taxbands) |> json
+    pars |> json
 end
 
 
@@ -121,13 +103,13 @@ end
 function deltax( n )
     pars = getparams()
     delonerb!( pars.taxrates, pars.taxbands, n );
-    (:pars=>pars) |> json
+    pars |> json
 end
 
 function addni( n )
     pars = getparams()
     addonerb!( pars.nirates, pars.nibands, n );
-    (:pars=>pars) |> json
+    pars |> json
 end
 
 function delni( n )
