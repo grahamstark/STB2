@@ -6,6 +6,7 @@ using .Definitions
 using StructTypes
 using JSON3
 
+const BIG_A = 9999999999
 mutable struct SimpleParams{T}
     taxrates :: Vector{T}
     taxbands :: Vector{T}
