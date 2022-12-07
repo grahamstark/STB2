@@ -17,16 +17,22 @@ function getparams()::SimpleParams
     end
 end
 
-function handlesubmit( req )
-
+function params()
     pars = getparams()
+    (:pars=>pars) |> json
+end
+
+function handlesubmit( payload )
+    @show payload
+    session = GenieSession.session()
+    pars = JSON3.read(payload, SimpleParams{Float64})
+    GenieSession.set!( session, :pars, pars )
     (:pars=>pars) |> json
 end
 
 
 function runt()
     pars = getparams()
-
     (:pars=>pars) |> json
 end
 
@@ -35,15 +41,16 @@ function savet()
 
     (:pars=>pars) |> json
 end
-function resett() 
-    pars = getparams()
 
+function resett() 
+    session = GenieSession.session()
+    pars = deepcopy( DEFAULT_SIMPLE_PARAMS )
+    GenieSession.set!( session, :pars, pars )
     (:pars=>pars) |> json
 end
 
 function progress() 
     pars = getparams()
-
     (:pars=>pars) |> json
 end
 
@@ -55,7 +62,6 @@ end
 
 function uprate( v :: Real ) 
     pars = getparams()
-
     (:pars=>pars) |> json
 end
 
@@ -95,7 +101,7 @@ end
 function addtax( n :: Int ) 
     pars = getparams()
     addonerb!( pars.taxrates, pars.taxbands, n )
-    pars |> json
+    (:pars=>pars) |> json
 end
 
 
@@ -103,13 +109,13 @@ end
 function deltax( n )
     pars = getparams()
     delonerb!( pars.taxrates, pars.taxbands, n );
-    pars |> json
+    (:pars=>pars) |> json
 end
 
 function addni( n )
     pars = getparams()
     addonerb!( pars.nirates, pars.nibands, n );
-    pars |> json
+    (:pars=>pars) |> json
 end
 
 function delni( n )

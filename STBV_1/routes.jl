@@ -16,41 +16,46 @@ const config = Settings(
 )
 =# 
 
-route( "/run", runt )
-route( "/save", savet )
-route( "/reset", resett )
-route( "/progress", progress )
-route( "/output", output )
+route( "/run", runt, method = POST )
+route( "/save", savet, method = POST )
+route( "/reset", resett, method = POST )
+route( "/progress", progress, method = POST )
+route( "/output", output, method = POST )
+route( "/params", params, method = POST);
 
-route( "/uprate/:v") do
+route( "/uprate/:v", method = POST) do
   v = parse(Float64, payload(:v))
   uprate( v )
 end
 
-route("/addtax/:n") do 
+route("/addtax/:n", method = POST) do 
   n::Int = parse(Int, payload(:n))
   addtax( n )
 end
 
 
-route("/deltax/:n" ) do
+route("/deltax/:n", method = POST ) do
   n::Int = parse(Int, payload(:n))
   deltax( n )
 end
 
-route("/addni/:n" ) do 
+route("/addni/:n", method = POST ) do 
   n::Int = parse(Int, payload(:n))
   addni( n )
 end
 
-route("/delni/:n" ) do 
+route("/delni/:n", method = POST ) do 
   n::Int = parse(Int,  payload(:n))
   delni( n )
 end
 
-route( "/submit/" ) do 
-  req = Requests.getrequest()
-  pars = handlesubmit( req ) 
+route( "/submit/", method = POST ) do 
+  # req = Requests.getrequest()
+  jp = jsonpayload()
+  rp = rawpayload()
+  @show jp
+  @show rp
+  pars = handlesubmit( rp ) 
 end
 
 route("/") do

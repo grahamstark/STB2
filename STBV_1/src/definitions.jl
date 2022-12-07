@@ -3,7 +3,8 @@ __precompile__(false)
 
 using .STBParameters
 using .Definitions
-
+using StructTypes
+using JSON3
 
 mutable struct SimpleParams{T}
     taxrates :: Vector{T}
@@ -11,8 +12,10 @@ mutable struct SimpleParams{T}
     nirates :: Vector{T}
     nibands :: Vector{T}
     taxallowance :: T
+    target :: Int
     # ....
 end
+StructTypes.StructType(::Type{SimpleParams}) = StructTypes.Struct()
 
 function loaddefs() :: TaxBenefitSystem 
     return load_file( joinpath( Definitions.MODEL_PARAMS_DIR, "sys_2022-23.jl" ))
@@ -27,7 +30,8 @@ function map_simple_to_full( params :: TaxBenefitSystem )::SimpleParams
         copy(params.it.non_savings_thresholds),
         copy(params.ni.primary_class_1_rates),
         copy(params.ni.primary_class_1_bands),
-        params.it.personal_allowance )
+        params.it.personal_allowance,
+        0 )
 end
 
 
