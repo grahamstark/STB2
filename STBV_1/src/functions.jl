@@ -4,7 +4,6 @@ using GenieSessionFileSession
 using ScottishTaxBenefitModel
 import Genie.Renderer.Json: json
 
-
 function getparams()::SimpleParams
     session = GenieSession.session()
     pars = nothing
@@ -30,7 +29,6 @@ function handlesubmit( payload )
     (:pars=>pars) |> json
 end
 
-
 function runt()
     pars = getparams()
     (:pars=>pars) |> json
@@ -38,7 +36,6 @@ end
 
 function savet() 
     pars = getparams()
-
     (:pars=>pars) |> json
 end
 
@@ -51,17 +48,17 @@ end
 
 function progress() 
     pars = getparams()
-    (:pars=>pars) |> json
+    (:prog=>"Goes Here") |> json
 end
 
 function output() 
     pars = getparams()
-
-    (:pars=>pars) |> json
+    (:out=>"Goes Here") |> json
 end
 
 function uprate( v :: Real ) 
     pars = getparams()
+    
     (:pars=>pars) |> json
 end
 
@@ -98,13 +95,15 @@ function addonerb!( rates::AbstractVector{T}, bands::AbstractVector{T}, pos::Int
     end
 end
 
+function defaults()
+    (:def=>DEFAULT_SIMPLE_PARAMS) |> json
+end
+
 function addtax( n :: Int ) 
     pars = getparams()
     addonerb!( pars.taxrates, pars.taxbands, n )
     (:pars=>pars) |> json
 end
-
-
 
 function deltax( n )
     pars = getparams()

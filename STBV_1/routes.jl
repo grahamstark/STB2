@@ -21,7 +21,7 @@ route( "/save", savet, method = POST )
 route( "/reset", resett, method = POST )
 route( "/progress", progress, method = POST )
 route( "/output", output, method = POST )
-route( "/params", params, method = POST);
+route( "/params", params, method = POST)
 
 route( "/uprate/:v", method = POST) do
   v = parse(Float64, payload(:v))
@@ -33,6 +33,9 @@ route("/addtax/:n", method = POST) do
   addtax( n )
 end
 
+route("/defaults", method = POST) do 
+  defaults()
+end
 
 route("/deltax/:n", method = POST ) do
   n::Int = parse(Int, payload(:n))
