@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     </script><script type='text/javascript' src='js/jquery.js'></script>
     <script type='text/javascript' src='js/jquery.periodicalupdater.js'></script>
+    <script type='text/javascript' src='js/jquery.validate.js'></script>
      <!-- bootstrap -->
     <script src="js/bootstrap.bundle.js"></script>
     <!-- vega graphics -->
@@ -17,6 +18,10 @@
     <script type="text/javascript" src="js/vega-embed.min.js"></script>
     <!-- templates -->
     <script type='text/javascript' src="js/mustache.min.js"></script>
+    <style>
+        .error{ color: red;}
+        .changed{ background-color: yellow; }
+    </style>
 </head>
 <body class='text-bg--primary'>
     <div class='container-fluid'>
@@ -166,7 +171,7 @@
         $("#"+which ).append( makeRow( n, name, addRow ));
     }
 
-    function loadTax( name, rates, bands ){
+    function loadTax( name, rates, bands, defrates, defbands ){
         var nr = rates.length;
         var nb = bands.length;
         // console.log( "nr="+nr + " nb = " + nb );
@@ -183,7 +188,7 @@
         }
     }
 
-    function initialiseTable( which, rates, bands ){
+    function initialiseTable( which, rates, bands, defrates, defbands ){
         var n = rates.length;
         var target = which+ "-rows";
         $( "#"+target ).children().remove();
@@ -191,7 +196,7 @@
         for( var i = 1; i <= n; i++ ){
             insertRow( target, i, which, addDel );
         }
-        loadTax( which, rates, bands );
+        loadTax( which, rates, bands, defrates, defbands );
     }
 
 
@@ -238,11 +243,33 @@
         return data;
     }
 
+function getClass( a, b ){
+    return (a == b) ? '' : "changed";
+}
+
+function populateForm( pars, defaults ){
+    initialiseTable( "tax", 
+        pars.taxrates, 
+        pars.taxbands,
+        defaults.taxrates,
+        defaults.taxbands );
+    initialiseTable( "ni", 
+        pars.nirates, 
+        pars.nibands,
+        defaults.nirates, 
+        defaults.nibands
+            );
+    $( "#taxallowance").val( pars.taxallowance );
+    var c = getClass(pars.taxallowance,defaults.taxallowance);
+    $( "#taxallowance").toggleClass( c );
+}
+
 function submitForm( action, target ){
      var url = "/stb2/"+action;
      if( target != null ){
         url += "/"+target;
      }
+     $("#mainform").validate();
      const dataset = JSON.stringify(scrapeData());
      // console.log( "submitForm; data = %o", dataset );
      // console.debug( "submitForm submitForm url="+url );
@@ -256,9 +283,7 @@ function submitForm( action, target ){
             function( result ){
                 console.log( "submitForm; result %o", result );
                 console.log( "target " + target );
-                initialiseTable( "tax", result.pars.taxrates, result.pars.taxbands );
-                initialiseTable( "ni", result.pars.nirates, result.pars.nibands );
-                $( "#taxallowance").val( result.pars.taxallowance );
+                populateForm( result[0].pars, result[1].def )
             }
         ).fail(
             function( jqXHR, textStatus, errorThrown ){
