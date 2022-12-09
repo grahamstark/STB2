@@ -116,136 +116,142 @@
 
 <script type='text/javascript'>
 
-    const BIG_A = 9999999999;
+const BIG_A = 9999999999;
 
-    function makeTypename( type ){
-        return type=='rate' ? 'r' : 'b';
-    }
-
-    function makeId( n, name, type ){
-        var typename = makeTypename( type );
-        return name + "-" + typename + '-' + n;
-    }
-
-    function makeInput( n, name, type ){
-        var typename = makeTypename( type );
-        var min=-BIG_A;
-        var max=BIG_A;
-        var step=1;
-        if( type == 'band' ){
-            min=0.0;
-            max=BIG_A;
-        } else if( type=='rate'){
-            min=0.0;
-            max=100;
-            step=0.01;
-        }
-        var id = makeId( n, name, type );
-        return "<input id='"+id+"' name='"+id+"' type='number' min='"+min+"' max='"+max+"' step='"+step+"' value='' class='' />";
-    }
-
-    function makeAddDel( n, name, isdel ){
-        var action = 'add'+name;
-        var icon = "bi-plus-circle text-success";
-        if(isdel===true){
-            action = 'del'+name;
-            icon = "bi-dash-circle text-danger";
-        }
-        return "<span onclick='submitForm(\""+action+"\", "+n+")' ><i class=\""+icon+"\" style=\"font-size: 1rem\"></i></span>";
-    }
-
-    function makeRow( n, name, addDel ){
-        const id = name+"-"+n;
-        var row = "<tr id='"+id+"'><td>"+makeInput( n, name, 'rate' )+"</td><td>"+makeInput( n, name, 'band' )+"</td><td  class='align-middle'>"+makeAddDel( n, name, false )+"</td>";
-        if( addDel ){
-            row += "<td class='align-middle'>"+makeAddDel( n, name, true )+"</td>";
-        } else {
-            row += "<td></td>";
-        }
-        row += "</tr>";
-        // console.log( "made row as |"+row+"|" );
-        return row;
-    }
-
-    function insertRow( which, n, name, addRow ){
-        $("#"+which ).append( makeRow( n, name, addRow ));
-    }
-
-    function loadTax( name, rates, bands, defrates, defbands ){
-        var nr = rates.length;
-        var nb = bands.length;
-        // console.log( "nr="+nr + " nb = " + nb );
-        $( "#"+name+"-n").val( nr );
-        for( var i = 1; i <= nr; i++ ){
-            var rp = "#"+name+"-r-"+i;
-            $( rp ).val( rates[i-1]);
-            var rb = "#"+name+"-b-"+i;
-            if( i == nr ){
-                $( rb ).hide();            
-            } else {
-                $( rb ).val( bands[i-1]);
-            }
-        }
-    }
-
-    function initialiseTable( which, rates, bands, defrates, defbands ){
-        var n = rates.length;
-        var target = which+ "-rows";
-        $( "#"+target ).children().remove();
-        var addDel = n > 1;
-        for( var i = 1; i <= n; i++ ){
-            insertRow( target, i, which, addDel );
-        }
-        loadTax( which, rates, bands, defrates, defbands );
-    }
-
-
-    function loadData( data ){
-        loadtax( "tax", data.taxrates, data.taxbands );
-        loadtax( "ni", data.nirates, data.nibands );
-        $( "#taxallowance").val( data.taxallowance );
-    }
-
-    function scrapetax( name ){
-        var rates = [];
-        var bands = [];
-        var nrt = "#"+name+"-n";
-        // console.log( "count nrt key = " + nrt );
-        var nr = parseInt($( nrt ).val());
-        // console.log( name + " : got nr as " + nr );
-        for( var i = 1; i <= nr; i++ ){
-            var rp = "#"+name+"-r-"+i;
-            var rb = "#"+name+"-b-"+i;
-            rates.push( parseFloat($( rp ).val()));
-            var rr = parseFloat($( rb ).val());
-            if( Number.isNaN(rr)){
-                rr = BIG_A;
-            }
-            bands.push( rr );
-        }
-        // console.log( "rates=" + rates );
-        return [rates, bands];
-    }
-
-    function scrapeData(){
-        var tbs = scrapetax("tax");
-        // console.log( "tbs=" + tbs );
-        var nbs = scrapetax( "ni");
-        var data = {
-            taxrates: tbs[0],
-            taxbands: tbs[1],
-            nirates: nbs[0],
-            nibands: nbs[1],
-            taxallowance: parseFloat($( "#taxallowance" ).val()),
-            target: -1
-        }
-        // console.log( "data.taxrates " + data.taxrates );
-        return data;
-    }
-
-function getClass( a, b ){
-    return (a == b) ? '' : "changed";
+function makeTypename( type ){
+    return type=='rate' ? 'r' : 'b';
 }
+
+function makeId( n, name, type ){
+    var typename = makeTypename( type );
+    return name + "-" + typename + '-' + n;
+}
+
+function makeInput( n, name, type ){
+    var typename = makeTypename( type );
+    var min=-BIG_A;
+    var max=BIG_A;
+    var step=1;
+    if( type == 'band' ){
+        min=0.0;
+        max=BIG_A;
+    } else if( type=='rate'){
+        min=0.0;
+        max=100;
+        step=0.01;
+    }
+    var id = makeId( n, name, type );
+    return "<input id='"+id+"' name='"+id+"' type='number' min='"+min+"' max='"+max+"' step='"+step+"' value='' class='' />";
+}
+
+function makeAddDel( n, name, isdel ){
+    var action = 'add'+name;
+    var icon = "bi-plus-circle text-success";
+    if(isdel===true){
+        action = 'del'+name;
+        icon = "bi-dash-circle text-danger";
+    }
+    return "<span onclick='submitForm(\""+action+"\", "+n+")' ><i class=\""+icon+"\" style=\"font-size: 1rem\"></i></span>";
+}
+
+function makeRow( n, name, addDel ){
+    const id = name+"-"+n;
+    var row = "<tr id='"+id+"'><td>"+makeInput( n, name, 'rate' )+"</td><td>"+makeInput( n, name, 'band' )+"</td><td  class='align-middle'>"+makeAddDel( n, name, false )+"</td>";
+    if( addDel ){
+        row += "<td class='align-middle'>"+makeAddDel( n, name, true )+"</td>";
+    } else {
+        row += "<td></td>";
+    }
+    row += "</tr>";
+    // console.log( "made row as |"+row+"|" );
+    return row;
+}
+
+function insertRow( which, n, name, addRow ){
+    $("#"+which ).append( makeRow( n, name, addRow ));
+}
+
+function setVal( id, val, def ){
+    $( "#"+id ).val( val );
+    console.log( "setVal for #%s val=%s def=%s", id, val, def )
+    if( val != def ){
+        $( "#"+id ).addClass( 'changed');
+    } else {
+        $( "#"+id ).removeClass( 'changed');
+    }
+}
+
+function loadTax( name, rates, bands, defrates, defbands ){
+    var nr = rates.length;
+    var nb = bands.length;
+    // console.log( "nr="+nr + " nb = " + nb );
+    $( "#"+name+"-n").val( nr );
+    for( var i = 1; i <= nr; i++ ){
+        var rp = "#"+name+"-r-"+i;
+        $( rp ).val( rates[i-1]);
+        var rb = "#"+name+"-b-"+i;
+        if( i == nr ){
+            $( rb ).hide();            
+        } else {
+            $( rb ).val( bands[i-1]);
+        }
+    }
+}
+
+function initialiseTable( which, rates, bands, defrates, defbands ){
+    var n = rates.length;
+    var target = which+ "-rows";
+    $( "#"+target ).children().remove();
+    var addDel = n > 1;
+    for( var i = 1; i <= n; i++ ){
+        insertRow( target, i, which, addDel );
+    }
+    loadTax( which, rates, bands, defrates, defbands );
+}
+
+function loadData( data ){
+    loadtax( "tax", data.taxrates, data.taxbands );
+    loadtax( "ni", data.nirates, data.nibands );
+    $( "#taxallowance").val( data.taxallowance );
+}
+
+function scrapetax( name ){
+    var rates = [];
+    var bands = [];
+    var nrt = "#"+name+"-n";
+    // console.log( "count nrt key = " + nrt );
+    var nr = parseInt($( nrt ).val());
+    // console.log( name + " : got nr as " + nr );
+    for( var i = 1; i <= nr; i++ ){
+        var rp = "#"+name+"-r-"+i;
+        var rb = "#"+name+"-b-"+i;
+        rates.push( parseFloat($( rp ).val()));
+        var rr = parseFloat($( rb ).val());
+        if( Number.isNaN(rr)){
+            rr = BIG_A;
+        }
+        bands.push( rr );
+    }
+    // console.log( "rates=" + rates );
+    return [rates, bands];
+}
+
+function scrapeData(){
+    var tbs = scrapetax("tax");
+    // console.log( "tbs=" + tbs );
+    var nbs = scrapetax( "ni");
+    var data = {
+        taxrates: tbs[0],
+        taxbands: tbs[1],
+        nirates: nbs[0],
+        nibands: nbs[1],
+        taxallowance: parseFloat($( "#taxallowance" ).val()),
+        target: -1
+    }
+    // console.log( "data.taxrates " + data.taxrates );
+    return data;
+}
+
 
 function populateForm( pars, defaults ){
     initialiseTable( "tax", 
@@ -259,9 +265,8 @@ function populateForm( pars, defaults ){
         defaults.nirates, 
         defaults.nibands
             );
-    $( "#taxallowance").val( pars.taxallowance );
-    var c = getClass(pars.taxallowance,defaults.taxallowance);
-    $( "#taxallowance").toggleClass( c );
+            pars.taxallowance );
+    setVal('taxallowance',pars.taxallowance, defaults.taxallowance);
 }
 
 function submitForm( action, target ){
