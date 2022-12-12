@@ -30,12 +30,17 @@ function handlesubmit( payload )
 end
 
 function runt()
-    pars = getparams()
+    rp = rawpayload()
+    # @show jp
+    @show rp
+    pars = handlesubmit( rp ) 
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
 end
 
 function savet() 
-    pars = getparams()
+    rp = rawpayload()
+    @show rp
+    pars = handlesubmit( rp ) 
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
 end
 

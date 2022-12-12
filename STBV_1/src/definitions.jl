@@ -16,7 +16,7 @@ mutable struct SimpleParams{T}
     child_benefit :: T
     pension :: T
     scottish_child_payment :: T
-    scp_age :: T
+    scp_age :: Int
     uc_single :: T
     uc_taper :: T
     wtc_basic :: T
@@ -44,18 +44,18 @@ function map_full_to_simple( sys :: TaxBenefitSystem )::SimpleParams
 		sys.nmt_bens.pensions.new_state_pension,
 		sys.scottish_child_payment.amount,
 		sys.scottish_child_payment.maximum_age,
-	    sys.uc.taper,
-        sys.uc..age_25_and_over,
-		sys.lmt.working_tax_credit.basic,
+	    sys.uc.age_25_and_over,
+		sys.uc.taper,
+        sys.lmt.working_tax_credit.basic,
         0 )
 end
 
-function roundm( v::T, m::T, digits=2)::T
+function roundm( v::T, m::T, digits=2)::T where T<:Number
     v *= m
     round(v,digits=digits)
 end
 
-function map_simple_to_full( sm :: Simplesys ) :: TaxBenefitSystem
+function map_simple_to_full( sm :: SimpleParams ) :: TaxBenefitSystem
     sys = deepcopy( DEFAULT_PARAMS )
     sys.it.non_savings_rates = sm.taxrates
     sys.it.non_savings_thresholds = sm.taxbands

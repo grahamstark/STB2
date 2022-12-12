@@ -1,0 +1,3 @@
+#!/bin/sh
+node sasst.js > css/stb-bootstrap.css
+/bin/cp css/stb-bootstrap.css ../STBV_1/web/css/

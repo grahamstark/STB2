@@ -54,9 +54,9 @@ end
 
 route( "/submit/", method = POST ) do 
   # req = Requests.getrequest()
-  jp = jsonpayload()
+  # jp = jsonpayload()
   rp = rawpayload()
-  @show jp
+  # @show jp
   @show rp
   pars = handlesubmit( rp ) 
 end

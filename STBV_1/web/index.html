@@ -18,13 +18,10 @@
     <script type="text/javascript" src="js/vega-embed.min.js"></script>
     <!-- templates -->
     <script type='text/javascript' src="js/mustache.min.js"></script>
-    <style>
-        .error{ color: red;}
-        .changed{ background-color: yellow; }
-    </style>
+   
 </head>
-<body class='text-bg--primary'>
-    <div class='container-fluid'>
+<body class='text-primary p-2'>
+    
         <nav class="navbar navbar-expand-lg text-primary">
             <ul class="nav">
                 <li class="nav-item"><a class='nav-link' href='https://stb.virtual-worlds.scot/scotbudg/'>A Scottish Budget</a></li>
@@ -34,117 +31,128 @@
             </ul>
         </nav>
         <header>
-            <h1>...r Scotland</h1>
+            <h1>A Budget for Scotland</h1>
+            <h4>2022/3 Version</h4>
         </header>
-        <div class='container-fluid'>
-            <div class='row'>
-                <div class='col'><!-- 1st col -->
-                    <form id='mainform' action="thing" method="POST">
-                        <div class='container-fluid'>
-                            <div class='row'>
-                                <div class='col'>
-                                    <div class="row">
-                                        <div class="col">
-                                            <h4>Income Tax</h4>
-                                            <input type="hidden" id="tax-n" name="tax-n" value=""/>
-                                            <table id='it-table' class="table table-sm table-striped">
-                                                <caption>Rates in %, bands in &pound;s pa</caption>
-                                                <thead>                                                    
-                                                    <tr>
-                                                        <th>Rate (%)</th>
-                                                        <th>Band (£pa)</th>
-                                                        <th></th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-
-                                                <tbody id='tax-rows'>
-                                                </tbody>
-
-                                            </table>
-                                            <div class="row">
-                                                <div class="col">                                                    
-                                                    <label for='taxallowance' class='form-label'>Personal Allowance £pa</label>
-                                                    <input id='taxallowance' type='number' name="taxallowance" min='0' max='100000' value='' step='1' size="12" class='form-control w-50'/>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div><!-- inner row -->                                    
-                                </div> <!-- col -->
-                                <div class='col'>
-                                    <h4>National Insurance</h4>
-                                    <input type="hidden" id="ni-n" name="ni-n" value=""/>
-                                    <table class="table table-sm table-striped">
-                                        <caption>Rates in %, bands in &pound;s pw</caption>
-                                        <thead>
-                                            <tr>
-                                                <th>Rate (%)</th>
-                                                <th>Band (£pw)</th>
-                                                <th></th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id='ni-rows'>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class='col'>
-                                    <h4>Means-Tested Benefits</h4>
-                                    <div class="row">
-                                        
-                                                <div class="col">                                                    
-                                                    <label for='scottish_child_payment' class='form-label'>Scottish Child Payment £pw</label>
-                                                    <input id='scottish_child_payment' type='number' name="scottish_child_payment" min='0' max='400' value='' step='0.01' size="10" class='form-control w-50'/>
-                                                </div>
-                                                <div class="col">                                                    
-                                                    <label for='scp_age' class='form-label'>Scottish Child Payment: maximum age (years)</label>
-                                                    <input id='scp_age' type='number' name="scp_age" min='0' max='18' value='' step='1' size="4" class='form-control w-50'/>
-                                                </div>
-                                                <div class="col">                                                    
-                                                    <label for='uc_single' class='form-label'>Universal Credit: Single over 25 (£pm)</label>
-                                                    <input id='uc_single' type='number' name="uc_single" min='0' max='2000' value='' step='1' size="10" class='form-control w-50'/>
-                                                </div>
-                                                <div class="col">                                                    
-                                                    <label for='uc_taper' class='form-label'>Universal Credit Taper (%)</label>
-                                                    <input id='uc_taper' type='number' name="uc_taper" min='1' max='100' value='' step='1' size="10" class='form-control w-50'/>
-                                                </div>
-                                                <div class="col">                                                    
-                                                    <label for='wtc_basic' class='form-label'>Working Tax Credit (Basic) £pa</label>
-                                                    <input id='wtc_basic' type='number' name="wtc_basic" min='0' max='30000' value='' step='1' size="10" class='form-control w-50'/>
-                                                </div>
-                                
-                                </div>
-                                <div class='col'>
-                                        <div class="row">
-                                            <h4>Other Benefits</h4>
-                                            <div class="col">                                                    
-                                                    <label for='child_benefit' class='form-label'>Child Benefit (1st child) £pw</label>
-                                                    <input id='child_benefit' type='number' name="child_benefit" min='0' max='1000' value='' step='0.01' size="10" class='form-control w-50'/>
-                                                </div>
-                                                <div class="col">                                                    
-                                                    <label for='pension' class='form-label'>New State Pension £pw</label>
-                                                    <input id='pension' type='number' name="pension" min='0' max='1000' value='' step='0.01' size="10" class='form-control w-50'/>
-                                                </div>
-                                        </div>
-                                </div>
-                            </div> <!-- row -->
-                            <div class="row">
-                                <div class="col"></div>
-                                <div class="col"></div>
-                                <div class="col">
-                                    <button  type="button" class='btn btn-warning' value='' onclick='submitForm( "reset" )'>Reset</button>
-                                </div>
-                                <div class="col">
-                                    <button  type="button" class='btn btn-success' value='' onclick='submitForm( "submit" )'>Submit</button>
+        
+        <form id='mainform' action="thing" method="POST">       
+            <div class='container-fluid'>                 
+                <div class='row'><!-- input row -->
+                    <fieldset class="col border rounded-2 m-1 p-2">
+                        <legend>Income Tax</legend>
+                                <input type="hidden" id="tax-n" name="tax-n" value=""/>
+                                <table id='it-table' class="table table-sm table-striped">
+                                    <caption>Rates in %, bands in &pound;s pa</caption>
+                                    <thead>                                                    
+                                        <tr>
+                                            <th>Rate (%)</th>
+                                            <th>Band (£pa)</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id='tax-rows'>
+                                    </tbody>
+                                </table>
+                                <div class="col ukreserved p-2">                                                    
+                                    <label for='taxallowance' class='form-label'>Personal Allowance £pa</label>
+                                    <input id='taxallowance' type='number' name="taxallowance" min='0' max='100000' value='' step='1' size="12" class='form-control w-50'/>
+                                </div>                                
+                    </fieldset>
+                    <fieldset class='col border rounded-2 m-1 p-2 ukreserved'>
+                        <legend>National Insurance</legend>
+                        <input type="hidden" id="ni-n" name="ni-n" value=""/>
+                        <table class="table table-sm table-striped">
+                            <caption>Rates in %, bands in &pound;s pw</caption>
+                            <thead>
+                                <tr>
+                                    <th>Rate (%)</th>
+                                    <th>Band (£pw)</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id='ni-rows'>
+                            </tbody>
+                        </table>
+                    </fieldset>
+                    <fieldset class='col border  rounded-2 m-1 p-2'>
+                        <legend>Scottish Benefits</legend>
+                        <div class="row">                                        
+                            <div class="col">                                                    
+                                <label for='scottish_child_payment' class='form-label'>Scottish Child Payment £pw</label>
+                                <input id='scottish_child_payment' type='number' name="scottish_child_payment" min='0' max='400' value='' step='0.01' size="10" class='form-control w-50'/>
+                            </div>
+                        </div>
+                        <div class="row">                                        
+                            <div class="col">                                                    
+                                <label for='scp_age' class='form-label'>Scottish Child Payment: maximum age (years)</label>
+                                <input id='scp_age' type='number' name="scp_age" min='0' max='18' value='' step='1' size="4" class='form-control w-50'/>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class='col border rounded-2 m-1 p-2 ukreserved'>
+                            <legend>UK (Reserved) Benefits</legend>                                            
+                            <div class="row">                                        
+                                <div class="col">                                                    
+                                    <label for='uc_single' class='form-label'>Universal Credit: Single over 25 (£pm)</label>
+                                    <input id='uc_single' type='number' name="uc_single" min='0' max='2000' value='' step='1' size="10" class='form-control w-50'/>
                                 </div>
                             </div>
-                        </div> <!-- container -->
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> <!-- main container -->
+                            <div class="row">                                                                                    
+                                <div class="col">                                                    
+                                    <label for='uc_taper' class='form-label'>Universal Credit Taper (%)</label>
+                                    <input id='uc_taper' type='number' name="uc_taper" min='1' max='100' value='' step='1' size="10" class='form-control w-50'/>
+                                </div>
+                            </div>
+                            <div class="row">                                        
+                                <div class="col">                                                    
+                                    <label for='wtc_basic' class='form-label'>Working Tax Credit (Basic) £pa</label>
+                                    <input id='wtc_basic' type='number' name="wtc_basic" min='0' max='30000' value='' step='1' size="10" class='form-control w-50'/>
+                                </div>
+                            </div>
+                                <div class="row">
+                                <div class="col">                                                    
+                                    <label for='child_benefit' class='form-label'>Child Benefit (1st child) £pw</label>
+                                    <input id='child_benefit' type='number' name="child_benefit" min='0' max='1000' value='' step='0.01' size="10" class='form-control w-50'/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                    <div class="col">                                                    
+                                        <label for='pension' class='form-label'>New State Pension £pw</label>
+                                        <input id='pension' type='number' name="pension" min='0' max='1000' value='' step='0.01' size="10" class='form-control w-50'/>
+                                    </div>                                                
+                            </div>
+                    </fieldset>
+                </div> <!-- input row -->
+                
+                <div class="row  border rounded-2 m-1 p-2">
+                    <div class="col"></div>
+                    <div class="col"></div>
+                    <div class="col"></div>
+                    <div class="col"></div>
+                </div> <!-- output row -->
+                <fieldset class="row">
+                    <div class="col"></div>
+                    <div class="col"></div>
+                    <div class="col"></div>
+                    <div class="col">
+                        <ul class="nav">
+                            <li class="nav-item  p-2">                      
+                                <button  type="button" class='btn btn-warning rounded-2' value='' onclick='submitForm( "reset" )'>Reset</button>
+                            </li>
+                            <li class="nav-item p-2">                      
+                                <button  type="button" class='btn btn-info rounded-2' value='' onclick='submitForm( "save" )'>Save</button>
+                            </li>
+                            <li class="nav-item p-2">                      
+                                <button  type="button" class='btn btn-success rounded-2' value='' onclick='submitForm( "run" )'>Run</button>
+                            </li>
+                        </ul>
+                    </div>
+                </fieldset> <!-- submission row -->
+        
+            </div> <!-- main container -->
+        </form>
 </body>
 
 <script type='text/javascript'>
@@ -174,7 +182,7 @@ function makeInput( n, name, type ){
         step=0.01;
     }
     var id = makeId( n, name, type );
-    return "<input id='"+id+"' name='"+id+"' type='number' min='"+min+"' max='"+max+"' step='"+step+"' value='' class='' />";
+    return "<input id='"+id+"' name='"+id+"' type='number' min='"+min+"' max='"+max+"' step='"+step+"' value='' class=' w-50' />";
 }
 
 function makeAddDel( n, name, isdel ){
