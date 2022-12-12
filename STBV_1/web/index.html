@@ -65,7 +65,7 @@
                                             <div class="row">
                                                 <div class="col">                                                    
                                                     <label for='taxallowance' class='form-label'>Personal Allowance £pa</label>
-                                                    <input id='taxallowance' type='number'  min='0' max='100000' value='' step='1' size="12" class='form-control w-50'/>
+                                                    <input id='taxallowance' type='number' name="taxallowance" min='0' max='100000' value='' step='1' size="12" class='form-control w-50'/>
                                                 </div>
                                             </div>
 
@@ -91,9 +91,42 @@
                                 </div>
                                 <div class='col'>
                                     <h4>Means-Tested Benefits</h4>
+                                    <div class="row">
+                                        
+                                                <div class="col">                                                    
+                                                    <label for='scottish_child_payment' class='form-label'>Scottish Child Payment £pw</label>
+                                                    <input id='scottish_child_payment' type='number' name="scottish_child_payment" min='0' max='400' value='' step='0.01' size="10" class='form-control w-50'/>
+                                                </div>
+                                                <div class="col">                                                    
+                                                    <label for='scp_age' class='form-label'>Scottish Child Payment: maximum age (years)</label>
+                                                    <input id='scp_age' type='number' name="scp_age" min='0' max='18' value='' step='1' size="4" class='form-control w-50'/>
+                                                </div>
+                                                <div class="col">                                                    
+                                                    <label for='uc_single' class='form-label'>Universal Credit: Single over 25 (£pm)</label>
+                                                    <input id='uc_single' type='number' name="uc_single" min='0' max='2000' value='' step='1' size="10" class='form-control w-50'/>
+                                                </div>
+                                                <div class="col">                                                    
+                                                    <label for='uc_taper' class='form-label'>Universal Credit Taper (%)</label>
+                                                    <input id='uc_taper' type='number' name="uc_taper" min='1' max='100' value='' step='1' size="10" class='form-control w-50'/>
+                                                </div>
+                                                <div class="col">                                                    
+                                                    <label for='wtc_basic' class='form-label'>Working Tax Credit (Basic) £pa</label>
+                                                    <input id='wtc_basic' type='number' name="wtc_basic" min='0' max='30000' value='' step='1' size="10" class='form-control w-50'/>
+                                                </div>
+                                
                                 </div>
                                 <div class='col'>
-                                    <h4>Other Benefits</h4>
+                                        <div class="row">
+                                            <h4>Other Benefits</h4>
+                                            <div class="col">                                                    
+                                                    <label for='child_benefit' class='form-label'>Child Benefit (1st child) £pw</label>
+                                                    <input id='child_benefit' type='number' name="child_benefit" min='0' max='1000' value='' step='0.01' size="10" class='form-control w-50'/>
+                                                </div>
+                                                <div class="col">                                                    
+                                                    <label for='pension' class='form-label'>New State Pension £pw</label>
+                                                    <input id='pension' type='number' name="pension" min='0' max='1000' value='' step='0.01' size="10" class='form-control w-50'/>
+                                                </div>
+                                        </div>
                                 </div>
                             </div> <!-- row -->
                             <div class="row">
@@ -246,6 +279,13 @@ function scrapeData(){
         nirates: nbs[0],
         nibands: nbs[1],
         taxallowance: parseFloat($( "#taxallowance" ).val()),
+        child_benefit: parseFloat( $( "#child_benefit" ).val()),
+        pension: parseFloat( $( "#pension" ).val()),
+        scottish_child_payment: parseFloat( $( "#scottish_child_payment" ).val()),
+        scp_age: parseInt( $( "#scp_age" ).val()),
+        uc_single: parseFloat( $( "#uc_single" ).val()),
+        uc_taper: parseFloat( $( "#uc_taper" ).val()),
+        wtc_basic: parseFloat( $( "#wtc_basic" ).val()),
         target: -1
     }
     // console.log( "data.taxrates " + data.taxrates );
@@ -265,7 +305,15 @@ function populateForm( pars, defaults ){
         defaults.nirates, 
         defaults.nibands
             );
-    setVal('taxallowance',pars.taxallowance, defaults.taxallowance);
+    setVal( 'taxallowance', pars.taxallowance, defaults.taxallowance);
+    setVal( 'child_benefit', pars.child_benefit, defaults.child_benefit );
+    setVal( 'pension', pars.pension, defaults.pension );
+    setVal( 'scottish_child_payment', pars.scottish_child_payment, defaults.scottish_child_payment );
+    setVal( 'scp_age', pars.scp_age, defaults.scp_age );
+    setVal( 'uc_single', pars.uc_single, defaults.uc_single );
+    setVal( 'uc_taper', pars.uc_taper, defaults.uc_taper );
+    setVal( 'wtc_basic', pars.wtc_basic, defaults.wtc_basic );
+
 }
 
 function submitForm( action, target ){
