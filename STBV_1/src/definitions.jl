@@ -32,6 +32,14 @@ end
 
 const DEFAULT_PARAMS = loaddefs()
 
+function weeklyparams():::: TaxBenefitSystem
+   pars = deepcopy( DEFAULT_PARAMS )
+   weeklyise!( pars )
+   pars;
+end
+
+const DEFAULT_WEEKLY_PARAMS = weeklyparams()
+
 function map_full_to_simple( sys :: TaxBenefitSystem )::SimpleParams
 
     return SimpleParams(
@@ -117,3 +125,34 @@ function map_simple_to_full( sm :: SimpleParams ) :: TaxBenefitSystem
 end
 
 const DEFAULT_SIMPLE_PARAMS = map_full_to_simple( DEFAULT_PARAMS )
+
+struct ParamsAndSettings{T}
+	uuid         :: UUID
+	cache_key    :: String
+	sys          :: TaxBenefitSystem{T}
+	settings     :: Settings
+end
+
+struct AllOutput
+	uuid         :: UUID
+	cache_key    :: String
+	results
+	summary
+	gain_lose
+	examples
+end
+
+#
+#
+PROGRESS = Dict{UUID,Any}()
+
+# FIXME we can simplify this by directly creating the outputs
+# as a string and just saving that in STASHED_RESULTS
+STASHED_RESULTS = Dict{UUID,Any}()
+
+# Save results by query string & just return that
+# TODO complete this.
+CACHED_RESULTS = Dict{String,Any}()
+
+
+

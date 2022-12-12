@@ -8,6 +8,8 @@ const up = Genie.up
 export up
 
 include( "definitions.jl" )
+include( "runner_libs.jl" )
+include( "queue_libs.jl" )
 include( "functions.jl" )
 
 function main()
