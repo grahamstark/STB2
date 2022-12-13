@@ -1,6 +1,8 @@
 # get around weird bug similar to: https://github.com/GenieFramework/Genie.jl/issues/433
 __precompile__(false)
 
+const BASE_UUID = UUID("985c312f-129b-4acd-9e40-cb629d184183")
+
 function initialise_settings()::Settings
     settings = Settings()
         # settings.uuid = BASE_UUID
@@ -10,10 +12,10 @@ function initialise_settings()::Settings
     settings.dump_frames = false
     settings.do_marginal_rates = true
     settings.requested_threads = 4
+    # FIXME shouldn't need to set this.
+    settings.data_dir = "/home/graham_s/julia/vw/ScottishTaxBenefitModel/data/"
     return settings
 end
-
-const BASE_SETTINGS = initialise_settings()
 
 const BIG_A = 9999999999
 mutable struct SimpleParams{T}
@@ -37,13 +39,16 @@ function loaddefs() :: TaxBenefitSystem
     return load_file( joinpath( Definitions.MODEL_PARAMS_DIR, "sys_2022-23.jl" ))
 end
 
-const DEFAULT_PARAMS ::  TaxBenefitSystem = loaddefs()
-
 function weeklyparams() :: TaxBenefitSystem
    pars = deepcopy( DEFAULT_PARAMS )
    weeklyise!( pars )
    pars;
 end
+
+const DEF_PROGRESS = Progress( BASE_UUID, "", 0, 0, 0, 0 )
+const NO_PROGRESS = ( progress=DEF_PROGRESS, total=-1)
+
+const DEFAULT_PARAMS ::  TaxBenefitSystem = loaddefs()
 
 const DEFAULT_WEEKLY_PARAMS :: TaxBenefitSystem = weeklyparams()
 
@@ -80,7 +85,7 @@ function map_simple_to_full( sm :: SimpleParams ) :: TaxBenefitSystem
 
     p = sm.child_benefit/sys.nmt_bens.child_benefit.first_child
     sys.nmt_bens.child_benefit.first_child = sm.child_benefit
-    sys.nmt_bens.child_benefit.other_children = roundm( sys.nmt_bens.other_children, p)
+    sys.nmt_bens.child_benefit.other_children = roundm( sys.nmt_bens.child_benefit.other_children, p)
 
     p = sm.pension / sys.nmt_bens.pensions.new_state_pension
     sys.nmt_bens.pensions.new_state_pension = sm.pension
@@ -114,20 +119,20 @@ function map_simple_to_full( sm :: SimpleParams ) :: TaxBenefitSystem
     sys.uc.work_allowance_no_housing = roundm( sys.uc.work_allowance_no_housing, p )
 
     p = sm.wtc_basic/sys.lmt.working_tax_credit.basic
-    wtc.basic = sm.wtc_basic
-    sys.wtc.lone_parent = roundm( sys.wtc.lone_parent, p,  0 )
-    sys.wtc.couple = roundm( sys.wtc.couple, p,  0 )
-    sys.wtc.hours_ge_30 = roundm( sys.wtc.hours_ge_30, p,  0 )
-    sys.wtc.disability = roundm( sys.wtc.disability, p,  0 )
-    sys.wtc.severe_disability = roundm( sys.wtc.severe_disability, p,  0 )
-    sys.wtc.age_50_plus = roundm( sys.wtc.age_50_plus, p,  0 )
-    sys.wtc.age_50_plus_30_hrs = roundm( sys.wtc.age_50_plus_30_hrs, p,  0 )
-    sys.wtc.childcare_proportion = roundm( sys.wtc.childcare_proportion, p,  0 )
-    sys.wtc.non_earnings_minima = roundm( sys.wtc.non_earnings_minima, p,  0 )
-    sys.wtc.threshold = roundm( sys.wtc.threshold, p,  0 )
-    sys.wtc.taper = roundm( sys.wtc.taper, p,  0 )
+    sys.lmt.working_tax_credit.basic = sm.wtc_basic
+    sys.lmt.working_tax_credit.lone_parent = roundm( sys.lmt.working_tax_credit.lone_parent, p,  0 )
+    sys.lmt.working_tax_credit.couple = roundm( sys.lmt.working_tax_credit.couple, p,  0 )
+    sys.lmt.working_tax_credit.hours_ge_30 = roundm( sys.lmt.working_tax_credit.hours_ge_30, p,  0 )
+    sys.lmt.working_tax_credit.disability = roundm( sys.lmt.working_tax_credit.disability, p,  0 )
+    sys.lmt.working_tax_credit.severe_disability = roundm( sys.lmt.working_tax_credit.severe_disability, p,  0 )
+    sys.lmt.working_tax_credit.age_50_plus = roundm( sys.lmt.working_tax_credit.age_50_plus, p,  0 )
+    sys.lmt.working_tax_credit.age_50_plus_30_hrs = roundm( sys.lmt.working_tax_credit.age_50_plus_30_hrs, p,  0 )
+    sys.lmt.working_tax_credit.childcare_proportion = roundm( sys.lmt.working_tax_credit.childcare_proportion, p,  0 )
+    sys.lmt.working_tax_credit.non_earnings_minima = roundm( sys.lmt.working_tax_credit.non_earnings_minima, p,  0 )
+    sys.lmt.working_tax_credit.threshold = roundm( sys.lmt.working_tax_credit.threshold, p,  0 )
+    sys.lmt.working_tax_credit.taper = roundm( sys.lmt.working_tax_credit.taper, p,  0 )
 
-    return tb
+    return sys
 end
 
 const DEFAULT_SIMPLE_PARAMS :: SimpleParams = map_full_to_simple( DEFAULT_PARAMS )
@@ -136,17 +141,6 @@ struct ParamsAndSettings{T}
 	simple   :: SimpleParams{T}
 	session  :: GenieSession.Session
 end
-
-struct AllOutput
-	results
-	summary
-	gain_lose
-	examples
-end
-
-# Save results by query string & just return that
-# TODO complete this.
-const CACHED_RESULTS = Dict{SimpleParams,AllOutput}()
 
 #
 # this many simultaneous (sp) runs
@@ -196,25 +190,10 @@ function format_and_class( change :: Real ) :: Tuple
     ( gnum, glclass, glstr )
 end
 
-## FIXME POVERTY LINE!
-function make_base_results()
-	settings = initialise_settings()	
-    obs = Observable( 
-		Progress(settings.uuid, "",0,0,0,0))
-	tot = 0
-	of = on(obs) do p
-		tot += p.step
-		PROGRESS[p.uuid] = (progress=p,total=tot)
-	end
-    settings = deepcopy(settings)
-	results = do_one_run( settings, [BASE_PARAMS], obs )
-    settings.poverty_line = make_poverty_line( results.hh[1], settings )        
-    outf = summarise_frames( results, settings )
-	gl = make_gain_lose( results.hh[1], results.hh[1], settings ) 
-	exres = calc_examples( BASE_PARAMS, BASE_PARAMS, settings )
-    aout = AllOutput( results, outf, gl, exres ) 
-	return aout;
+struct AllOutput
+	results
+	summary
+	gain_lose
+	examples
 end
 
-const BASE_RESULTS = make_base_results()
-const BASE_TEXT_OUTPUT = results_to_html( BASE_UUID, BASE_RESULTS, BASE_RESULTS )

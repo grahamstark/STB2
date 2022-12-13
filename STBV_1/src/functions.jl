@@ -10,17 +10,13 @@ function do_run(
     simple :: SimpleParams )
 	@debug "do_run_a entered"
 	settings = initialise_settings()
-	if haskey( CACHED_RESULTS, simple )
-        p = Progress( settings.uuid, "end", -99, -99, -99, -99 )
-        GenieSession.set!( session, :progress, (progress=p,total=0))
-        return
-	end
 	sys :: TaxBenefitSystem = map_simple_to_full( simple )
 	obs = Observable(
 		Progress(settings.uuid, "",0,0,0,0))
 	tot = 0
 	of = on(obs) do p
         tot += p.step
+        @debug "monitor tot=$tot p = $(p)"
 		GenieSession.set!( session, :progress, (progress=p,total=tot))
 	end
 	results = do_one_run( settings, [sys], obs )
@@ -36,7 +32,7 @@ end
 function submit_job( 
     session::GenieSession.Session, 
     simple :: SimpleParams )
-    put!( IN_QUEUE, ParamsAndSettings( session, simple ))
+    put!( IN_QUEUE, ParamsAndSettings( simple, session ))
 	@debug "submit exiting queue is now $IN_QUEUE"
 end
 
@@ -57,7 +53,7 @@ for i in 1:NUM_HANDLERS # start n tasks to process requests in parallel
     errormonitor(@async calc_one())
 end
 
-function getparams()::SimpleParams
+function paramsfromsession()::SimpleParams
     session = GenieSession.session()
     pars = nothing
     if( GenieSession.isset( session, :pars ))
@@ -69,59 +65,74 @@ function getparams()::SimpleParams
     end
 end
 
-function params()
-    pars = getparams()
+function getparams()
+    pars = paramsfromsession()
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
 end
 
-function handlesubmit( payload )
+function paramsfrompayload( payload )
     @show payload
-    session = GenieSession.session()
     pars = JSON3.read(payload, SimpleParams{Float64})
-    GenieSession.set!( session, :pars, pars )
+    return pars
+end
+
+function dorun()
+    sess = GenieSession.session()
+    pars = paramsfrompayload( rawpayload() )
+    GenieSession.set!( sess, :pars, pars )
+    output = "";
+    if haskey( CACHED_RESULTS, pars )
+        output = CACHED_RESULTS[pars]
+    else
+        submit_job( sess, pars )
+    end
+    (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS,:output=>output) |> json
+end
+
+function dosave() 
+    pars = paramsfrompayload(rawpayload())
+    sess = GenieSession.session()
+    GenieSession.set!( sess, :pars, pars )
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
 end
 
-function runt()
-    rp = rawpayload()
-    # @show jp
-    @show rp
-    pars = handlesubmit( rp ) 
-
-    (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
-end
-
-function savet() 
-    rp = rawpayload()
-    @show rp
-    pars = handlesubmit( rp ) 
-    (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
-end
-
-function resett() 
-    session = GenieSession.session()
+function doreset() 
+    sess = GenieSession.session()
     pars = deepcopy( DEFAULT_SIMPLE_PARAMS )
-    GenieSession.set!( session, :pars, pars )
+    GenieSession.set!( sess, :pars, pars )
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
 end
 
-function progress() 
-    pars = getparams()
-    (:prog=>"Goes Here") |> json
+function getprogress() 
+    sess = GenieSession.session()
+    progress = NO_PROGRESS
+    if( GenieSession.isset( session, :progress ))
+        progress = GenieSession.get( sess, :progress )
+    else
+        GenieSession.set!( sess, :progress, progress )
+    end
+    (:progress=>progress) |> json
 end
 
-function output() 
-    pars = getparams()
-    (:out=>"Goes Here") |> json
+function getoutput() 
+    pars = paramsfromsession()
+    output = ""
+    if haskey( CACHED_RESULTS, pars )
+        output = CACHED_RESULTS[pars]
+    end
+    (:output=>output) |> json
 end
 
-function uprate( v :: Real ) 
-    pars = getparams()
-    
+function douprate( v :: Real ) 
+    pars = paramsfromsession()
+    # TODO
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
 end
 
-function delonerb!( rates::AbstractVector, bands::AbstractVector, pos::Integer )
+function delonerb!( 
+    rates::AbstractVector, 
+    bands::AbstractVector, 
+    pos::Integer )
     sz = size(rates)[1]
     sb = size(bands)[1]
     @assert sb in (sz-1):sz
@@ -137,7 +148,11 @@ function delonerb!( rates::AbstractVector, bands::AbstractVector, pos::Integer )
     end
 end
 
-function addonerb!( rates::AbstractVector{T}, bands::AbstractVector{T}, pos::Integer, val :: T = zero(T) ) where T
+function addonerb!( 
+    rates::AbstractVector{T}, 
+    bands::AbstractVector{T}, 
+    pos::Integer, 
+    val :: T = zero(T) ) where T
     sz = size(rates)[1]
     sb = size(bands)[1]
     @assert sb in (sz-1):sz
@@ -154,30 +169,30 @@ function addonerb!( rates::AbstractVector{T}, bands::AbstractVector{T}, pos::Int
     end
 end
 
-function defaults()
+function getdefaults()
     (:def=>DEFAULT_SIMPLE_PARAMS) |> json
 end
 
 function addtax( n :: Int ) 
-    pars = getparams()
+    pars = paramsfromsession()
     addonerb!( pars.taxrates, pars.taxbands, n )
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
 end
 
 function deltax( n )
-    pars = getparams()
+    pars = paramsfromsession()
     delonerb!( pars.taxrates, pars.taxbands, n );
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
 end
 
 function addni( n )
-    pars = getparams()
+    pars = paramsfromsession()
     addonerb!( pars.nirates, pars.nibands, n );
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
 end
 
 function delni( n )
-    pars = getparams()
+    pars = paramsfromsession()
     delonerb!( pars.nirates, pars.nibands, n );
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
 end

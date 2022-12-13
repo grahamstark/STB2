@@ -16,16 +16,17 @@ const config = Settings(
 )
 =# 
 
-route( "/run", runt, method = POST )
-route( "/save", savet, method = POST )
-route( "/reset", resett, method = POST )
-route( "/progress", progress, method = POST )
-route( "/output", output, method = POST )
-route( "/params", params, method = POST)
+route( "/run", dorun, method = POST )
+route( "/save", dosave, method = POST )
+route( "/reset", doreset, method = POST )
+route( "/progress", getprogress, method = POST )
+route( "/output", getoutput, method = POST )
+route( "/params", getparams, method = POST)
+route( "/defaults", getdefaults, method = POST)
 
 route( "/uprate/:v", method = POST) do
   v = parse(Float64, payload(:v))
-  uprate( v )
+  douprate( v )
 end
 
 route("/addtax/:n", method = POST) do 
@@ -50,15 +51,6 @@ end
 route("/delni/:n", method = POST ) do 
   n::Int = parse(Int,  payload(:n))
   delni( n )
-end
-
-route( "/submit/", method = POST ) do 
-  # req = Requests.getrequest()
-  # jp = jsonpayload()
-  rp = rawpayload()
-  # @show jp
-  @show rp
-  pars = handlesubmit( rp ) 
 end
 
 route("/") do

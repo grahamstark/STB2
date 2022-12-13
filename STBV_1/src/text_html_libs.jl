@@ -238,24 +238,6 @@ end
  Of 'arrows', only 'arrows_3' displays correctly in Windows, I think,
  arrows_1 is prettiest
 =#
-
-const ARROWS_3 = Dict([
-    "nonsig"          => "&#x25CF;",
-    "positive_strong" => "&#x21c8;",
-    "positive_med"    => "&#x2191;",
-    "positive_weak"   => "&#x21e1;",
-    "negative_strong" => "&#x21ca;",
-    "negative_med"    => "&#x2193;",
-    "negative_weak"   => "&#x21e3;" ])
-
-const ARROWS_1 = Dict([
-    "nonsig"          => "",
-    "positive_strong" => "<i class='bi bi-arrow-up-circle-fill'></i>",
-    "positive_med"    => "<i class='bi bi-arrow-up-circle'></i>",
-    "positive_weak"   => "<i class='bi bi-arrow-up'></i>",
-    "negative_strong" => "<i class='bi bi-arrow-down-circle-fill'></i>",
-    "negative_med"    => "<i class='bi bi-arrow-down-circle'></i>",
-    "negative_weak"   => "<i class='bi bi-arrow-down'></i>" ])
     
 function make_example_card( hh :: ExampleHH, res :: NamedTuple ) :: String
     change = res.pres.bhc_net_income - res.bres.bhc_net_income
@@ -321,12 +303,7 @@ function hhsummary( hh :: Household )
     table
 end
 
-
-# width='100' 
-# height='140'
-
 function make_popups( hh :: ExampleHH, res :: NamedTuple ) :: String
-
     pit = pers_inc_table( res )
     hhtab = hhsummary( hh.hh )
     modal = """
@@ -378,11 +355,9 @@ end
 
 
 function results_to_html( 
-    uuid :: UUID, 
     base_results :: AllOutput, 
     results      :: AllOutput ) :: NamedTuple
-    @debug "results_to_html entered with uuid $uuid"
-
+    
     gain_lose = gain_lose_table( results.gain_lose )
     gains_by_decile = results.summary.deciles[1][:,3] -
 			    base_results.summary.deciles[1][:,3]
@@ -413,7 +388,6 @@ function results_to_html(
             results.summary.income_summary[1] )) 
     outt = ( 
         phase = "end", 
-        uuid = uuid,
         gain_lose = gain_lose, 
         gains_by_decile = gains_by_decile,
         costs = costs, 
