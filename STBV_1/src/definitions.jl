@@ -1,13 +1,19 @@
 # get around weird bug similar to: https://github.com/GenieFramework/Genie.jl/issues/433
 __precompile__(false)
 
-using .STBParameters
-using .RunSettings
-using .Definitions
+function initialise_settings()::Settings
+    settings = Settings()
+        # settings.uuid = BASE_UUID
+    settings.means_tested_routing = modelled_phase_in
+    settings.run_name="run-$(date_string())"
+    settings.income_data_source = ds_frs
+    settings.dump_frames = false
+    settings.do_marginal_rates = true
+    settings.requested_threads = 4
+    return settings
+end
 
-using StructTypes
-using JSON3
-using GenieSession 
+const BASE_SETTINGS = initialise_settings()
 
 const BIG_A = 9999999999
 mutable struct SimpleParams{T}
@@ -138,10 +144,6 @@ struct AllOutput
 	examples
 end
 
-# FIXME we can simplify this by directly creating the outputs
-# as a string and just saving that in STASHED_RESULTS
-const STASHED_RESULTS = Dict{UUID,Any}()
-
 # Save results by query string & just return that
 # TODO complete this.
 const CACHED_RESULTS = Dict{SimpleParams,AllOutput}()
@@ -155,6 +157,64 @@ const QSIZE = 32
 
 IN_QUEUE = Channel{ParamsAndSettings}(QSIZE)
 
+# configure logger; see: https://docs.julialang.org/en/v1/stdlib/Logging/index.html
+# and: https://github.com/oxinabox/LoggingExtras.jl
+logger = FileLogger("/var/tmp/stb_log.txt")
+global_logger(logger)
+LogLevel( Logging.Debug )
 
+const MR_UP_GOOD = [1,0,0,0,0,0,0,-1,-1]
+const COST_UP_GOOD = [1,1,1,1,-1,-1,-1,-1,-1,-1,-1]
 
+function format_and_class( change :: Real ) :: Tuple
+    gnum = format( abs(change), commas=true, precision=2 )
+    glclass = "";
+    glstr = ""
+    if change > 20.0
+        glstr = "positive_strong"
+        glclass = "text-success"
+    elseif change > 10.0
+        glstr = "positive_med"
+        glclass = "text-success"
+    elseif change > 0.01
+        glstr = "positive_weak"
+        glclass = "text-success"
+    elseif change < -20.0
+        glstr = "negative_strong"
+        glclass = "text-danger"
+    elseif change < -10
+        glstr = "negative_med"
+        glclass = "text-danger"
+    elseif change < -0.01
+        glstr = "negative_weak"
+        glclass = "text-danger"
+    else
+        glstr = "nonsig"
+        glclass = "text-body"
+        gnum = "";
+    end
+    ( gnum, glclass, glstr )
+end
 
+## FIXME POVERTY LINE!
+function make_base_results()
+	settings = initialise_settings()	
+    obs = Observable( 
+		Progress(settings.uuid, "",0,0,0,0))
+	tot = 0
+	of = on(obs) do p
+		tot += p.step
+		PROGRESS[p.uuid] = (progress=p,total=tot)
+	end
+    settings = deepcopy(settings)
+	results = do_one_run( settings, [BASE_PARAMS], obs )
+    settings.poverty_line = make_poverty_line( results.hh[1], settings )        
+    outf = summarise_frames( results, settings )
+	gl = make_gain_lose( results.hh[1], results.hh[1], settings ) 
+	exres = calc_examples( BASE_PARAMS, BASE_PARAMS, settings )
+    aout = AllOutput( results, outf, gl, exres ) 
+	return aout;
+end
+
+const BASE_RESULTS = make_base_results()
+const BASE_TEXT_OUTPUT = results_to_html( BASE_UUID, BASE_RESULTS, BASE_RESULTS )

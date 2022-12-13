@@ -9,14 +9,13 @@ function do_run(
     session,
     simple :: SimpleParams )
 	@debug "do_run_a entered"
-	settings = Settings()
+	settings = initialise_settings()
 	if haskey( CACHED_RESULTS, simple )
         p = Progress( settings.uuid, "end", -99, -99, -99, -99 )
         GenieSession.set!( session, :progress, (progress=p,total=0))
         return
 	end
 	sys :: TaxBenefitSystem = map_simple_to_full( simple )
-
 	obs = Observable(
 		Progress(settings.uuid, "",0,0,0,0))
 	tot = 0
@@ -34,16 +33,12 @@ function do_run(
     CACHED_RESULTS[ simple ] = res_text
 end
 
-
-
 function submit_job( 
     session::GenieSession.Session, 
     simple :: SimpleParams )
     put!( IN_QUEUE, ParamsAndSettings( session, simple ))
 	@debug "submit exiting queue is now $IN_QUEUE"
 end
-
-
 
 function calc_one()
 	while true
