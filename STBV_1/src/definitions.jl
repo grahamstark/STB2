@@ -2,9 +2,12 @@
 __precompile__(false)
 
 using .STBParameters
+using .RunSettings
 using .Definitions
+
 using StructTypes
 using JSON3
+using GenieSession 
 
 const BIG_A = 9999999999
 mutable struct SimpleParams{T}
@@ -20,9 +23,7 @@ mutable struct SimpleParams{T}
     uc_single :: T
     uc_taper :: T
     wtc_basic :: T
-
     target :: Int
-   
 end
 StructTypes.StructType(::Type{SimpleParams}) = StructTypes.Struct()
 
@@ -30,18 +31,17 @@ function loaddefs() :: TaxBenefitSystem
     return load_file( joinpath( Definitions.MODEL_PARAMS_DIR, "sys_2022-23.jl" ))
 end
 
-const DEFAULT_PARAMS = loaddefs()
+const DEFAULT_PARAMS ::  TaxBenefitSystem = loaddefs()
 
-function weeklyparams():::: TaxBenefitSystem
+function weeklyparams() :: TaxBenefitSystem
    pars = deepcopy( DEFAULT_PARAMS )
    weeklyise!( pars )
    pars;
 end
 
-const DEFAULT_WEEKLY_PARAMS = weeklyparams()
+const DEFAULT_WEEKLY_PARAMS :: TaxBenefitSystem = weeklyparams()
 
 function map_full_to_simple( sys :: TaxBenefitSystem )::SimpleParams
-
     return SimpleParams(
         copy(sys.it.non_savings_rates),
         copy(sys.it.non_savings_thresholds),
@@ -124,35 +124,37 @@ function map_simple_to_full( sm :: SimpleParams ) :: TaxBenefitSystem
     return tb
 end
 
-const DEFAULT_SIMPLE_PARAMS = map_full_to_simple( DEFAULT_PARAMS )
+const DEFAULT_SIMPLE_PARAMS :: SimpleParams = map_full_to_simple( DEFAULT_PARAMS )
 
 struct ParamsAndSettings{T}
-	uuid         :: UUID
-	cache_key    :: String
-	sys          :: TaxBenefitSystem{T}
-	settings     :: Settings
+	simple   :: SimpleParams{T}
+	session  :: GenieSession.Session
 end
 
 struct AllOutput
-	uuid         :: UUID
-	cache_key    :: String
 	results
 	summary
 	gain_lose
 	examples
 end
 
-#
-#
-PROGRESS = Dict{UUID,Any}()
-
 # FIXME we can simplify this by directly creating the outputs
 # as a string and just saving that in STASHED_RESULTS
-STASHED_RESULTS = Dict{UUID,Any}()
+const STASHED_RESULTS = Dict{UUID,Any}()
 
 # Save results by query string & just return that
 # TODO complete this.
-CACHED_RESULTS = Dict{String,Any}()
+const CACHED_RESULTS = Dict{SimpleParams,AllOutput}()
+
+#
+# this many simultaneous (sp) runs
+#
+const NUM_HANDLERS = 4
+
+const QSIZE = 32
+
+IN_QUEUE = Channel{ParamsAndSettings}(QSIZE)
+
 
 
 

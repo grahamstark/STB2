@@ -2,7 +2,65 @@ using JSON3
 using GenieSession 
 using GenieSessionFileSession
 using ScottishTaxBenefitModel
+using .Monitor: Progress
 import Genie.Renderer.Json: json
+
+function do_run(
+    session,
+    simple :: SimpleParams )
+	@debug "do_run_a entered"
+	settings = Settings()
+	if haskey( CACHED_RESULTS, simple )
+        p = Progress( settings.uuid, "end", -99, -99, -99, -99 )
+        GenieSession.set!( session, :progress, (progress=p,total=0))
+        return
+	end
+	sys :: TaxBenefitSystem = map_simple_to_full( simple )
+
+	obs = Observable(
+		Progress(settings.uuid, "",0,0,0,0))
+	tot = 0
+	of = on(obs) do p
+        tot += p.step
+		GenieSession.set!( session, :progress, (progress=p,total=tot))
+	end
+	results = do_one_run( settings, [sys], obs )
+	settings.poverty_line = make_poverty_line( results.hh[1], settings )
+	outf = summarise_frames( results, settings )
+	gl = make_gain_lose( BASE_RESULTS.results.hh[1], results.hh[1], settings )
+	exres = calc_examples( BASE_PARAMS, sys, settings )
+	aout = AllOutput( results, outf, gl, exres )
+    res_text = results_to_html( BASE_RESULTS, aout )
+    CACHED_RESULTS[ simple ] = res_text
+end
+
+
+
+function submit_job( 
+    session::GenieSession.Session, 
+    simple :: SimpleParams )
+    put!( IN_QUEUE, ParamsAndSettings( session, simple ))
+	@debug "submit exiting queue is now $IN_QUEUE"
+end
+
+
+
+function calc_one()
+	while true
+		@debug "calc_one entered"
+		params = take!( IN_QUEUE )
+		@debug "params taken from IN_QUEUE; got params"
+		do_run( params.session, params.simple )
+		@debug "model run OK; putting results into CACHED_RESULTS"		
+	end
+end
+
+#
+# Set up job queues 
+#
+for i in 1:NUM_HANDLERS # start n tasks to process requests in parallel
+    errormonitor(@async calc_one())
+end
 
 function getparams()::SimpleParams
     session = GenieSession.session()
