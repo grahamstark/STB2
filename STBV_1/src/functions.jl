@@ -26,8 +26,7 @@ function do_run(
 	gl = make_gain_lose( DEFAULT_RESULTS.results.hh[1], results.hh[1], settings )
 	exres = calc_examples( DEFAULT_WEEKLY_PARAMS, sys, settings )
 	aout = AllOutput( results, outf, gl, exres )
-    res_text = results_to_html( DEFAULT_RESULTS, aout )
-    CACHED_RESULTS[ simple ] = res_text
+    CACHED_RESULTS[ simple ] = aout
 end
 
 function submit_job( 
@@ -104,10 +103,13 @@ end
 
 function getprogress() 
     sess = GenieSession.session()
+    @info "getprogress entered"
     progress = NO_PROGRESS
-    if( GenieSession.isset( session, :progress ))
+    if( GenieSession.isset( sess, :progress ))
+        @debug "getprogress: has progress"
         progress = GenieSession.get( sess, :progress )
     else
+        @debug "getprogress: no progress"
         GenieSession.set!( sess, :progress, progress )
     end
     (:progress=>progress) |> json

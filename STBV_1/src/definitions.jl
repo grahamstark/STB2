@@ -42,10 +42,10 @@ end
 function weeklyparams() :: TaxBenefitSystem
    pars = deepcopy( DEFAULT_PARAMS )
    weeklyise!( pars )
-   pars;
+   pars
 end
 
-const DEF_PROGRESS = Progress( BASE_UUID, "", 0, 0, 0, 0 )
+const DEF_PROGRESS = Progress( BASE_UUID, "na", 0, 0, 0, 0 )
 const NO_PROGRESS = ( progress=DEF_PROGRESS, total=-1)
 
 const DEFAULT_PARAMS ::  TaxBenefitSystem = loaddefs()
@@ -76,11 +76,11 @@ end
 
 function map_simple_to_full( sm :: SimpleParams ) :: TaxBenefitSystem
     sys = deepcopy( DEFAULT_PARAMS )
-    sys.it.non_savings_rates = sm.taxrates
-    sys.it.non_savings_thresholds = sm.taxbands
+    sys.it.non_savings_rates = copy(sm.taxrates)
+    sys.it.non_savings_thresholds = copy(sm.taxbands)
 
-    sys.ni.primary_class_1_rates = sm.nirates
-    sys.ni.primary_class_1_bands = sm.nibands
+    sys.ni.primary_class_1_rates = copy(sm.nirates)
+    sys.ni.primary_class_1_bands = copy(sm.nibands)
     sys.it.personal_allowance = sm.taxallowance
 
     p = sm.child_benefit/sys.nmt_bens.child_benefit.first_child
@@ -153,7 +153,7 @@ IN_QUEUE = Channel{ParamsAndSettings}(QSIZE)
 
 # configure logger; see: https://docs.julialang.org/en/v1/stdlib/Logging/index.html
 # and: https://github.com/oxinabox/LoggingExtras.jl
-logger = FileLogger("/var/tmp/stb2_log.txt")
+logger = FileLogger("log/stb2_log.txt")
 global_logger(logger)
 LogLevel( Logging.Debug )
 

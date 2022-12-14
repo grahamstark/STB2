@@ -125,13 +125,12 @@
                             </div>
                     </fieldset>
                 </div> <!-- input row -->
-                
-                <div class="row  border rounded-2 m-1 p-2">
+                <div class="row"> <!-- progress bar -->
                     <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col"></div>
+                    <div class='col-2' id="progress-indicator"></div>
                     <div class="col"></div>
                 </div> <!-- output row -->
+                
                 <fieldset class="row">
                     <div class="col"></div>
                     <div class="col"></div>
@@ -150,6 +149,69 @@
                         </ul>
                     </div>
                 </fieldset> <!-- submission row -->
+                <div class="row  border rounded-2 m-1 p-2">
+                    <div class='col'>
+                            <div id='output-fields'>
+                                <div class='row'>
+        
+                                    <div class='col-4'></div>
+                                    <div class='col-4'>
+                                        <h2>Results for some Example Families</h2>
+                                    </div>
+                                    <div class='col-4'></div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-12' id='examples'>
+                                       
+                                    </div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col-4'></div>
+                                    <div class='col-4'>
+                                        <h2>Results for the Whole of Scotland</h2>
+                                    </div>
+                                    <div class='col-4'></div>
+                                </div>
+                                <div class='row'>
+                                    <div class='col'>
+                                        <h4>Gainers and Losers</h4>
+                                        <div class='row'>
+                                            <div class='col' id="gain-lose-table">,</div>
+                                            <div class='col' id="deciles-graph">,</div>
+                                        </div>
+                                    </div>
+                                    <div class='col'>
+                                        <h4>Revenues and Costs</h4>
+                                        <div
+                                            data-bs-toggle='modal' 
+                                            data-bs-target='#big-costs-popup'>
+                                            <div id="costs-table"></div>
+                                        </div>
+                                        <div id="overall-costs"></div>
+                                    </div>                            
+                                    <div class='col'>
+                                        <h4>Incentives - Marginal Effective Tax Rates</h4>
+                                        <div id="mr-table"></div>
+                                    </div>                            
+                                </div><!-- row -->
+                                <div class='row'>
+                                    <div class='col'>
+                                        <h4>Poverty</h4>
+                                        <div id='pov-table'></div>
+                                    </div>
+                                    <div class='col'>
+                                        <h4>Inequality</h4>
+                                        <div id='ineq-table'></div>
+                                    </div>
+                                    <div class='col'>
+                                        <div id='lorenz'></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+         
+               </div> <!-- output row -->
         
             </div> <!-- main container -->
         </form>
@@ -324,6 +386,71 @@ function populateForm( pars, defaults ){
 
 }
 
+var updater;
+
+function drawRunProgress( result ){
+    // https://getbootstrap.com/docs/5.0/components/progress/
+    console.log( "result.count" + result.count + "result.size" + result.size );
+    var pct = Math.trunc(100 * result.count / result.size);
+    var prog = 
+        "<p>Model Running</p>"+
+        "<div class='progress'>"+
+        "<div class='progress-bar bg-success progress-bar-animated progress-bar-striped' role='progressbar' "+
+            "aria-valuenow='" + pct + "' " + 
+            "style='width: "+pct+"%' " +
+            "aria-valuemin='0' " +
+            "aria-valuemax='100'>"+
+            pct + "%" +
+            "</div> "+
+            "</div>";
+    console.log( "prog="+prog )
+    $("#progress-indicator").html( prog );
+}
+
+function createMainOutputs( result ){
+
+}
+
+function updateProgress( result ){
+    console.log( "updateSTB  result.phase = " + result.progress.phase );
+    switch( result.progress.phase ){
+        case 'missing':
+            $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Run is waiting to start found.</div>");
+            break;
+        case 'start':
+            $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Run starting: starting pre-run routines.</div>");
+            break;
+        case 'weights':
+            $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Generating sample weights (may take some time..).</div>");
+            break;
+        case 'disability_eligibility':
+            $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Calibrating Disability Benefits.</div>");
+            break;
+        case 'starting':
+            $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Pre-routines completed; run starting.</div>");
+            break;
+        case 'run':
+            drawRunProgress( result.progress );
+            break;
+        case 'dumping_frames':
+            $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Calculations complete; now generating output.</div>");
+            break;
+        case 'end':
+            $("#progress-indicator").html( "<div></div>" );
+            createMainOutputs( result );
+            updater.stop();
+            break;  
+        case 'na':
+            updater.stop();
+            break;  
+        default:
+            $("#progress-indicator").html( "<div class='alert alert-danger' role='alert'>Problem: run "+result.uuid+" can't be found.</div>");
+            break;                                      
+    }
+}
+
+
+
 function submitForm( action, target ){
      var url = "/stb2/"+action;
      if( target != null ){
@@ -343,7 +470,36 @@ function submitForm( action, target ){
             function( result ){
                 console.log( "submitForm; result %o", result );
                 console.log( "target " + target );
-                populateForm( result[0].pars, result[1].def )
+                populateForm( result[0].pars, result[1].def );
+                if( action == 'run'){
+                    // start updater if no immediate output
+                    if( result[2].output == "" ){
+                        console.log( "starting run and timer");               
+                        console.log( "result " + result );
+                        var uri = '/stb2/progress/';
+                        updater = $.PeriodicalUpdater('/stb2/progress', {
+                            url: uri,         // URL of ajax request
+                            cache: false,     // By default, don't allow caching
+                            method: 'POST',    // method; get or post
+                            data: '',         // array of values to be passed to the page - e.g. {name: "John", greeting: "hello"}
+                            minTimeout: 1000, // starting value for the timeout in milliseconds
+                            maxTimeout:64000, // maximum length of time between requests
+                            multiplier: 2,    // if set to 2, timerInterval will double each time the response hasn't changed (up to maxTimeout)
+                            maxCalls: 0,      // maximum number of calls. 0 = no limit.
+                            maxCallsCallback: null, // The callback to execute when we reach our max number of calls
+                            autoStop: 0,      // automatically stop requests after this many returns of the same data. 0 = disabled
+                            autoStopCallback: null, // The callback to execute when we autoStop
+                            cookie: false,    // whether (and how) to store a cookie
+                            runatonce: false, // Whether to fire initially or wait
+                            verbose: 0        // The level to be logging at: 0 = none; 1 = some; 2 = all
+                        }, function(remoteData, success, xhr, handle) {
+                            console.log( "progress: got %o", remoteData );
+                            updateProgress( remoteData.progress );
+                        });
+                    } else {
+                        createMainOutputs( result[2].output );
+                    }
+                }
             }
         ).fail(
             function( jqXHR, textStatus, errorThrown ){
