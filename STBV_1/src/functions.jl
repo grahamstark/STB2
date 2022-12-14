@@ -6,9 +6,9 @@ using .Monitor: Progress
 import Genie.Renderer.Json: json
 
 function do_run(
-    session,
-    simple :: SimpleParams )
-	@debug "do_run entered"
+    session :: GenieSession.Session,
+    simple  :: SimpleParams ) :: AllOutput
+	@info "do_run entered"
 	settings = initialise_settings()
 	sys :: TaxBenefitSystem = map_simple_to_full( simple )
     weeklyise!( sys )
@@ -17,7 +17,7 @@ function do_run(
 	tot = 0
 	of = on(obs) do p
         tot += p.step
-        @debug "monitor tot=$tot p = $(p)"
+        @info "monitor tot=$tot p = $(p)"
 		GenieSession.set!( session, :progress, (progress=p,total=tot))
 	end
 	results = do_one_run( settings, [sys], obs )
@@ -27,23 +27,25 @@ function do_run(
 	exres = calc_examples( DEFAULT_WEEKLY_PARAMS, sys, settings )
 	aout = AllOutput( results, outf, gl, exres )
     CACHED_RESULTS[ simple ] = aout
+    @info "CACHED_RESULTS keys= " $(keys(CACHED_RESULTS))
+    aout
 end
 
 function submit_job( 
-    session::GenieSession.Session, 
-    simple :: SimpleParams )
+    session :: GenieSession.Session, 
+    simple  :: SimpleParams )
     @info "submit_job entered"
     put!( IN_QUEUE, ParamsAndSettings( simple, session ))
-	@debug "submit exiting queue is now $IN_QUEUE"
+	@info "submit exiting queue is now $IN_QUEUE"
 end
 
 function calc_one()
 	while true
-		@debug "calc_one entered"
+		@info "calc_one entered"
 		params = take!( IN_QUEUE )
-		@debug "params taken from IN_QUEUE; got params"
+		@info "params taken from IN_QUEUE; got params"
 		do_run( params.session, params.simple )
-		@debug "model run OK; putting results into CACHED_RESULTS"		
+		@info "model run OK; putting results into CACHED_RESULTS"		
 	end
 end
 
@@ -77,11 +79,11 @@ function dorun()
     GenieSession.set!( sess, :pars, pars )
     output = "";
     if haskey( CACHED_RESULTS, pars )
-        @debug "output from cache"
+        @info "output from cache"
         res = CACHED_RESULTS[pars]
         output = results_to_html( DEFAULT_RESULTS, res )
     else
-        @debug "submitting job"
+        @info "submitting job"
         submit_job( sess, pars )
     end
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS,:output=>output) |> json
@@ -106,10 +108,10 @@ function getprogress()
     @info "getprogress entered"
     progress = NO_PROGRESS
     if( GenieSession.isset( sess, :progress ))
-        @debug "getprogress: has progress"
+        @info "getprogress: has progress"
         progress = GenieSession.get( sess, :progress )
     else
-        @debug "getprogress: no progress"
+        @info "getprogress: no progress"
         GenieSession.set!( sess, :progress, progress )
     end
     (:progress=>progress) |> json
@@ -117,8 +119,10 @@ end
 
 function getoutput() 
     pars = paramsfromsession()
+    @info "getoutput pars="  pars
     output = ""
     if haskey( CACHED_RESULTS, pars )
+        @info "getting cached results"
         res = CACHED_RESULTS[pars]
         output = results_to_html( DEFAULT_RESULTS, res )
     end

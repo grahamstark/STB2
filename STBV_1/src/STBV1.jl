@@ -50,7 +50,7 @@ include( "static_texts.jl")
 # Set up job queues 
 #
 for i in 1:NUM_HANDLERS # start n tasks to process requests in parallel
-  @debug "starting handler $i" 
+  @info "starting handler $i" 
   errormonitor(@async calc_one())
 end
 
