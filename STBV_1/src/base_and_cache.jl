@@ -25,5 +25,6 @@ function make_base_results()
 	return aout;
 end
 
-const BASE_RESULTS = make_base_results()
-const BASE_TEXT_OUTPUT = results_to_html( BASE_RESULTS, BASE_RESULTS )
+const DEFAULT_RESULTS = make_base_results()
+const DEFAULT_TEXT_OUTPUT = results_to_html( DEFAULT_RESULTS, DEFAULT_RESULTS )
+CACHED_RESULTS[DEFAULT_SIMPLE_PARAMS] = DEFAULT_RESULTS

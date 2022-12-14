@@ -8,9 +8,10 @@ import Genie.Renderer.Json: json
 function do_run(
     session,
     simple :: SimpleParams )
-	@debug "do_run_a entered"
+	@debug "do_run entered"
 	settings = initialise_settings()
 	sys :: TaxBenefitSystem = map_simple_to_full( simple )
+    weeklyise!( sys )
 	obs = Observable(
 		Progress(settings.uuid, "",0,0,0,0))
 	tot = 0
@@ -22,16 +23,17 @@ function do_run(
 	results = do_one_run( settings, [sys], obs )
 	settings.poverty_line = make_poverty_line( results.hh[1], settings )
 	outf = summarise_frames( results, settings )
-	gl = make_gain_lose( BASE_RESULTS.results.hh[1], results.hh[1], settings )
-	exres = calc_examples( BASE_PARAMS, sys, settings )
+	gl = make_gain_lose( DEFAULT_RESULTS.results.hh[1], results.hh[1], settings )
+	exres = calc_examples( DEFAULT_WEEKLY_PARAMS, sys, settings )
 	aout = AllOutput( results, outf, gl, exres )
-    res_text = results_to_html( BASE_RESULTS, aout )
+    res_text = results_to_html( DEFAULT_RESULTS, aout )
     CACHED_RESULTS[ simple ] = res_text
 end
 
 function submit_job( 
     session::GenieSession.Session, 
     simple :: SimpleParams )
+    @info "submit_job entered"
     put!( IN_QUEUE, ParamsAndSettings( simple, session ))
 	@debug "submit exiting queue is now $IN_QUEUE"
 end
@@ -72,11 +74,13 @@ end
 function dorun()
     sess = GenieSession.session()
     pars = paramsfrompayload( rawpayload() )
+    @info "dorun entered pars are " pars
     GenieSession.set!( sess, :pars, pars )
     output = "";
     if haskey( CACHED_RESULTS, pars )
-        output = CACHED_RESULTS[pars]
         @debug "output from cache"
+        res = CACHED_RESULTS[pars]
+        output = results_to_html( DEFAULT_RESULTS, res )
     else
         @debug "submitting job"
         submit_job( sess, pars )
@@ -113,7 +117,8 @@ function getoutput()
     pars = paramsfromsession()
     output = ""
     if haskey( CACHED_RESULTS, pars )
-        output = CACHED_RESULTS[pars]
+        res = CACHED_RESULTS[pars]
+        output = results_to_html( DEFAULT_RESULTS, res )
     end
     (:output=>output) |> json
 end
