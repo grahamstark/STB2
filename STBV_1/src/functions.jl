@@ -46,13 +46,6 @@ function calc_one()
 	end
 end
 
-#
-# Set up job queues 
-#
-for i in 1:NUM_HANDLERS # start n tasks to process requests in parallel
-    errormonitor(@async calc_one())
-end
-
 function paramsfromsession()::SimpleParams
     session = GenieSession.session()
     pars = nothing
@@ -83,7 +76,9 @@ function dorun()
     output = "";
     if haskey( CACHED_RESULTS, pars )
         output = CACHED_RESULTS[pars]
+        @debug "output from cache"
     else
+        @debug "submitting job"
         submit_job( sess, pars )
     end
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS,:output=>output) |> json

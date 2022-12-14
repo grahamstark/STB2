@@ -41,11 +41,18 @@ export up
 include( "table_libs.jl")
 include( "examples.jl")
 include( "definitions.jl" )
-
 include( "text_html_libs.jl")
 include( "base_and_cache.jl")
 include( "functions.jl" )
 include( "static_texts.jl")
+
+#
+# Set up job queues 
+#
+for i in 1:NUM_HANDLERS # start n tasks to process requests in parallel
+  @debug "starting handler $i" 
+  errormonitor(@async calc_one())
+end
 
 function main() 
   Genie.genie(; context = @__MODULE__)
