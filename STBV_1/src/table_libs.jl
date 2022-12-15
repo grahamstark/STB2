@@ -80,9 +80,10 @@ function mr_dataframe( mr1::Histogram, mr2::Histogram, mean1::Real, mean2 :: Rea
 end
 
 function ineq_dataframe( ineq1 :: InequalityMeasures, ineq2 :: InequalityMeasures )
-    names = ["Gini", "Palma", "Atkinson(ϵ=0.5)", "Atkinson(ϵ=1)", "Atkinson(ϵ=2)", "Hoover"]
-    v1 = [ineq1.gini, ineq1.palma, ineq1.atkinson[2], ineq1.atkinson[4], ineq1.atkinson[8], ineq1.hoover] .* 100
-    v2 = [ineq2.gini, ineq2.palma, ineq2.atkinson[2], ineq2.atkinson[4], ineq2.atkinson[8], ineq2.hoover] .* 100
+    names = ["Gini", "Palma"]
+    #  "Atkinson(ϵ=0.5)", "Atkinson(ϵ=1)", "Atkinson(ϵ=2)", "Hoover"]
+    v1 = [ineq1.gini, ineq1.palma] #, ineq1.atkinson[2], ineq1.atkinson[4], ineq1.atkinson[8], ineq1.hoover] .* 100
+    v2 = [ineq2.gini, ineq2.palma] #, ineq2.atkinson[2], ineq2.atkinson[4], ineq2.atkinson[8], ineq2.hoover] .* 100
     diff = v2 -v1
     return DataFrame( Item=names, Before=v1, After=v2, Change=diff)
 end
@@ -93,11 +94,13 @@ function pov_dataframe(
     ch1 :: GroupPoverty, 
     ch2 :: GroupPoverty )
     println( "got child poverty[1] as $(ch1)")            
-    names = ["Headcount (All)", "Child Poverty", "Gap", "FGT(α=2)", "Watts", "Sen", "Shorrocks"]
+    names = ["Headcount (All)", "Child Poverty", "Gap", "Severity"]
+    # , "Watts", "Sen", "Shorrocks"
     # child povs already %s ..
-    v1 = [pov1.headcount, ch1.prop, pov1.gap, pov1.foster_greer_thorndyke[5], pov1.watts, pov1.sen, pov1.shorrocks]  .* 100
-    v2 = [pov2.headcount, ch2.prop, pov2.gap, pov2.foster_greer_thorndyke[5], pov2.watts, pov2.sen, pov2.shorrocks]  .* 100
-    diff = v2 - v1    
+    v1 = [pov1.headcount, ch1.prop, pov1.gap, pov1.foster_greer_thorndyke[5]]  .* 100
+    v2 = [pov2.headcount, ch2.prop, pov2.gap, pov2.foster_greer_thorndyke[5]]  .* 100
+    # , pov1.watts, pov1.sen, pov1.shorrocks
+    diff = v2 - v1 
     return DataFrame( Item=names, Before=v1, After=v2, Change=diff)
 end
 

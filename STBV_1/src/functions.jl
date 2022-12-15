@@ -26,7 +26,7 @@ function do_run(
 	gl = make_gain_lose( DEFAULT_RESULTS.results.hh[1], results.hh[1], settings )
 	exres = calc_examples( DEFAULT_WEEKLY_PARAMS, sys, settings )
 	aout = AllOutput( results, outf, gl, exres )
-    CACHED_RESULTS[ simple ] = aout
+    cacheout(simple,aout)
     aout
 end
 
@@ -75,14 +75,14 @@ function dorun()
     pars = paramsfrompayload( rawpayload() )
     @info "dorun entered pars are " pars
     GenieSession.set!( sess, :pars, pars )
-    output = "";
-    if haskey( CACHED_RESULTS, pars )
-        @info "output from cache"
-        res = CACHED_RESULTS[pars]
+    res = getout(pars)
+    output = ""
+    if ! isnothing(res)
+        @info "output from cache"        
         output = results_to_html( DEFAULT_RESULTS, res )
     else
         @info "submitting job"
-        submit_job( sess, pars )
+        submit_job( sess, pars )    
     end
     (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS,:output=>output) |> json
 end
@@ -118,11 +118,11 @@ end
 function getoutput() 
     pars = paramsfromsession()
     @info "getoutput pars="  pars
-    output = ""
+    res = getout( pars )
     @info "CACHED_RESULTS keys= " keys(CACHED_RESULTS)
-    if haskey( CACHED_RESULTS, pars )
+    output = ""
+    if ! isnothing(res)
         @info "getting cached results"
-        res = CACHED_RESULTS[pars]
         output = results_to_html( DEFAULT_RESULTS, res )
     end
     (:output=>output) |> json

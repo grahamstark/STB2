@@ -18,7 +18,7 @@ function initialise_settings()::Settings
 end
 
 const BIG_A = 9999999999
-mutable struct SimpleParams{T}
+struct SimpleParams{T}
     taxrates :: Vector{T}
     taxbands :: Vector{T}
     nirates :: Vector{T}
@@ -53,7 +53,7 @@ const DEFAULT_PARAMS ::  TaxBenefitSystem = loaddefs()
 const DEFAULT_WEEKLY_PARAMS :: TaxBenefitSystem = weeklyparams()
 
 """
-Chop of top band if needed 
+Chop off top band if needed 
 """
 function copyArrays( r :: Vector, b :: Vector ) :: Tuple
     ar = copy(r)
@@ -69,7 +69,7 @@ function copyArrays( r :: Vector, b :: Vector ) :: Tuple
 end
 
 function map_full_to_simple( sys :: TaxBenefitSystem )::SimpleParams
-    itr, irb = copyArrays( 
+    itr, itb = copyArrays( 
         sys.it.non_savings_rates, 
         sys.it.non_savings_thresholds )
     nr, nb = copyArrays(

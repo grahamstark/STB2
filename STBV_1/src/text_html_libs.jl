@@ -216,7 +216,7 @@ function gain_lose_table( gl :: NamedTuple )
     losepct = md_format(100*gl.losers/gl.popn)
     gainpct = md_format(100*gl.gainers/gl.popn)
     ncpct = md_format(100*gl.nc/gl.popn)
-    caption = "Individuals living in households where net income has risen, fallen, or stayed the same respectively."
+    caption = "Individuals living in households where net income has risen by at least 1%, fallen by at least 1%, or stayed the same respectively."
     table = "<table class='table table-sm'>"
     table *= "<thead>
         <tr>

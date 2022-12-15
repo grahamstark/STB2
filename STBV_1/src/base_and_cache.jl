@@ -3,7 +3,20 @@
 #
 # Save results by query string & just return that
 # TODO complete this.
-const CACHED_RESULTS = Dict{SimpleParams,AllOutput}()
+const CACHED_RESULTS = Dict{UInt,AllOutput}()
+
+function cacheout(simp::SimpleParams,allo::AllOutput)
+	CACHED_RESULTS[riskyhash(simp)] = allo
+end
+
+function getout( simp::SimpleParams )::Union{Nothing,AllOutput}
+	u = riskyhash(simp)
+	if ! haskey(CACHED_RESULTS, u )
+		return nothing
+	end
+	CACHED_RESULTS[u]
+end
+
 
 ## FIXME POVERTY LINE!
 function make_base_results()
@@ -27,4 +40,4 @@ end
 
 const DEFAULT_RESULTS = make_base_results()
 const DEFAULT_TEXT_OUTPUT = results_to_html( DEFAULT_RESULTS, DEFAULT_RESULTS )
-CACHED_RESULTS[DEFAULT_SIMPLE_PARAMS] = DEFAULT_RESULTS
+cacheout(DEFAULT_SIMPLE_PARAMS,DEFAULT_RESULTS)
