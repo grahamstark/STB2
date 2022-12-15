@@ -98,7 +98,7 @@ function doreset()
     sess = GenieSession.session()
     pars = deepcopy( DEFAULT_SIMPLE_PARAMS )
     GenieSession.set!( sess, :pars, pars )
-    (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS) |> json
+    (:pars=>pars,:def=>DEFAULT_SIMPLE_PARAMS,:output=>DEFAULT_TEXT_OUTPUT) |> json
 end
 
 function getprogress() 

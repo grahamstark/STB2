@@ -127,7 +127,7 @@
                 </div> <!-- input row -->
                 <div class="row"> <!-- progress bar -->
                     <div class="col"></div>
-                    <div class='col-2' id="progress-indicator"></div>
+                    <div class='col-4' id="progress-indicator"></div>
                     <div class="col"></div>
                 </div> <!-- output row -->
                 
@@ -212,7 +212,7 @@
                     </div>
          
                </div> <!-- output row -->
-        
+               <div class="row"><div class='col' id='endnotes'></div></div>
             </div> <!-- main container -->
         </form>
 </body>
@@ -565,6 +565,7 @@ function createMainOutputs( result ){
     $("#pov-table").html( result.poverty );
     $("#ineq-table").html( result.inequality );
     $("#big-costs-table").html( result.big_costs_table );
+    $("#endnotes").html( result.endnotes );
     createLorenzCurve( 
         "#lorenz", 
         result,
@@ -627,7 +628,7 @@ function submitForm( action, target ){
         url += "/"+target;
      }
      $("#mainform").validate();
-     const dataset = JSON.stringify(scrapeData());
+     var dataset = JSON.stringify(scrapeData());
      console.log( "submitForm; data = %o", dataset );
      // console.debug( "submitForm submitForm url="+url );
      $.ajax(
@@ -669,6 +670,8 @@ function submitForm( action, target ){
                     } else {
                         createMainOutputs( result[2].output );
                     }
+                } else if( action == 'reset'){
+                    createMainOutputs( result[2].output );
                 }
             }
         ).fail(
@@ -684,8 +687,9 @@ $(document).ready(function(){
                 alert('submit intercepted');
                 e.preventDefault(e);
         });
-        submitForm("params");
-        submitForm("run");
+        // submitForm("params");
+        
+        submitForm("reset");
     });
 
 </script>

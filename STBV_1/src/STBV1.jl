@@ -10,12 +10,13 @@ import Genie.Renderer.Json: json
 using DataFrames
 using Formatting
 using JSON3
-using UUIDs
 using Logging, LoggingExtras
+using Markdown
 using Observables
 using PovertyAndInequalityMeasures
 using StatsBase
 using StructTypes
+using UUIDs
 
 using ScottishTaxBenefitModel
 using .BCCalcs

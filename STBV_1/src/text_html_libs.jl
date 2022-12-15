@@ -1,6 +1,25 @@
 
 const FAMDIR = "budget" # old budget images; alternative is 'keiko' for VE images
 
+const ARROWS_3 = Dict([
+    "nonsig"          => "&#x25CF;",
+    "positive_strong" => "&#x21c8;",
+    "positive_med"    => "&#x2191;",
+    "positive_weak"   => "&#x21e1;",
+    "negative_strong" => "&#x21ca;",
+    "negative_med"    => "&#x2193;",
+    "negative_weak"   => "&#x21e3;" ])
+
+
+    const ARROWS_1 = Dict([
+    "nonsig"          => "",
+    "positive_strong" => "<i class='bi bi-arrow-up-circle-fill'></i>",
+    "positive_med"    => "<i class='bi bi-arrow-up-circle'></i>",
+    "positive_weak"   => "<i class='bi bi-arrow-up'></i>",
+    "negative_strong" => "<i class='bi bi-arrow-down-circle-fill'></i>",
+    "negative_med"    => "<i class='bi bi-arrow-down-circle'></i>",
+    "negative_weak"   => "<i class='bi bi-arrow-down'></i>" ])
+
 function thing_table(
     names::Vector{String}, 
     v1::Vector, 
@@ -398,6 +417,7 @@ function results_to_html(
         lorenz_pre=lorenz_pre, 
         lorenz_post=lorenz_post,
         examples = example_text,
-        big_costs_table = big_costs )
+        big_costs_table = big_costs,
+        endnotes = Markdown.parse( ENDNOTES ))
     return outt
 end
