@@ -39,13 +39,13 @@ import Base.Threads.@spawn
 const up = Genie.up
 export up
 
+include( "static_texts.jl")
 include( "table_libs.jl")
 include( "examples.jl")
 include( "definitions.jl" )
 include( "text_html_libs.jl")
 include( "base_and_cache.jl")
 include( "functions.jl" )
-include( "static_texts.jl")
 
 #
 # Set up job queues 

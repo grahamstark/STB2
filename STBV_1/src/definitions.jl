@@ -98,14 +98,14 @@ end
 
 function map_simple_to_full( sm :: SimpleParams ) :: TaxBenefitSystem
     sys = deepcopy( DEFAULT_PARAMS )
+    no = size( DEFAULT_PARAMS.it.non_savings_rates )[1]
     sys.it.non_savings_rates = copy(sm.taxrates)
     ns = size( sys.it.non_savings_rates )[1]
-    # if array size made smaller, designate some arbitrary rate as the basic rate
-    if ns in [1,2]
-        sys.it.non_savings_basic_rate = 1
-    elseif ns == 3
-        sys.it.non_savings_basic_rate = 2
-    end # this is hack 
+    sch = no - ns
+    if sch < 0 # rates deleted - adjust which counts as basic rate
+        sys.it.non_savings_basic_rate = max(1, sys.it.non_savings_basic_rate + sch )
+    end
+    
     @info " setting sys.it.non_savings_basic_rate to " sys.it.non_savings_basic_rate
     sys.it.non_savings_thresholds = copy(sm.taxbands)
     sys.ni.primary_class_1_rates = copy(sm.nirates)

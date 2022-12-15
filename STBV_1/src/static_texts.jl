@@ -20,7 +20,9 @@ See [the model blog](https://stb-blog.virtual-worlds.scot/) for more gory detail
 
 #### Known Problems
 
-* measures of inequality seem low compared to official statistics.
+* measures of inequality seem low compared to official statistics;
+* if you delete lower tax rates, this can cause unexpected *gains* for some high income families. This is because the band that counts as the 'basic rate' is can be higher, which allows for gains for higher rate payers from restricted allowances and marriage transfers;
+* some changes can change poverty measures in unexpected ways. This is because the poverty line is 60% of median income and the median is recalculated after your changes. So, for example, a change that produces losses for the poorest households can *reduce* poverty if the changes also cause a larger fall in median income. Them's the rules, though I could add a fixed poverty line based on pre-reform incomes.
 
 I'd very much welcome contributions and suggestions. If you spot anything odd or if you have any ideas for how this can be improved, you can:
 

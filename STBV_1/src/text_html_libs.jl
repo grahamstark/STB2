@@ -418,6 +418,6 @@ function results_to_html(
         lorenz_post=lorenz_post,
         examples = example_text,
         big_costs_table = big_costs,
-        endnotes = Markdown.parse( ENDNOTES ))
+        endnotes = Markdown.html( ENDNOTES ))
     return outt
 end
