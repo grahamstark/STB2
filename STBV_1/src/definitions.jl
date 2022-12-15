@@ -52,12 +52,34 @@ const DEFAULT_PARAMS ::  TaxBenefitSystem = loaddefs()
 
 const DEFAULT_WEEKLY_PARAMS :: TaxBenefitSystem = weeklyparams()
 
+"""
+Chop of top band if needed 
+"""
+function copyArrays( r :: Vector, b :: Vector ) :: Tuple
+    ar = copy(r)
+    ab = copy(b)
+    start = firstindex(ar)
+    tstop = lastindex(ab)
+    rstop = lastindex(ar)
+    @assert (rstop - tstop) <= 1
+    if rstop == tstop
+        tstop -= 1
+    end    
+    (ar,ab[start:tstop])
+end
+
 function map_full_to_simple( sys :: TaxBenefitSystem )::SimpleParams
+    itr, irb = copyArrays( 
+        sys.it.non_savings_rates, 
+        sys.it.non_savings_thresholds )
+    nr, nb = copyArrays(
+        sys.ni.primary_class_1_rates,
+        sys.ni.primary_class_1_bands )
     return SimpleParams(
-        copy(sys.it.non_savings_rates),
-        copy(sys.it.non_savings_thresholds),
-        copy(sys.ni.primary_class_1_rates),
-        copy(sys.ni.primary_class_1_bands),
+        itr,
+        itb,
+        nr,
+        nb,
         sys.it.personal_allowance,
     	sys.nmt_bens.child_benefit.first_child,
 		sys.nmt_bens.pensions.new_state_pension,

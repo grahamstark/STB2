@@ -27,7 +27,6 @@ function do_run(
 	exres = calc_examples( DEFAULT_WEEKLY_PARAMS, sys, settings )
 	aout = AllOutput( results, outf, gl, exres )
     CACHED_RESULTS[ simple ] = aout
-    @info "CACHED_RESULTS keys= " $(keys(CACHED_RESULTS))
     aout
 end
 
@@ -51,14 +50,13 @@ end
 
 function paramsfromsession()::SimpleParams
     session = GenieSession.session()
-    pars = nothing
     if( GenieSession.isset( session, :pars ))
-        return GenieSession.get( session, :pars )
+        pars = GenieSession.get( session, :pars )
     else
         pars = deepcopy( DEFAULT_SIMPLE_PARAMS )
         GenieSession.set!( session, :pars, pars )
-        return pars
     end
+    return pars
 end
 
 function getparams()
@@ -121,6 +119,7 @@ function getoutput()
     pars = paramsfromsession()
     @info "getoutput pars="  pars
     output = ""
+    @info "CACHED_RESULTS keys= " keys(CACHED_RESULTS)
     if haskey( CACHED_RESULTS, pars )
         @info "getting cached results"
         res = CACHED_RESULTS[pars]
