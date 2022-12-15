@@ -1,2 +1,5 @@
 #!/bin/sh
-/opt/julia/bin/julia --color=yes --depwarn=no --project=@. -q -i -- $(dirname $0)/../bootstrap.jl -s=true "$@"
+
+# /opt/julia/bin/julia -t4 --project=. src/scotbudg.jl
+
+/opt/julia/bin/julia --color=yes -t4 --depwarn=no --project=. -q -i -- $(dirname $0)/../bootstrap.jl -s=true "$@"
