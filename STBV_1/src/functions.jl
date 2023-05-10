@@ -22,7 +22,7 @@ function do_run(
 	end
 	results = do_one_run( settings, [sys], obs )
 	settings.poverty_line = make_poverty_line( results.hh[1], settings )
-	outf = summarise_frames( results, settings )
+	outf = summarise_frames!( results, settings )
 	gl = make_gain_lose( DEFAULT_RESULTS.results.hh[1], results.hh[1], settings )
 	exres = calc_examples( DEFAULT_WEEKLY_PARAMS, sys, settings )
 	aout = AllOutput( results, outf, gl, exres )
