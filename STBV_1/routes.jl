@@ -34,10 +34,6 @@ route("/addtax/:n", method = POST) do
   addtax( n )
 end
 
-route("/defaults", method = POST) do 
-  defaults()
-end
-
 route("/deltax/:n", method = POST ) do
   n::Int = parse(Int, payload(:n))
   deltax( n )
@@ -54,5 +50,5 @@ route("/delni/:n", method = POST ) do
 end
 
 route("/") do
-  (:message => "Hi there!") |> json
+  (:message => "Welcome to Scotben 2022/3.") |> json
 end
