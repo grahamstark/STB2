@@ -103,9 +103,12 @@ function map_simple_to_full( sm :: SimpleParams ) :: TaxBenefitSystem
     ns = size( sys.it.non_savings_rates )[1]
     # ns = 1
     # no = 5
-    # 5-1
-    sch = ns - no
-    if sch < 0 # rates deleted - adjust which counts as basic rate
+    # 1-5
+    # rates deleted - adjust which counts as basic rate
+    # FIXME this ain't right... 
+    if sys.it.non_savings_basic_rate > ns 
+        sch = ns - no
+        # if sch < 0 # 
         sys.it.non_savings_basic_rate = max(1, sys.it.non_savings_basic_rate + sch )
     end
     
