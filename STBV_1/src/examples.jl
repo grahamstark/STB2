@@ -19,6 +19,7 @@ function make_hh(
 	spouse_age          :: Int = 0,
 	spouse_private_pens :: Real = 0.0 ) :: Household
 	hh = deepcopy(get_example( single_hh ))
+	hh.region = Scotland
 	head = get_head(hh)
 	head.age = head_age
 	head.marital_status = marrstat
