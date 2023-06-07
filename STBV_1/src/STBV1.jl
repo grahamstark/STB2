@@ -39,12 +39,12 @@ import Base.Threads.@spawn
 const up = Genie.up
 export up
 
-include( "static_texts.jl")
-include( "table_libs.jl")
-include( "examples.jl")
-include( "definitions.jl" )
-include( "text_html_libs.jl")
-include( "base_and_cache.jl")
+include( "../../lib/static_texts.jl")
+include( "../../lib/table_libs.jl")
+include( "../../lib/examples.jl")
+include( "../../lib/definitions.jl" )
+include( "../../lib/text_html_libs.jl")
+include( "../../lib/base_and_cache.jl")
 include( "functions.jl" )
 
 #
