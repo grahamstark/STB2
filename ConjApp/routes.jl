@@ -1,4 +1,5 @@
 using Genie.Router
+using ConjApp
 
 route("/") do
   serve_static_file("welcome.html")
