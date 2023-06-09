@@ -58,8 +58,9 @@ include( "../../lib/text_html_libs.jl")
 # include( "../../lib/base_and_cache.jl")
 
 const DEFAULT_FACTORS = Factors{Float64}
-const DEFAULT_RESULTS = "" #make_base_results()
+# const DEFAULT_RESULTS = "" #make_base_results()
 # const DEFAULT_TEXT_OUTPUT = results_to_html( DEFAULT_RESULTS, DEFAULT_RESULTS )
+
 const CACHED_RESULTS = Dict{UInt,AllOutput}()
 logger = FileLogger("log/conjapp_log.txt")
 global_logger(logger)
@@ -88,12 +89,12 @@ function cacheout(simp::Factors,allo::AllOutput)
 	CACHED_RESULTS[riskyhash(simp)] = allo
 end
 
-function getout( simp::Factors )::Union{Nothing,AllOutput}
-	u = riskyhash(simp)
+function getout( facs::Factors )::Union{Nothing,AllOutput}
+	u = riskyhash(facs)
 	if ! haskey(CACHED_RESULTS, u )
 		return nothing
 	end
-	CACHED_RESULTS[u]
+	return CACHED_RESULTS[u]
 end
 
 function make_popularity_table( pop :: Number )
