@@ -403,6 +403,15 @@ function make_examples( example_results :: Vector )
 end
 
 
+function make_popularity_table( pop :: Number )
+  v1 = format(pop*100, precision=1)
+  s = "<table class='table'><tr><th>Popularity<td class='text-right; text-primary'>$v1</td></tr></table>"
+  return s
+end
+
+"""
+Main output generation for standard model
+"""
 function results_to_html( 
     base_results :: AllOutput, 
     results      :: AllOutput ) :: NamedTuple
@@ -451,3 +460,63 @@ function results_to_html(
         endnotes = Markdown.html( ENDNOTES ))
     return outt
 end
+
+
+
+"""
+Main output generation for conjoint model
+"""
+function results_to_html_conjoint( 
+  results      :: NamedTuple ) :: NamedTuple
+  # table expects a tuple
+  gls = ( gainers = results.summary.gain_lose[2].gainers, 
+          losers=results.summary.gain_lose[2].losers, 
+          nc=results.summary.gain_lose[2].nc,
+          popn = results.summary.gain_lose[2].popn )
+  gain_lose = gain_lose_table( gls )
+  gains_by_decile = results.summary.deciles[2][:,4] -
+        results.summary.deciles[1][:,4]
+  @info "gains_by_decile = $gains_by_decile"
+  costs = costs_table( 
+      results.summary.income_summary[1],
+      results.summary.income_summary[2])
+  overall_costs = overall_cost( 
+      results.summary.income_summary[1],
+      results.summary.income_summary[2])
+  mrs = mr_table(
+      results.summary.metrs[1], 
+      results.summary.metrs[2] )       
+  poverty = pov_table(
+      results.summary.poverty[1],
+      results.summary.poverty[2],
+      results.summary.child_poverty[1],
+      results.summary.child_poverty[2])
+  inequality = ineq_table(
+      results.summary.inequality[1],
+      results.summary.inequality[2])
+  lorenz_pre = results.summary.deciles[1][:,2]
+  lorenz_post = results.summary.deciles[2][:,2]
+  example_text = make_examples( results.examples )
+  big_costs = costs_frame_to_table( 
+      detailed_cost_dataframe( 
+          results.summary.income_summary[1],
+          results.summary.income_summary[2] )) 
+  popularity_table = make_popularity_table( results.popularity )
+  outt = ( 
+      phase = "end", 
+      popularity = popularity_table,
+      gain_lose = gain_lose, 
+      gains_by_decile = gains_by_decile,
+      costs = costs, 
+      overall_costs = overall_costs,
+      mrs = mrs, 
+      poverty=poverty, 
+      inequality=inequality, 
+      lorenz_pre=lorenz_pre, 
+      lorenz_post=lorenz_post,
+      examples = example_text,
+      big_costs_table = big_costs,
+      endnotes = Markdown.html( ENDNOTES ))
+  return outt
+end
+

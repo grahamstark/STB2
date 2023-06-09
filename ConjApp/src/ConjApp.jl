@@ -1,5 +1,6 @@
 module ConjApp
-
+# get around weird bug similar to: https://github.com/GenieFramework/Genie.jl/issues/433
+__precompile__(false)
 using Genie
 using Conjoint
 using GenieSession 
@@ -41,13 +42,30 @@ export dorun,
   output,
   reset  
 
+#
+# hack : AllOutput is not actually needed but is included in some shared libs
+#
+struct AllOutput
+  results
+  summary
+  gain_lose
+  examples  
+end
+
+#
+#  constants used in html lib
+#
+const MR_UP_GOOD = [1,0,0,0,0,0,0,-1,-1]
+const COST_UP_GOOD = [1,1,1,1,-1,-1,-1,-1,-1,-1,-1]
+  
 include( "../../lib/static_texts.jl")
 include( "../../lib/table_libs.jl")
 include( "../../lib/examples.jl")
 include( "../../lib/text_html_libs.jl")
 
-const DEFAULT_FACTORS = Factors{Float64}
-const CACHED_RESULTS = Dict{UInt,AllOutput}()
+const DEFAULT_FACTORS = Factors{Float64}()
+const CACHED_RESULTS = Dict{UInt,Any}()
+
 
 """
 Save output to the cache
@@ -56,22 +74,20 @@ function cacheout(facs::Factors,allo::NamedTuple)
 	CACHED_RESULTS[riskyhash(facs)] = allo
 end
 
-function make_base_results()
-  obs = Observable( 
-    Progress(settings.uuid, "",0,0,0,0))
+function make_and_cache_base_results()
+  settings = Conjoint.make_default_settings()
+  obs = Observable( Progress(settings.uuid, "",0,0,0,0))
   tot = 0
   of = on(obs) do p
     tot += p.step
   end
-  results = Conjoint.doonerun( DEFAULT_FACTORS, obs )  
+  results = Conjoint.doonerun( DEFAULT_FACTORS, obs; settings=settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
-  output = results_to_html( ( results..., examples=exres  ))  
-  cacheout( facs, output )
+  output = results_to_html_conjoint( ( results..., examples=exres  ))  
+  cacheout( DEFAULT_FACTORS, output )
 end 
 
-const DEFAULT_RESULTS = make_base_results()
-
-cacheout( DEFAULT_FACTORS, DEFAULT_RESULTS )
+const DEFAULT_RESULTS = make_and_cache_base_results()
 
 logger = FileLogger("log/conjapp_log.txt")
 global_logger(logger)
@@ -95,77 +111,9 @@ const QSIZE = 32
 
 IN_QUEUE = Channel{FactorAndSession}(QSIZE)
 
-const MR_UP_GOOD = [1,0,0,0,0,0,0,-1,-1]
-const COST_UP_GOOD = [1,1,1,1,-1,-1,-1,-1,-1,-1,-1]
-
 
 function getoutput( facs::Factors )::Union{Nothing,NamedTuple}
-	u = riskyhash(facs)
-	if ! haskey(CACHED_RESULTS, u )
-          def = riskyhash( DEFAULT_FACTORS )
-          return CACHED_RESULTS[def]
-	end
-	return CACHED_RESULTS[u]
-end
-
-function make_popularity_table( pop :: Number )
-  v1 = format(pop*100, precision=1)
-  s = "<table class='table'><tr><th>Popularity<td class='text-right; text-primary'>$v1</td></tr></table>"
-  return s
-end
-
-function results_to_html_x( 
-  results      :: NamedTuple ) :: NamedTuple
-  # table expects a tuple
-  gls = ( gainers = results.summary.gain_lose[2].gainers, 
-          losers=results.summary.gain_lose[2].losers, 
-          nc=results.summary.gain_lose[2].nc,
-          popn = results.summary.gain_lose[2].popn )
-  gain_lose = gain_lose_table( gls )
-  gains_by_decile = results.summary.deciles[2][:,4] -
-        results.summary.deciles[1][:,4]
-  @info "gains_by_decile = $gains_by_decile"
-  costs = costs_table( 
-      results.summary.income_summary[1],
-      results.summary.income_summary[2])
-  overall_costs = overall_cost( 
-      results.summary.income_summary[1],
-      results.summary.income_summary[2])
-  mrs = mr_table(
-      results.summary.metrs[1], 
-      results.summary.metrs[2] )       
-  poverty = pov_table(
-      results.summary.poverty[1],
-      results.summary.poverty[2],
-      results.summary.child_poverty[1],
-      results.summary.child_poverty[2])
-  inequality = ineq_table(
-      results.summary.inequality[1],
-      results.summary.inequality[2])
-  lorenz_pre = results.summary.deciles[1][:,2]
-  lorenz_post = results.summary.deciles[2][:,2]
-  example_text = make_examples( results.examples )
-  big_costs = costs_frame_to_table( 
-      detailed_cost_dataframe( 
-          results.summary.income_summary[1],
-          results.summary.income_summary[2] )) 
-  popularity_table = make_popularity_table( results.popularity )
-  outt = ( 
-      phase = "end", 
-      popularity = popularity_table,
-      gain_lose = gain_lose, 
-      gains_by_decile = gains_by_decile,
-      costs = costs, 
-      overall_costs = overall_costs,
-      mrs = mrs, 
-      poverty=poverty, 
-      inequality=inequality, 
-      lorenz_pre=lorenz_pre, 
-      lorenz_post=lorenz_post,
-      examples = example_text,
-      big_costs_table = big_costs,
-      endnotes = Markdown.html( ENDNOTES ))
-  return outt
+	
 end
 
 function facsfrompayload( payload ) :: Factors
@@ -186,19 +134,10 @@ function factorsfromsession()::Factors
       facs = GenieSession.get( session, :facs )
   else
       facs = deepcopy( DEFAULT_FACTORS )
-      GenieSession.set!( session, :facs, pars )
+      GenieSession.set!( session, :facs, facs )
   end
-  return pars
+  return facs
 end
-
-function reset()
-
-end
-
-function output()
-
-end
-
 
 """
 TODO
@@ -209,7 +148,6 @@ function doreset()
     GenieSession.set!( sess, :facs, facs )
     (:facs=>facs,:output=>DEFAULT_RESULTS ) |> json
 end
-
 
 """
 
@@ -229,61 +167,70 @@ function getprogress()
 end
 
 """
-
+return output for the 
 """
 function getoutput() 
-    facs = facsfromsession()
-    @info "getoutput pars="  pars
-    res = getout( pars )
-    @info "CACHED_RESULTS keys= " keys(CACHED_RESULTS)
+    facs = factorsfromsession()
+    @info "getoutput facs=" facs
+    u = riskyhash(facs)
     output = ""
-    if ! isnothing(res)
-        @info "getting cached results"
-        output = results_to_html( DEFAULT_RESULTS, res )
+    if haskey(CACHED_RESULTS, u )
+      # u = riskyhash( DEFAULT_FACTORS )
+      output = CACHED_RESULTS[u]
     end
-    (:output=>output) |> json
+    
+    return (:output=>output) |> json
 end
 
 
 """
-grab run from Queue
+Execute a run from the queue.
 """
-function dorun( session :: GenieSession.Session )
-  sess = GenieSession.session()
-  facs = facsfrompayload( rawpayload() )
-  @info "dorun entered pars are " facs
-  GenieSession.set!( sess, :facs, facs )
-  obs = Observable(
-          Progress(settings.uuid, "",0,0,0,0))
+function dorun( session::Session, facs :: Factors )
+  settings = Conjoint.make_default_settings()  
+  @info "dorun entered facs are " facs
+  obs = Observable( Progress(settings.uuid, "",0,0,0,0))
   tot = 0
   of = on(obs) do p
   tot += p.step
   @info "monitor tot=$tot p = $(p)"
-          GenieSession.set!( session, :progress, (progress=p,total=tot))
+    GenieSession.set!( session, :progress, (progress=p,total=tot))
   end  
-  results = Conjoint.doonerun( facs, obs )  
+  results = Conjoint.doonerun( facs, obs; settings = settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
-  output = results_to_html( ( results..., examples=exres  ))  
+  output = results_to_html_conjoint( ( results..., examples=exres  ))  
   cacheout( facs, output )
-  # (:output=>output) |> json
 end
 
 function submit_job(
-    session :: GenieSession.Session, 
-    facs    :: Factors )
-    put!( IN_QUEUE, FactorAndSession( facs, session )
+    session :: GenieSession.Session )
+    facs = facsfrompayload( rawpayload() )
+    u = riskyhash(facs)
+    if ! haskey( CACHED_RESULTS, u )    
+      put!( IN_QUEUE, FactorAndSession( facs, session ))
+    end
 end
 
-function calc_one()
+"""
+
+"""
+function grab_runs_from_queue()
   while true
     params = take!( IN_QUEUE )
     dorun( params.session, params.facs ) 
   end
 end
 
-
 function main()
   Genie.genie(; context = @__MODULE__)
+end
+
+#
+# Run the job queues
+#
+for i in 1:NUM_HANDLERS # start n tasks to process requests in parallel
+  @info "starting handler $i" 
+  errormonitor(@async grab_runs_from_queue())
 end
 
 end # module
