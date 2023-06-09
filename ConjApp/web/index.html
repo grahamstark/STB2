@@ -537,7 +537,7 @@ function loadFromForm(){
         funding: $( "input:radio[name='Funding']:checked" ).val(),
         eligibility: $( "input:radio[name='Eligibility']:checked" ).val(),
         means_testing: $( "input:radio[name='Means.Testing']:checked" ).val(),
-        citizenship$: $( "Citizenship" ).val()
+        citizenship$: $( "input:radio[name='Citizenship']:checked" ).val()
     }
     return data;
 }
