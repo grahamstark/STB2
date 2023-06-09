@@ -40,28 +40,39 @@ export dorun,
   progress,
   output,
   reset  
-struct AllOutput
-  results
-  summary
-  gain_lose
-  examples
-end
-
-function make_base_results()
-end
 
 include( "../../lib/static_texts.jl")
 include( "../../lib/table_libs.jl")
 include( "../../lib/examples.jl")
-# include( "../../lib/definitions.jl" )
 include( "../../lib/text_html_libs.jl")
-# include( "../../lib/base_and_cache.jl")
 
 const DEFAULT_FACTORS = Factors{Float64}
-# const DEFAULT_RESULTS = "" #make_base_results()
-# const DEFAULT_TEXT_OUTPUT = results_to_html( DEFAULT_RESULTS, DEFAULT_RESULTS )
-
 const CACHED_RESULTS = Dict{UInt,AllOutput}()
+
+"""
+Save output to the cache
+"""
+function cacheout(facs::Factors,allo::NamedTuple)
+	CACHED_RESULTS[riskyhash(facs)] = allo
+end
+
+function make_base_results()
+  obs = Observable( 
+    Progress(settings.uuid, "",0,0,0,0))
+  tot = 0
+  of = on(obs) do p
+    tot += p.step
+  end
+  results = Conjoint.doonerun( DEFAULT_FACTORS, obs )  
+  exres = calc_examples( results.sys1, results.sys2, results.settings )    
+  output = results_to_html( ( results..., examples=exres  ))  
+  cacheout( facs, output )
+end 
+
+const DEFAULT_RESULTS = make_base_results()
+
+cacheout( DEFAULT_FACTORS, DEFAULT_RESULTS )
+
 logger = FileLogger("log/conjapp_log.txt")
 global_logger(logger)
 LogLevel( Logging.Debug )
@@ -77,6 +88,9 @@ end
 #
 const NUM_HANDLERS = 4
 
+#
+# This number of submissions
+#
 const QSIZE = 32
 
 IN_QUEUE = Channel{FactorAndSession}(QSIZE)
@@ -85,14 +99,11 @@ const MR_UP_GOOD = [1,0,0,0,0,0,0,-1,-1]
 const COST_UP_GOOD = [1,1,1,1,-1,-1,-1,-1,-1,-1,-1]
 
 
-function cacheout(simp::Factors,allo::AllOutput)
-	CACHED_RESULTS[riskyhash(simp)] = allo
-end
-
-function getout( facs::Factors )::Union{Nothing,AllOutput}
+function getoutput( facs::Factors )::Union{Nothing,NamedTuple}
 	u = riskyhash(facs)
 	if ! haskey(CACHED_RESULTS, u )
-		return nothing
+          def = riskyhash( DEFAULT_FACTORS )
+          return CACHED_RESULTS[def]
 	end
 	return CACHED_RESULTS[u]
 end
@@ -101,7 +112,6 @@ function make_popularity_table( pop :: Number )
   v1 = format(pop*100, precision=1)
   s = "<table class='table'><tr><th>Popularity<td class='text-right; text-primary'>$v1</td></tr></table>"
   return s
-  
 end
 
 function results_to_html_x( 
@@ -158,16 +168,16 @@ function results_to_html_x(
   return outt
 end
 
-# cacheout(DEFAULT_SIMPLE_PARAMS,DEFAULT_RESULTS)
-
-function main()
-  Genie.genie(; context = @__MODULE__)
-end
-
-function paramsfrompayload( payload )
+function facsfrompayload( payload ) :: Factors
   @show payload
-  pars = JSON3.read( payload, Conjoint.Factors{Float64} )
-  return pars
+  pars = JSON3.read( payload )
+  facs = Conjoint.Factors{Float64}()
+  facs.level = pars.level
+  facs.tax = pars.tax
+  facs.funding = pars.funding
+  facs.eligibility = pars.eligibility
+  facs.citizenship = pars.citizenship
+  return facs
 end
 
 function factorsfromsession()::Factors
@@ -189,9 +199,83 @@ function output()
 
 end
 
+#=
+function do_run(
+    session :: GenieSession.Session,
+    simple  :: SimpleParams ) :: NamedTuple
+    @info "do_run entered"
+    settings = initialise_settings()
+    sys :: TaxBenefitSystem = map_simple_to_full( simple )
+    weeklyise!( sys )
+	obs = Observable(
+		Progress(settings.uuid, "",0,0,0,0))
+	tot = 0
+	of = on(obs) do p
+        tot += p.step
+        @info "monitor tot=$tot p = $(p)"
+		GenieSession.set!( session, :progress, (progress=p,total=tot))
+	end
+	results = do_one_run( settings, [sys], obs )
+	settings.poverty_line = make_poverty_line( results.hh[1], settings )
+	outf = summarise_frames!( results, settings )
+	gl = make_gain_lose( DEFAULT_RESULTS.results.hh[1], results.hh[1], settings )
+	exres = calc_examples( DEFAULT_WEEKLY_PARAMS, sys, settings )
+	aout = AllOutput( results, outf, gl, exres )
+    cacheout(simple,aout)
+    aout
+end
+=#
+
+"""
+TODO
+"""
+function doreset() 
+    sess = GenieSession.session()
+    # pars = deepcopy( DEFAULT_SIMPLE_PARAMS )
+    GenieSession.set!( sess, :facs, pars )
+    # (:facs=>pars,:def=>DEFAULT_SIMPLE_PARAMS,:output=>DEFAULT_TEXT_OUTPUT) |> json
+end
+
+"""
+
+"""
+function getprogress() 
+    sess = GenieSession.session()
+    @info "getprogress entered"
+    progress = NO_PROGRESS
+    if( GenieSession.isset( sess, :progress ))
+        @info "getprogress: has progress"
+        progress = GenieSession.get( sess, :progress )
+    else
+        @info "getprogress: no progress"
+        GenieSession.set!( sess, :progress, progress )
+    end
+    (:progress=>progress) |> json
+end
+
+"""
+
+"""
+function getoutput() 
+    facs = facsfromsession()
+    @info "getoutput pars="  pars
+    res = getout( pars )
+    @info "CACHED_RESULTS keys= " keys(CACHED_RESULTS)
+    output = ""
+    if ! isnothing(res)
+        @info "getting cached results"
+        output = results_to_html( DEFAULT_RESULTS, res )
+    end
+    (:output=>output) |> json
+end
+
+
+"""
+grab run from Queue
+"""
 function dorun( session :: GenieSession.Session )
   sess = GenieSession.session()
-  facs = paramsfrompayload( rawpayload() )
+  facs = facsfrompayload( rawpayload() )
   @info "dorun entered pars are " facs
   GenieSession.set!( sess, :facs, facs )
   obs = Observable(
@@ -201,12 +285,30 @@ function dorun( session :: GenieSession.Session )
   tot += p.step
   @info "monitor tot=$tot p = $(p)"
           GenieSession.set!( session, :progress, (progress=p,total=tot))
-  end
-  results = Conjoint.doonerun( facs, obs )
-  exres = calc_examples( results.sys1, results.sys2, results.settings )
-    
-  output = results_to_html( ( results..., examples=exres  ))
-  (:output=>output) |> json
+  end  
+  results = Conjoint.doonerun( facs, obs )  
+  exres = calc_examples( results.sys1, results.sys2, results.settings )    
+  output = results_to_html( ( results..., examples=exres  ))  
+  cacheout( facs, output )
+  # (:output=>output) |> json
 end
 
+function submit_job(
+    session :: GenieSession.Session, 
+    facs    :: Factors )
+    put!( IN_QUEUE, FactorAndSession( facs, session )
 end
+
+function calc_one()
+  while true
+    params = take!( IN_QUEUE )
+    dorun( params.session, params.facs ) 
+  end
+end
+
+
+function main()
+  Genie.genie(; context = @__MODULE__)
+end
+
+end # module

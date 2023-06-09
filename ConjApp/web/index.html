@@ -24,14 +24,11 @@
     
         <nav class="navbar navbar-expand-lg text-primary">
             <ul class="nav">
-                <li class="nav-item"><a class='nav-link' href='https://stb.virtual-worlds.scot/scotbudg/'>A Scottish Budget</a></li>
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href='https://ubi.virtual-worlds.scot/'>Basic Income</a></li>
-                <li class="nav-item"><a class='nav-link' href='https://stb.virtual-worlds.scot/bcd/'>Budget Constraints</a></li>
-                <li class="nav-item"><a class='nav-link' href='https://stb-blog.virtual-worlds.scot/'>Blog</a></li>
+                <li class="nav-item"><a class='nav-link' href='https://stb.virtual-worlds.scot/scotbudg/'></a></li>
             </ul>
         </nav>
         <header>
-            <h1>A Budget for Scotland</h1>
+            <h1>Basic Income Conjoint Demo mk 1</h1>
             <h4>2022/3 Version</h4>
         </header>
         
@@ -39,92 +36,173 @@
             <div class='container-fluid'>                 
                 <div class='row'><!-- input row -->
                     <fieldset class="col border rounded-2 m-1 p-2">
-                        <legend>Income Tax</legend>
-                                <input type="hidden" id="tax-n" name="tax-n" value=""/>
-                                <table id='it-table' class="table table-sm table-striped">
-                                    <caption>Rates in %, bands in &pound;s pa</caption>
-                                    <thead>                                                    
-                                        <tr>
-                                            <th>Rate (%)</th>
-                                            <th>Band (£pa)</th>
-                                            <th></th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id='tax-rows'>
-                                    </tbody>
-                                </table>
-                                <div class="col ukreserved p-2 rounded-2">
-                                    <label for='taxallowance' class='form-label'>Personal Allowance £pa</label>
-                                    <input id='taxallowance' type='number' name="taxallowance" min='0' max='100000' value='' step='1' size="12" class='form-control w-50'/>
-                                </div>                                
+                        <legend>Basic Income - How much?</legend>
+                        <div class="form-check">
+                            <input class='form-check-input' checked='' type='radio' name='Level' id='Level-1' value='Child - £0; Adult - £63; Pensioner - £190'  />
+                            <label class='form-check-label' for='Level-1'>Child - £0; Adult - £63; Pensioner - £190</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio' name='Level' id='Level-2' value='Child - £41; Adult - £63; Pensioner - £190'  />
+                            <label class='form-check-label' for='Level-2'>Child - £41; Adult - £63; Pensioner - £190</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio' name='Level' id='Level-3' value='Child - £0; Adult - £145; Pensioner - £190'  />
+                            <label class='form-check-label' for='Level-3'>Child - £0; Adult - £145; Pensioner - £190</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio' name='Level' id='Level-4' value='Child - £41; Adult - £145; Pensioner - £190'  />
+                            <label class='form-check-label' for='Level-4'>Child - £41; Adult - £145; Pensioner - £190</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio' name='Level' id='Level-5' value='Child - £63; Adult - £145; Pensioner - £190'  />
+                            <label class='form-check-label' for='Level-5'>Child - £63; Adult - £145; Pensioner - £190</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio' name='Level' id='Level-6' value='Child - £63; Adult - £190; Pensioner - £190'  />
+                            <label class='form-check-label' for='Level-6'>Child - £63; Adult - £190; Pensioner - £190</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio' name='Level' id='Level-7' value='Child - £95; Adult - £190; Pensioner - £230'  />
+                            <label class='form-check-label' for='Level-7'>Child - £95; Adult - £190; Pensioner - £230</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio' name='Level' id='Level-8' value='Child - £41; Adult - £230; Pensioner - £230'  />
+                            <label class='form-check-label' for='Level-8'>Child - £41; Adult - £230; Pensioner - £230</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio' name='Level' id='Level-9' value='Child - £95; Adult - £230; Pensioner - £230'  />
+                            <label class='form-check-label' for='Level-9'>Child - £95; Adult - £230; Pensioner - £230</label>
+                        </div>
+
                     </fieldset>
-                    <fieldset class='col border rounded-2 m-1 p-2 ukreserved'>
-                        <legend>National Insurance</legend>
-                        <input type="hidden" id="ni-n" name="ni-n" value=""/>
-                        <table class="table table-sm table-striped">
-                            <caption>Rates in %, bands in &pound;s pw</caption>
-                            <thead>
-                                <tr>
-                                    <th>Rate (%)</th>
-                                    <th>Band (£pw)</th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id='ni-rows'>
-                            </tbody>
-                        </table>
+                    
+                    <fieldset class='col border rounded-2 m-1 p-2'>
+                        <legend>How to pay - income tax Rates</legend>
+                            <div class="form-check">
+                                <input class='form-check-input' checked='' type='radio' name='Tax' id='Tax-1' value='Basic rate - 20%; Higher rate - 40%; Additional rate - 45%'  />
+                                    <label class='form-check-label' for='Tax-1'>Basic rate - 20%; Higher rate - 40%; Additional rate - 45%</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class='form-check-input' type='radio' name='Tax' id='Tax-2' value='Basic rate - 23%; Higher rate - 43%; Additional rate - 48%'  />
+                                    <label class='form-check-label' for='Tax-2'>Basic rate - 23%; Higher rate - 43%; Additional rate - 48%</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class='form-check-input' type='radio' name='Tax' id='Tax-3' value='Basic rate - 30%; Higher rate - 50%; Additional rate - 60%'  />
+                                    <label class='form-check-label' for='Tax-3'>Basic rate - 30%; Higher rate - 50%; Additional rate - 60%</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class='form-check-input' type='radio' name='Tax' id='Tax-4' value='Basic rate - 40%; Higher rate - 60%; Additional rate - 70%'  />
+                                    <label class='form-check-label' for='Tax-4'>Basic rate - 40%; Higher rate - 60%; Additional rate - 70%</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class='form-check-input' type='radio' name='Tax' id='Tax-5' value='Basic rate - 48%; Higher rate - 68%; Additional rate - 78%'  />
+                                    <label class='form-check-label' for='Tax-5'>Basic rate - 48%; Higher rate - 68%; Additional rate - 78%</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class='form-check-input' type='radio' name='Tax' id='Tax-6' value='Basic rate - 50%; Higher rate - 70%; Additional rate - 80%'  />
+                                    <label class='form-check-label' for='Tax-6'>Basic rate - 50%; Higher rate - 70%; Additional rate - 80%</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class='form-check-input' type='radio' name='Tax' id='Tax-7' value='Basic rate - 65%; Higher rate - 85%; Additional rate - 95%'  />
+                                    <label class='form-check-label' for='Tax-7'>Basic rate - 65%; Higher rate - 85%; Additional rate - 95%</label>
+                                </div>
                     </fieldset>
+                    
                     <fieldset class='col border  rounded-2 m-1 p-2'>
-                        <legend>Scottish Benefits</legend>
-                        <div class="row">                                        
-                            <div class="col">                                                    
-                                <label for='scottish_child_payment' class='form-label'>Scottish Child Payment £pw</label>
-                                <input id='scottish_child_payment' type='number' name="scottish_child_payment" min='0' max='400' value='' step='0.01' size="10" class='form-control w-50'/>
-                            </div>
+                        <legend>How to pay- other things</legend>
+                        <div class="form-check">
+                            <input class='form-check-input' checked='' type='radio' name='Funding' id='Funding-1' value='Removal of income tax-free personal allowance'  />
+                            <label class='form-check-label' for='Funding-1'>Removal of income tax-free personal allowance</label>
                         </div>
-                        <div class="row">                                        
-                            <div class="col">                                                    
-                                <label for='scp_age' class='form-label'>Scottish Child Payment: maximum age (years)</label>
-                                <input id='scp_age' type='number' name="scp_age" min='0' max='18' value='' step='1' size="4" class='form-control w-50'/>
-                            </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio'   disabled='disabled' name='Funding' id='Funding-2' value='Increased government borrowing'  />
+                            <label class='form-check-label' for='Funding-2'>Increased government borrowing</label>
                         </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio'   disabled='disabled' name='Funding' id='Funding-3' value='Corporation tax increase'  />
+                            <label class='form-check-label' for='Funding-3'>Corporation tax increase</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio'   disabled='disabled' name='Funding' id='Funding-4' value='Tax for businesses based on carbon emissions'  />
+                            <label class='form-check-label' for='Funding-4'>Tax for businesses based on carbon emissions</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio'   disabled='disabled' name='Funding' id='Funding-5' value='Tax for individuals based on carbon emissions'  />
+                            <label class='form-check-label' for='Funding-5'>Tax for individuals based on carbon emissions</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio'   disabled='disabled' name='Funding' id='Funding-6' value='Tax on wealth'  />
+                            <label class='form-check-label' for='Funding-6'>Tax on wealth</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio'   disabled='disabled' name='Funding' id='Funding-7' value='VAT increase'  />
+                            <label class='form-check-label' for='Funding-7'>VAT increase</label>
+                        </div>
+                        <p>GKS NOTES:incidence? </p>
                     </fieldset>
-                    <fieldset class='col border rounded-2 m-1 p-2 ukreserved'>
-                            <legend>UK (Reserved) Benefits</legend>                                            
-                            <div class="row">                                        
-                                <div class="col">                                                    
-                                    <label for='uc_single' class='form-label'>Universal Credit: Single over 25 (£pm)</label>
-                                    <input id='uc_single' type='number' name="uc_single" min='0' max='2000' value='' step='0.01' size="10" class='form-control w-50'/>
-                                </div>
+                </div><!-- input row -->
+                <div class='row'><!-- input row -->
+                    <fieldset class='col border rounded-2 m-1 p-2 '>
+                            <legend>Basic Income - who is entitled?</legend>  
+                            <div class="form-check">
+                            <input class='form-check-input' checked=''   disabled='disabled' type='radio' name='Eligibility' id='Eligibility-1' value='People in and out of work are entitled'  />
+                            <label class='form-check-label' for='Eligibility-1'>People in and out of work are entitled</label>
                             </div>
-                            <div class="row">                                                                                    
-                                <div class="col">                                                    
-                                    <label for='uc_taper' class='form-label'>Universal Credit Taper (%)</label>
-                                    <input id='uc_taper' type='number' name="uc_taper" min='1' max='100' value='' step='1' size="10" class='form-control w-50'/>
-                                </div>
+                            <div class="form-check">
+                                <input class='form-check-input' type='radio'   disabled='disabled' name='Eligibility' id='Eligibility-2' value='Everyone is entitled but people of working age who are not disabled are required to look for work'  />
+                                <label class='form-check-label' for='Eligibility-2'>Everyone is entitled but people of working age who are not disabled are required to look for work</label>
                             </div>
-                            <div class="row">                                        
-                                <div class="col">                                                    
-                                    <label for='wtc_basic' class='form-label'>Working Tax Credit (Basic) £pa</label>
-                                    <input id='wtc_basic' type='number' name="wtc_basic" min='0' max='30000' value='' step='1' size="10" class='form-control w-50'/>
-                                </div>
+                            <div class="form-check">
+                                <input class='form-check-input' type='radio'   disabled='disabled' name='Eligibility' id='Eligibility-3' value='Only people in work are entitled'  />
+                                <label class='form-check-label' for='Eligibility-3'>Only people in work are entitled</label>
                             </div>
-                                <div class="row">
-                                <div class="col">                                                    
-                                    <label for='child_benefit' class='form-label'>Child Benefit (1st child) £pw</label>
-                                    <input id='child_benefit' type='number' name="child_benefit" min='0' max='1000' value='' step='0.01' size="10" class='form-control w-50'/>
-                                </div>
+                            <div class="form-check">
+                                <input class='form-check-input' type='radio'   disabled='disabled' name='Eligibility' id='Eligibility-4' value='Only people out of work are entitled'  />
+                                <label class='form-check-label' for='Eligibility-4'>Only people out of work are entitled</label>
                             </div>
-                            <div class="row">
-                                    <div class="col">                                                    
-                                        <label for='pension' class='form-label'>New State Pension £pw</label>
-                                        <input id='pension' type='number' name="pension" min='0' max='1000' value='' step='0.01' size="10" class='form-control w-50'/>
-                                    </div>                                                
+                            <p>GKS NOTES: is this supposed to be individual/benunit/household entitlement?</p>
+                    </fieldset>   
+                    
+                    <fieldset class='col border rounded-2 m-1 p-2 '>
+                            <legend>Basic Income - should it be means tested?</legend>  
+                        <div class="form-check">
+                            <input class='form-check-input' checked='' type='radio' name='Means.testing' id='Means.testing-1' value='People with any or no amount of income are entitled to the full benefit'  />
+                            <label class='form-check-label' for='Means.testing-1'>People with any or no amount of income are entitled to the full benefit</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio' disabled='disabled' name='Means.testing' id='Means.testing-2' value='Only those with incomes less than £20k are entitled to the full benefit'  />
+                            <label class='form-check-label' for='Means.testing-2'>Only those with incomes less than £20k are entitled to the full benefit</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio'  disabled='disabled' name='Means.testing' id='Means.testing-3' value='Only those with incomes less than £50k are entitled to the full benefit'  />
+                            <label class='form-check-label' for='Means.testing-3'>Only those with incomes less than £50k are entitled to the full benefit</label>
+                        </div>
+                        <div class="form-check">
+                            <input class='form-check-input' type='radio'  disabled='disabled' name='Means.testing' id='Means.testing-4' value='Only those with incomes less than £125k are entitled to the full benefit'  />
+                            <label class='form-check-label' for='Means.testing-4'>Only those with incomes less than £125k are entitled to the full benefit</label>
+                        </div>
+                        <p>GKS NOTES: is this supposed to be individual/benunit/household income?  Do you lose 100% if you're over these amounts? Do we use UC/Taxable income?</p>
+                    </fieldset>
+                    
+                    <fieldset class='col border rounded-2 m-1 p-2 '>
+                            <legend>Basic Income - citizens?</legend>  
+                            <div class="form-check">
+                                <input class='form-check-input' checked=''   disabled='disabled' type='radio' name='Citizenship' id='Citizenship-1' value='Citizens, permanent residents and anyone residing in the UK for more than six months are entitled'  />
+                                <label class='form-check-label' for='Citizenship-1'>Citizens, permanent residents and anyone residing in the UK for more than six months are entitled</label>
                             </div>
+                            <div class="form-check">
+                                <input class='form-check-input' type='radio'   disabled='disabled' name='Citizenship' id='Citizenship-2' value='Only citizens and permanent residents are entitled'  />
+                                <label class='form-check-label' for='Citizenship-2'>Only citizens and permanent residents are entitled</label>
+                            </div>
+                            <div class="form-check">
+                                <input class='form-check-input' type='radio'   disabled='disabled' name='Citizenship' id='Citizenship-3' value='Only citizens are entitled'  />
+                                <label class='form-check-label' for='Citizenship-3'>Only citizens are entitled</label>
+                            </div>
+                            <p>GKS notes: need to model this</p>
                     </fieldset>
                 </div> <!-- input row -->
+                
+                
                 <div class="row"> <!-- progress bar -->
                     <div class="col"></div>
                     <div class='col-4' id="progress-indicator"></div>
@@ -168,7 +246,7 @@
                                 <div class='row'>
                                     <div class='col-4'></div>
                                     <div class='col-4'>
-                                        <h2>Results for the Whole of Scotland</h2>
+                                        <h2>Results</h2>
                                     </div>
                                     <div class='col-4'></div>
                                 </div>
@@ -190,8 +268,8 @@
                                         <div id="overall-costs"></div>
                                     </div>                            
                                     <div class='col'>
-                                        <h4>Incentives - Marginal Effective Tax Rates</h4>
-                                        <div id="mr-table"></div>
+                                        <h4>Popularity</h4>
+                                        <div id="conjoint-table"></div>
                                     </div>                            
                                 </div><!-- row -->
                                 <div class='row'>
@@ -223,174 +301,7 @@
 
 <script type='text/javascript'>
 
-const BIG_A = 9999999999;
 
-function makeTypename( type ){
-    return type=='rate' ? 'r' : 'b';
-}
-
-function makeId( n, name, type ){
-    var typename = makeTypename( type );
-    return name + "-" + typename + '-' + n;
-}
-
-function makeInput( n, name, type ){
-    var typename = makeTypename( type );
-    var min=-BIG_A;
-    var max=BIG_A;
-    var step=1;
-    if( type == 'band' ){
-        min=0.0;
-        max=BIG_A;
-    } else if( type=='rate'){
-        min=0.0;
-        max=100;
-        step=0.01;
-    }
-    var id = makeId( n, name, type );
-    return "<input id='"+id+"' name='"+id+"' type='number' min='"+min+"' max='"+max+"' step='"+step+"' value='' class=' w-75' />";
-}
-
-function makeAddDel( n, name, isdel ){
-    var action = 'add'+name;
-    var icon = "bi-plus-circle text-success";
-    if(isdel===true){
-        action = 'del'+name;
-        icon = "bi-dash-circle text-danger";
-    }
-    return "<span onclick='submitForm(\""+action+"\", "+n+")' ><i class=\""+icon+"\" style=\"font-size: 1rem\"></i></span>";
-}
-
-function makeRow( n, name, addDel ){
-    const id = name+"-"+n;
-    var row = "<tr id='"+id+"'><td>"+makeInput( n, name, 'rate' )+"</td><td>"+makeInput( n, name, 'band' )+"</td><td  class='align-middle'>"+makeAddDel( n, name, false )+"</td>";
-    if( addDel ){
-        row += "<td class='align-middle'>"+makeAddDel( n, name, true )+"</td>";
-    } else {
-        row += "<td></td>";
-    }
-    row += "</tr>";
-    // console.log( "made row as |"+row+"|" );
-    return row;
-}
-
-function insertRow( which, n, name, addRow ){
-    $("#"+which ).append( makeRow( n, name, addRow ));
-}
-
-function setVal( id, val, def ){
-    $( "#"+id ).val( val );
-    console.log( "setVal for #%s val=%s def=%s", id, val, def )
-    if( val != def ){
-        $( "#"+id ).addClass( 'changed');
-    } else {
-        $( "#"+id ).removeClass( 'changed');
-    }
-}
-
-function loadTax( name, rates, bands, defrates, defbands ){
-    var nr = rates.length;
-    var nb = bands.length;
-    // console.log( "nr="+nr + " nb = " + nb );
-    $( "#"+name+"-n").val( nr );
-    for( var i = 1; i <= nr; i++ ){
-        var rp = "#"+name+"-r-"+i;
-        $( rp ).val( rates[i-1]);
-        var rb = "#"+name+"-b-"+i;
-        if( i == nr ){
-            $( rb ).hide();            
-        } else {
-            $( rb ).val( bands[i-1]);
-        }
-    }
-}
-
-function initialiseTable( which, rates, bands, defrates, defbands ){
-    var n = rates.length;
-    var target = which+ "-rows";
-    $( "#"+target ).children().remove();
-    var addDel = n > 1;
-    for( var i = 1; i <= n; i++ ){
-        insertRow( target, i, which, addDel );
-    }
-    loadTax( which, rates, bands, defrates, defbands );
-}
-
-function loadData( data ){
-    loadtax( "tax", data.taxrates, data.taxbands );
-    loadtax( "ni", data.nirates, data.nibands );
-    $( "#taxallowance").val( data.taxallowance );
-}
-
-function scrapetax( name ){
-    var rates = [];
-    var bands = [];
-    var nrt = "#"+name+"-n";
-    // console.log( "count nrt key = " + nrt );
-    var nr = parseInt($( nrt ).val());
-    // console.log( name + " : got nr as " + nr );
-    for( var i = 1; i <= nr; i++ ){
-        var rp = "#"+name+"-r-"+i;
-        var rb = "#"+name+"-b-"+i;
-        rates.push( parseFloat($( rp ).val()));
-         if( i < nr ){ // skip top bands
-            var rr = parseFloat($( rb ).val());
-            if( Number.isNaN(rr)){
-                rr = BIG_A;
-            }
-            bands.push( rr );
-        }
-    }
-    // console.log( "rates=" + rates );
-    return [rates, bands];
-}
-
-function scrapeData(){
-    var tbs = scrapetax("tax");
-    // console.log( "tbs=" + tbs );
-    var nbs = scrapetax( "ni");
-    var data = {
-        taxrates: tbs[0],
-        taxbands: tbs[1],
-        nirates: nbs[0],
-        nibands: nbs[1],
-        taxallowance: parseFloat($( "#taxallowance" ).val()),
-        child_benefit: parseFloat( $( "#child_benefit" ).val()),
-        pension: parseFloat( $( "#pension" ).val()),
-        scottish_child_payment: parseFloat( $( "#scottish_child_payment" ).val()),
-        scp_age: parseInt( $( "#scp_age" ).val()),
-        uc_single: parseFloat( $( "#uc_single" ).val()),
-        uc_taper: parseFloat( $( "#uc_taper" ).val()),
-        wtc_basic: parseFloat( $( "#wtc_basic" ).val()),
-        target: -1
-    }
-    // console.log( "data.taxrates " + data.taxrates );
-    return data;
-}
-
-
-function populateForm( pars, defaults ){
-    initialiseTable( "tax", 
-        pars.taxrates, 
-        pars.taxbands,
-        defaults.taxrates,
-        defaults.taxbands );
-    initialiseTable( "ni", 
-        pars.nirates, 
-        pars.nibands,
-        defaults.nirates, 
-        defaults.nibands
-            );
-    setVal( 'taxallowance', pars.taxallowance, defaults.taxallowance);
-    setVal( 'child_benefit', pars.child_benefit, defaults.child_benefit );
-    setVal( 'pension', pars.pension, defaults.pension );
-    setVal( 'scottish_child_payment', pars.scottish_child_payment, defaults.scottish_child_payment );
-    setVal( 'scp_age', pars.scp_age, defaults.scp_age );
-    setVal( 'uc_single', pars.uc_single, defaults.uc_single );
-    setVal( 'uc_taper', pars.uc_taper, defaults.uc_taper );
-    setVal( 'wtc_basic', pars.wtc_basic, defaults.wtc_basic );
-
-}
 
 var updater;
 
@@ -565,7 +476,6 @@ function createMainOutputs( result ){
         false );
     $("#costs-table").html( result.costs );
     $("#overall-costs").html( result.overall_costs )
-    $("#mr-table").html( result.mrs );
     $("#pov-table").html( result.poverty );
     $("#ineq-table").html( result.inequality );
     $("#big-costs-table").html( result.big_costs_table );
@@ -626,8 +536,20 @@ function updateProgress( result ){
     }
 }
 
+function loadFromForm(){
+    var data = {
+        level: $("input:radio[name='Level']:checked").val()
+        tax: $( "input:radio[name='Tax']:checked" ).val(),
+        funding: $( "input:radio[name='Funding']:checked" ).val(),
+        eligibility: $( "input:radio[name='Eligibility']:checked" ).val(),
+        means_testing: $( "input:radio[name='Means.Testing']:checked" ).val(),
+        citizenship$: $( "Citizenship" ).val()
+    }
+    return data;
+}
+
 function submitForm( action, target ){
-     var url = "/stb2/"+action;
+     var url = "/conjoint/"+action;
      if( target != null ){
         url += "/"+target;
      }
@@ -651,8 +573,8 @@ function submitForm( action, target ){
                     if( result[2].output == "" ){
                         console.log( "starting run and timer");               
                         console.log( "result " + result );
-                        var uri = '/stb2/progress/';
-                        updater = $.PeriodicalUpdater('/stb2/progress', {
+                        var uri = '/conjoint/progress/';
+                        updater = $.PeriodicalUpdater('/conjoint/progress', {
                             url: uri,         // URL of ajax request
                             cache: false,     // By default, don't allow caching
                             method: 'POST',    // method; get or post
