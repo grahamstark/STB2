@@ -199,42 +199,17 @@ function output()
 
 end
 
-#=
-function do_run(
-    session :: GenieSession.Session,
-    simple  :: SimpleParams ) :: NamedTuple
-    @info "do_run entered"
-    settings = initialise_settings()
-    sys :: TaxBenefitSystem = map_simple_to_full( simple )
-    weeklyise!( sys )
-	obs = Observable(
-		Progress(settings.uuid, "",0,0,0,0))
-	tot = 0
-	of = on(obs) do p
-        tot += p.step
-        @info "monitor tot=$tot p = $(p)"
-		GenieSession.set!( session, :progress, (progress=p,total=tot))
-	end
-	results = do_one_run( settings, [sys], obs )
-	settings.poverty_line = make_poverty_line( results.hh[1], settings )
-	outf = summarise_frames!( results, settings )
-	gl = make_gain_lose( DEFAULT_RESULTS.results.hh[1], results.hh[1], settings )
-	exres = calc_examples( DEFAULT_WEEKLY_PARAMS, sys, settings )
-	aout = AllOutput( results, outf, gl, exres )
-    cacheout(simple,aout)
-    aout
-end
-=#
 
 """
 TODO
 """
 function doreset() 
     sess = GenieSession.session()
-    # pars = deepcopy( DEFAULT_SIMPLE_PARAMS )
-    GenieSession.set!( sess, :facs, pars )
-    # (:facs=>pars,:def=>DEFAULT_SIMPLE_PARAMS,:output=>DEFAULT_TEXT_OUTPUT) |> json
+    facs = deepcopy( DEFAULT_FACTORS )
+    GenieSession.set!( sess, :facs, facs )
+    (:facs=>facs,:output=>DEFAULT_RESULTS ) |> json
 end
+
 
 """
 
