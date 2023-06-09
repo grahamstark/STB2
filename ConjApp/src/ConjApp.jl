@@ -96,9 +96,14 @@ function getout( simp::Factors )::Union{Nothing,AllOutput}
 	CACHED_RESULTS[u]
 end
 
-function results_to_html( 
+function results_to_html_x( 
   results      :: NamedTuple ) :: NamedTuple
-  gain_lose = gain_lose_table( results.summary.gain_lose )
+  # table expects a tuple
+  gls = ( gainers = results.summary.gain_lose[2].gainers, 
+          losers=results.summary.gain_lose[2].losers, 
+          nc=results.summary.gain_lose[2].nc,
+          popn = results.summary.gain_lose[2].popn )
+  gain_lose = gain_lose_table( gls )
   gains_by_decile = results.summary.deciles[2][:,4] -
         results.summary.deciles[1][:,4]
   @info "gains_by_decile = $gains_by_decile"
@@ -126,7 +131,7 @@ function results_to_html(
       detailed_cost_dataframe( 
           results.summary.income_summary[1],
           results.summary.income_summary[2] )) 
-  popularity = "<table><tr><td>POPTABLE GOES HERE</td></tr></table>"
+  popularity_table = "<table><tr><td>POPTABLE GOES HERE</td></tr></table>"
   outt = ( 
       phase = "end", 
       popularity = popularity_table,
@@ -181,8 +186,18 @@ function dorun( session :: GenieSession.Session )
   facs = paramsfrompayload( rawpayload() )
   @info "dorun entered pars are " facs
   GenieSession.set!( sess, :facs, facs )
-  results = Conjoint.doonerun(facs)
-  output = results_to_html( DEFAULT_RESULTS, results )
+  obs = Observable(
+          Progress(settings.uuid, "",0,0,0,0))
+  tot = 0
+  of = on(obs) do p
+  tot += p.step
+  @info "monitor tot=$tot p = $(p)"
+          GenieSession.set!( session, :progress, (progress=p,total=tot))
+  end
+  results = Conjoint.doonerun( facs, obs )
+  exres = calc_examples( results.sys1, results.sys2, results.settings )
+    
+  output = results_to_html( ( results..., examples=exres  ))
   (:output=>output) |> json
 end
 
