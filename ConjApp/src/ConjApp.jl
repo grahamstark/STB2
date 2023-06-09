@@ -96,6 +96,13 @@ function getout( simp::Factors )::Union{Nothing,AllOutput}
 	CACHED_RESULTS[u]
 end
 
+function make_popularity_table( pop :: Number )
+  v1 = format(pop*100, precision=1)
+  s = "<table class='table'><tr><th>Popularity<td class='text-right; text-primary'>$v1</td></tr></table>"
+  return s
+  
+end
+
 function results_to_html_x( 
   results      :: NamedTuple ) :: NamedTuple
   # table expects a tuple
@@ -131,7 +138,7 @@ function results_to_html_x(
       detailed_cost_dataframe( 
           results.summary.income_summary[1],
           results.summary.income_summary[2] )) 
-  popularity_table = "<table><tr><td>POPTABLE GOES HERE</td></tr></table>"
+  popularity_table = make_popularity_table( results.popularity )
   outt = ( 
       phase = "end", 
       popularity = popularity_table,
