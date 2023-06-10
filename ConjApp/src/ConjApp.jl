@@ -71,7 +71,7 @@ const CACHED_RESULTS = Dict{UInt,Any}()
 Save output to the cache
 """
 function cacheout(facs::Factors,allo::NamedTuple)
-	CACHED_RESULTS[riskyhash(facs)] = allo
+  CACHED_RESULTS[riskyhash(facs)] = allo
 end
 
 function make_and_cache_base_results()
@@ -139,6 +139,8 @@ function factorsfromsession()::Factors
   return facs
 end
 
+@enum Responses output_ready has_progress load_params bad_request
+
 """
 TODO
 """
@@ -146,7 +148,7 @@ function doreset()
     sess = GenieSession.session()
     facs = deepcopy( DEFAULT_FACTORS )
     GenieSession.set!( sess, :facs, facs )
-    (:facs=>facs,:output=>DEFAULT_RESULTS ) |> json
+    ( response=load_params, data=>facs ) |> json
 end
 
 """
@@ -155,7 +157,7 @@ end
 function getprogress() 
     sess = GenieSession.session()
     @info "getprogress entered"
-    progress = NO_PROGRESS
+    progress = ( phase="missing", completed = 0, size=0 )
     if( GenieSession.isset( sess, :progress ))
         @info "getprogress: has progress"
         progress = GenieSession.get( sess, :progress )
@@ -163,7 +165,7 @@ function getprogress()
         @info "getprogress: no progress"
         GenieSession.set!( sess, :progress, progress )
     end
-    (:progress=>progress) |> json
+    ( response=has_progress, data=>progress) |> json
 end
 
 """
@@ -177,9 +179,9 @@ function getoutput()
     if haskey(CACHED_RESULTS, u )
       # u = riskyhash( DEFAULT_FACTORS )
       output = CACHED_RESULTS[u]
+      return ( response=output_ready, data=>output) |> json
     end
-    
-    return (:output=>output) |> json
+    return( response=bad_request, data="" ) |> json
 end
 
 
@@ -190,11 +192,11 @@ function dorun( session::Session, facs :: Factors )
   settings = Conjoint.make_default_settings()  
   @info "dorun entered facs are " facs
   obs = Observable( Progress(settings.uuid, "",0,0,0,0))
-  tot = 0
+  completed = 0
   of = on(obs) do p
-  tot += p.step
-  @info "monitor tot=$tot p = $(p)"
-    GenieSession.set!( session, :progress, (progress=p,total=tot))
+    completed += p.step
+    @info "monitor tot=$tot p = $(p)"
+    GenieSession.set!( session, :progress, (phase=p.phase, completed = completed, size=p.total))
   end  
   results = Conjoint.doonerun( facs, obs; settings = settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
@@ -208,6 +210,12 @@ function submit_job(
     u = riskyhash(facs)
     if ! haskey( CACHED_RESULTS, u )    
       put!( IN_QUEUE, FactorAndSession( facs, session ))
+      qp = (phase="queued" ,completed=0, size=0)
+      GenieSession.set!( session, :progress, qp )
+      return ( response=has_progress, :data=>qp ) |> json
+    else
+      GenieSession.set!( session, :progress, (phase="end",completed=0, size=0 ))
+      return ( response=output_ready, :data=>CACHED_RESULTS[u] ) |> json      
     end
 end
 
