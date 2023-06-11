@@ -508,7 +508,7 @@ function updateProgress( data ){
             break;
         case 'end':
             $("#progress-indicator").html( "<div></div>" );
-            /**
+            
             updater.stop();
             $.ajax(
                 { url: "/conjoint/output",
@@ -521,9 +521,8 @@ function updateProgress( data ){
                         console.log( "submitForm; result %o", outp);
                         createMainOutputs( outp.data );
                     }
-                );                
-            **/
-        break;  
+                );            
+            break;  
         case 'na':
             updater.stop();
             break;  
