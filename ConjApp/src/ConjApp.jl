@@ -2,6 +2,7 @@ module ConjApp
 # get around weird bug similar to: https://github.com/GenieFramework/Genie.jl/issues/433
 __precompile__(false)
 using Genie
+using Genie.Requests # rawpayload
 using Conjoint
 using GenieSession 
 using GenieSessionFileSession
