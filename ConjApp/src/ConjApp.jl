@@ -200,8 +200,8 @@ function dorun( session::Session, facs :: Factors )
   cacheout( facs, output )
 end
 
-function submit_job(
-    session :: GenieSession.Session )
+function submit_job()
+    session = GenieSession.session() #  :: GenieSession.Session 
     facs = facsfrompayload( rawpayload() )
     u = riskyhash(facs)
     if ! haskey( CACHED_RESULTS, u )    
