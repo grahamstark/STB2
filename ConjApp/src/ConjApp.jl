@@ -39,8 +39,9 @@ const up = Genie.up
 export up
 export dorun,
   progress,
-  output,
-  reset  
+  getoutput,
+  reset,
+  submit_job
 
 #
 # hack : AllOutput is not actually needed but is included in some shared libs
@@ -110,11 +111,6 @@ const NUM_HANDLERS = 4
 const QSIZE = 32
 
 IN_QUEUE = Channel{FactorAndSession}(QSIZE)
-
-
-function getoutput( facs::Factors )::Union{Nothing,NamedTuple}
-	
-end
 
 function facsfrompayload( payload ) :: Factors
   @show payload
