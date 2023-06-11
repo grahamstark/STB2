@@ -145,7 +145,7 @@ function doreset()
     sess = GenieSession.session()
     facs = deepcopy( DEFAULT_FACTORS )
     GenieSession.set!( sess, :facs, facs )
-    ( response=load_params, data=>facs ) |> json
+    ( response=load_params, data=facs ) |> json
 end
 
 """
@@ -162,7 +162,7 @@ function getprogress()
         @info "getprogress: no progress"
         GenieSession.set!( sess, :progress, progress )
     end
-    ( response=has_progress, data=>progress) |> json
+    ( response=has_progress, data=progress) |> json
 end
 
 """
@@ -176,7 +176,7 @@ function getoutput()
     if haskey(CACHED_RESULTS, u )
       # u = riskyhash( DEFAULT_FACTORS )
       output = CACHED_RESULTS[u]
-      return ( response=output_ready, data=>output) |> json
+      return ( response=output_ready, data=output) |> json
     end
     return( response=bad_request, data="" ) |> json
 end
@@ -209,10 +209,10 @@ function submit_job()
       put!( IN_QUEUE, FactorAndSession( facs, session ))
       qp = (phase="queued" ,completed=0, size=0)
       GenieSession.set!( session, :progress, qp )
-      return ( response=has_progress, :data=>qp ) |> json
+      return ( response=has_progress, data=qp ) |> json
     else
       GenieSession.set!( session, :progress, (phase="end",completed=0, size=0 ))
-      return ( response=output_ready, :data=>CACHED_RESULTS[u] ) |> json      
+      return ( response=output_ready, data=CACHED_RESULTS[u] ) |> json      
     end
 end
 
