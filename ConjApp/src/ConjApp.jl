@@ -193,7 +193,7 @@ function dorun( session::Session, facs :: Factors )
   of = on(obs) do p
     completed += p.step
     @info "monitor tot=$tot p = $(p)"
-    GenieSession.set!( session, :progress, (phase=p.phase, completed = completed, size=p.total))
+    GenieSession.set!( session, :progress, (phase=p.phase, completed = completed, size=p.size))
   end  
   results = Conjoint.doonerun( facs, obs; settings = settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
