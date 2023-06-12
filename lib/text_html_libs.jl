@@ -143,9 +143,9 @@ function format_diff( v1 :: Number, v2 :: Number; up_is_good = 0, prec=2,commas=
     colour = ""
     if (up_is_good !== 0) && (! (change ≈ 0))
         if change > 0
-            colour = up_is_good[i] == 1 ? "text-success" : "text-danger"
+            colour = up_is_good == 1 ? "text-success" : "text-danger"
         else
-            colour = up_is_good[i] == 1 ? "text-danger" : "text-success"
+            colour = up_is_good == 1 ? "text-danger" : "text-success"
         end # neg diff   
     end # non zero diff
     ds = change ≈ 0 ? "-" : format(change, commas=true, precision=prec )
