@@ -407,7 +407,9 @@ components = (; lev, tx, fun, lxp, mh, elig, mt, cit, pov, ineq )
 return (; avg, components )
 """
 function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) :: String
-  v1 = format(pop*100, precision=1)
+  v = format(pop.avg*100, precision=1)
+  d = format(defaultPop.avg*100,precision=1)
+  
   s = """
     <table class='table table-sm'>
         <tr class="text-primary text-bg">
@@ -416,13 +418,15 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
             <th>Default</td>
         </tr>
         <tr class="text-primary text-bg"><th>Overall Popularity</th>
-            <td class='text-right;'>$(pop.avg)</td>
-            <td class='text-right;'>$(defaultPop.avg)</td>
+            <td class='text-right;'>$v</td>
+            <td class='text-right;'>$d</td>
         </tr>
 """
      for k in keys(pop.components)
         v = pop.components[k]
         d = defaultPop.components[k]
+        v = format(pop.components[k]*100, precision=1)
+        d = format(defaultPop.components[k]*100,precision=1)
         s *= "<tr><th>$k</th><td>$v</td><td>$d</td></tr>"
      end
 
