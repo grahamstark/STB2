@@ -246,7 +246,7 @@ function submit_job()
       return ( response=has_progress, data=qp ) |> json
     else
       GenieSession.set!( session, :progress, (phase="end",completed=0, size=0 ))
-      return ( response=output_ready, data=get_output_from_cache()) |> json      
+      # return ( response=output_ready, data=get_output_from_cache()) |> json      
     end
 end
 
