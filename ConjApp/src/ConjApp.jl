@@ -206,6 +206,7 @@ end
 function submit_job()
     session = GenieSession.session() #  :: GenieSession.Session 
     facs = facsfrompayload( rawpayload() )
+    GenieSession.set!( session, :facs, facs )
     u = riskyhash(facs)
     @info "submit_job facs=" facs
     if ! haskey( CACHED_RESULTS, u )    
