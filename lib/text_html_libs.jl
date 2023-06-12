@@ -449,16 +449,16 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
   
   s = """
     <table class='table table-sm'>
-        <tr class="text-primary text-bold table-info"> 
+        <tr class='text-primary text-bold table-info'> 
             <th></th>
             <th>Before</td>
             <th>After</td>
             <th>Change</td>
         </tr>
-        <tr class="text-primary text-bg"><th>Overall Popularity</th>
+        <tr class='text-primary text-bg'><th>Overall Popularity</th>
             <td class='text-right'>$(fmtd.v1s)</td>
-            <td class='text-right '>$(fmtd.v2s)</td>
-            <td class='text-right  $(fmtd.colour)'>$(fmtd.ds)</td>            
+            <td class='text-right'>$(fmtd.v2s)</td>
+            <td class='text-right $(fmtd.colour)'>$(fmtd.ds)</td>            
         </tr>
         <tr><th colspan='4'>Components:</th></tr>
     """
