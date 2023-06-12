@@ -524,8 +524,8 @@ function updateProgress( data ){
             break;
         case 'end':
             $("#progress-indicator").html( "<div></div>" );
+            updater.stop();            
             loadOutput();
-            updater.stop();
             break;  
         case 'na':
             updater.stop();

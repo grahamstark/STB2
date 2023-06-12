@@ -111,6 +111,7 @@ function get_output_from_cache() # removed bacause json doesn't like ::Union{Nam
       output = CACHED_RESULTS[nvc]
       return ( response=output_ready, data=output)
     end
+    @info "responding with bad_request" 
     return( response=bad_request, data="" )  
 end 
 
