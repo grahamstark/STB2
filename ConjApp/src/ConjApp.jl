@@ -102,7 +102,7 @@ end
 """
 
 """
-function get_output_from_cache() :: NamedTuple
+function get_output_from_cache()
     facs = factorsfromsession()
     @info "getoutput facs=" facs
     nvc = NonVariableFacts( facs )
