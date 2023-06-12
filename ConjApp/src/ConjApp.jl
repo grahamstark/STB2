@@ -198,6 +198,8 @@ function dorun( session::Session, facs :: Factors )
   results = Conjoint.doonerun( facs, obs; settings = settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
   output = results_to_html_conjoint( ( results..., examples=exres  ))  
+  u = riskyhash(facs)
+  CACHED_RESULTS[u] = output
   cacheout( facs, output )
 end
 
@@ -208,7 +210,7 @@ function submit_job()
     @info "submit_job facs=" facs
     if ! haskey( CACHED_RESULTS, u )    
       put!( IN_QUEUE, FactorAndSession( facs, session ))
-      qp = (phase="queued" ,completed=0, size=0)
+      qp = ( phase="queued" ,completed=0, size=0 )
       GenieSession.set!( session, :progress, qp )
       return ( response=has_progress, data=qp ) |> json
     else
