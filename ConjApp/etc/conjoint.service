@@ -1,5 +1,5 @@
 [Unit]
-Description=Genie server for Scotbudg
+Description=Genie server for Northumbria Conjoint modelling demo
 After=network.target remote-fs.target nss-lookup.target
 
 [Service]
@@ -9,9 +9,9 @@ User=graham_s
 EnvironmentFile=/etc/systemd/user/gks_environment
 # The PID file is optional, but recommended in the manpage
 # "so that systemd can identify the main process of the daemon"
-PIDFile=/run/conjoint.pid
-WorkingDirectory=/home/graham_s/julia/vw/STB2/Conjoint
-ExecStart=/home/graham_s/julia/vw/STB2/Conjoint/bin/server
+PIDFile=/run/ConjApp.pid
+WorkingDirectory=/home/graham_s/julia/vw/STB2/ConjApp/
+ExecStart=/home/graham_s/julia/vw/STB2/ConjApp/bin/server
 ExecStop=/bin/kill -WINCH ${MAINPID}
 KillSignal=SIGKILL
 PrivateTmp=true
