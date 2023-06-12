@@ -149,7 +149,7 @@ function format_diff( v1 :: Number, v2 :: Number; up_is_good = 0, prec=2,commas=
         end # neg diff   
     end # non zero diff
     ds = change ≈ 0 ? "-" : format(change, commas=true, precision=prec )
-    if ds != "-" && r.Change > 0
+    if ds != "-" && change > 0
         ds = "+$(ds)"
     end 
     v1s = format(v1, commas=commas, precision=prec)
