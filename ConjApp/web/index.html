@@ -618,7 +618,8 @@ function submitForm( action, target ){
                             }
                         });
                     } else {
-                        createMainOutputs( initialResult.data );
+                        loadOutput();
+                        # createMainOutputs( initialResult.data );
                     }
                     break;
                 case 'reset':
