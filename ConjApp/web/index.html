@@ -486,25 +486,22 @@ function createMainOutputs( result ){
 
 function loadOutput(){
     // FIXME use asnc or something
-    for( var i = 0; i < 3; i++ ){
-        $.ajax(
-            { url: "/conjoint/output",
-            method: 'post',
-            dataType: 'json',
-            contentType: "application/json",
-            data:""
-            }).done(
-                function( outp ){
-                    if( outp.response == 'output_ready' ){
-                        console.log( "submitForm; result %o", outp);
-                        createMainOutputs( outp.data );
-                        break;
-                    } else {
-                        ;
-                    }
+    $.ajax(
+        { url: "/conjoint/output",
+        method: 'post',
+        dataType: 'json',
+        contentType: "application/json",
+        data:""
+        }).done(
+            function( outp ){
+                if( outp.response == 'output_ready' ){
+                    console.log( "submitForm; result %o", outp);
+                    createMainOutputs( outp.data );
+                } else {
+                    return "";
                 }
-            );
-    } // loop 3
+            }
+        );
 }
 
 function updateProgress( data ){
