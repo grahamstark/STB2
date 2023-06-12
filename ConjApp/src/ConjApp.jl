@@ -201,7 +201,7 @@ function dorun( session::Session, facs :: Factors )
   results = Conjoint.doonerun!( facs, obs; settings = settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
   output = results_to_html_conjoint( ( results..., examples=exres  ))  
-  GenieSession.set!( :facs, facs ) # save again sin
+  GenieSession.set!( :facs, facs ) # save again since poverty, etc. is overwritten in doonerun!
   cacheout( facs, output )
 end
 
