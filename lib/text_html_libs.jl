@@ -141,7 +141,7 @@ end
 function format_diff( v1 :: Number, v2 :: Number; up_is_good = 0, prec=2,commas=true ) :: NamedTuple
     change = v2 - v1
     colour = ""
-    if (up_is_good !== 0) && (! (r.Change ≈ 0))
+    if (up_is_good !== 0) && (! (change ≈ 0))
         if change > 0
             colour = up_is_good[i] == 1 ? "text-success" : "text-danger"
         else
