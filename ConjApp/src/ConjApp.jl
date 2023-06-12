@@ -107,9 +107,9 @@ function get_output_from_cache() # removed bacause json doesn't like ::Union{Nam
     @info "getoutput keys are " keys(CACHED_RESULTS)
     if haskey(CACHED_RESULTS, nvc )
       # u = riskyhash( DEFAULT_FACTORS )
-      @info "got results from CACHED_RESULTS "
+      @info "got results from CACHED_RESULTS " 
       output = CACHED_RESULTS[nvc]
-      return ( response=output_ready, data=output) |> json
+      return ( response=output_ready, data=output)
     end
     return( response=bad_request, data="" )  
 end 
