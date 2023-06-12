@@ -99,7 +99,7 @@ end
 """
 
 """
-function get_output_from_cache()::NamedTuple
+function get_output_from_cache()::Union{NamedTuple,String}
     facs = factorsfromsession()
     @info "getoutput facs=" facs
     nvc = NonVariableFacts( facs )
