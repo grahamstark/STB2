@@ -462,6 +462,10 @@ function createDecileBarChart( targetId, result, thumbnail ){
 }
 
 function createMainOutputs( result ){
+    if (typeof result.gain_lose == 'undefined') {
+        // the variable is defined
+        loadOutput();
+    }
     console.log( result.inequality );
     console.log( result.examples );
     console.log( result.overall_costs )
