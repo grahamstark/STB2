@@ -89,9 +89,6 @@ end
 
 const CACHED_RESULTS = Dict{NonVariableFacts,Any}()
 
-
-
-
 """
 Save output to the cache
 """
@@ -108,7 +105,6 @@ function get_output_from_cache()
     nvc = NonVariableFacts( facs )
     @info "getoutput; nvc = " nvc 
     @info "getoutput keys are " keys(CACHED_RESULTS)
-    output = ""
     if haskey(CACHED_RESULTS, nvc )
       # u = riskyhash( DEFAULT_FACTORS )
       @info "got results from CACHED_RESULTS "
@@ -241,16 +237,16 @@ function submit_job()
     session = GenieSession.session() #  :: GenieSession.Session 
     facs = facsfrompayload( rawpayload() )
     GenieSession.set!( session, :facs, facs )
-    u = riskyhash(facs)
+    
     @info "submit_job facs=" facs
-    if ! haskey( CACHED_RESULTS, u )    
+    if ! haskey( CACHED_RESULTS, NonVariableFacts(facs))    
       put!( IN_QUEUE, FactorAndSession( facs, session ))
       qp = ( phase="queued" ,completed=0, size=0 )
       GenieSession.set!( session, :progress, qp )
       return ( response=has_progress, data=qp ) |> json
     else
       GenieSession.set!( session, :progress, (phase="end",completed=0, size=0 ))
-      return ( response=output_ready, data=CACHED_RESULTS[u] ) |> json      
+      return ( response=output_ready, get_output_from_cache()) |> json      
     end
 end
 
