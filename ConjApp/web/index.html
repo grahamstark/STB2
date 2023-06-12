@@ -523,6 +523,7 @@ function updateProgress( data ){
             $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Calculations complete; now generating output.</div>");
             break;
         case 'end':
+            console.log( "updateProgress; end encountered loading " ); 
             $("#progress-indicator").html( "<div></div>" );
             updater.stop();            
             loadOutput();
@@ -603,8 +604,9 @@ function submitForm( action, target ){
                             switch( responseFromUpdater.response ){
                                 case 'output_ready':
                                     updater.stop();
-                                    console.log( "updater stopped" );
-                                    createMainOutputs( responseFromUpdater.data );
+                                    console.log( "updater stopped; main; loading output" );
+                                    loadOutput();
+                                    // createMainOutputs( responseFromUpdater.data );
                                 break;
                                 case 'has_progress':
                                     updateProgress( responseFromUpdater.data );
