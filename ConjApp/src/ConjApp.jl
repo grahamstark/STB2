@@ -198,9 +198,10 @@ function dorun( session::Session, facs :: Factors )
     @info "monitor completed=$completed p = $(p)"
     GenieSession.set!( session, :progress, (phase=p.phase, completed = completed, size=p.size))
   end  
-  results = Conjoint.doonerun( facs, obs; settings = settings )  
+  results = Conjoint.doonerun!( facs, obs; settings = settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
   output = results_to_html_conjoint( ( results..., examples=exres  ))  
+  GenieSession.set!( :facs, facs ) # save again sin
   cacheout( facs, output )
 end
 
