@@ -99,7 +99,10 @@ function save_output_to_cache(facs::Factors,allo::NamedTuple)
   CACHED_RESULTS[NonVariableFacts(facs)] = allo
 end
 
-function get_output_from_cache( facs :: Factors ) :: NamedTuple
+"""
+
+"""
+function get_output_from_cache() :: NamedTuple
     facs = factorsfromsession()
     @info "getoutput facs=" facs
     nvc = NonVariableFacts( facs )
