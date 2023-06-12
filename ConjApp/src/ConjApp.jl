@@ -175,6 +175,7 @@ function getoutput()
     output = ""
     if haskey(CACHED_RESULTS, u )
       # u = riskyhash( DEFAULT_FACTORS )
+      @info "got results from CACHED_RESULTS "
       output = CACHED_RESULTS[u]
       return ( response=output_ready, data=output) |> json
     end
@@ -198,8 +199,6 @@ function dorun( session::Session, facs :: Factors )
   results = Conjoint.doonerun( facs, obs; settings = settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
   output = results_to_html_conjoint( ( results..., examples=exres  ))  
-  u = riskyhash(facs)
-  CACHED_RESULTS[u] = output
   cacheout( facs, output )
 end
 
