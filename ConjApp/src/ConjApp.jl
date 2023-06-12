@@ -172,6 +172,8 @@ function getoutput()
     facs = factorsfromsession()
     @info "getoutput facs=" facs
     u = riskyhash(facs)
+    @info "getoutput; u = " u 
+    @info "getoutput keys are " keys(CACHED_RESULTS)
     output = ""
     if haskey(CACHED_RESULTS, u )
       # u = riskyhash( DEFAULT_FACTORS )
