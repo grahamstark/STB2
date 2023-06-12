@@ -462,6 +462,7 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
         </tr>
         <tr><th colspan='4'>Components:</th></tr>
     """
+    
      for k in keys(pop.components)
         lab = POP_LABELS[k]
         v = pop.components[k]*100
