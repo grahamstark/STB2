@@ -139,7 +139,7 @@ function costs_frame_to_table(
 end
 
 function format_diff( v1 :: Number, v2 :: Number; up_is_good = 0, prec=2,commas=true ) :: NamedTuple
-    change = v2 - v1
+    change = round(v1 - v2, , digits=6)
     colour = ""
     if (up_is_good !== 0) && (! (change ≈ 0))
         if change > 0
