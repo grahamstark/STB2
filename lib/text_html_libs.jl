@@ -439,7 +439,7 @@ const POP_LABELS = Dict([
     :mt => "Means Testing", 
     :cit=>"Citizenship", 
     :pov=>"Poverty", 
-    :ineq=>"Inequality    
+    :ineq=>"Inequality"    
 ])
 
 function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) :: String
@@ -463,7 +463,7 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
         <tr><th colspan='4'>Components:</th></tr>
     """
     
-     for k in keys(pop.components)
+    for k in keys(pop.components)
         lab = POP_LABELS[k]
         v = pop.components[k]*100
         d = defaultPop.components[k]*100
@@ -475,7 +475,7 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
                 <td class='text-right $(fmtd.colour)' >$(fmtd.ds)</td>
             </tr>
             """
-     end
+    end
     s *= """
     </table>
   """
