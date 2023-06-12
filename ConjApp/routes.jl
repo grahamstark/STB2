@@ -6,7 +6,7 @@ route("/") do
 end
 
 route( "/run", ConjApp.submit_job, method = POST )
-route( "/reset", doreset, method = POST )
+route( "/reset", ConjApp.doreset, method = POST )
 route( "/progress", ConjApp.getprogress, method = POST )
 route( "/output", ConjApp.getoutput, method = POST )
 
