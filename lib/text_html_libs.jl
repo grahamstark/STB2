@@ -456,8 +456,8 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
             <th>Change</td>
         </tr>
         <tr class='text-primary text-bg'><th>Overall Popularity</th>
-            <td class='text-right'>$(fmtd.v1s)</td>
             <td class='text-right'>$(fmtd.v2s)</td>
+            <td class='text-right'>$(fmtd.v1s)</td>
             <td class='text-right $(fmtd.colour)'>$(fmtd.ds)</td>            
         </tr>
         <tr><th colspan='4'>Components:</th></tr>
@@ -470,8 +470,8 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
         fmtd = format_diff( v, d; up_is_good = true, prec=1,commas=false )
         s *= """
             <tr><th>$lab</th>
-                <td class='text-right'>$(fmtd.v1s)</td>
                 <td class='text-right'>$(fmtd.v2s)</td>
+                <td class='text-right'>$(fmtd.v1s)</td>
                 <td class='text-right $(fmtd.colour)' >$(fmtd.ds)</td>
             </tr>
             """
