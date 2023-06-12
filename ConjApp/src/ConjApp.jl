@@ -66,15 +66,56 @@ include( "../../lib/examples.jl")
 include( "../../lib/text_html_libs.jl")
 
 const DEFAULT_FACTORS = Factors{Float64}()
-const CACHED_RESULTS = Dict{UInt,Any}()
+
+
+struct NonVariableFacts 
+    level :: String 
+    tax  :: String 
+    funding :: String 
+    eligibility :: String 
+    means_testing :: String 
+    citizenship :: String 
+    
+    NonVariableFacts(facs::Factor) = new(
+      facs.level,
+      facs.tax,
+      facs.funding,
+      facs.eligibility,
+      facs.means_testing,
+      facs.citizenship
+    )
+    
+end
+
+const CACHED_RESULTS = Dict{NonVariableFacts,Any}()
+
+
 
 
 """
 Save output to the cache
 """
-function cacheout(facs::Factors,allo::NamedTuple)
-  CACHED_RESULTS[riskyhash(facs)] = allo
+function save_output_to_cache(facs::Factors,allo::NamedTuple)
+  CACHED_RESULTS[NonVariableFacts(facs)] = allo
 end
+
+function get_output_from_cache( facs :: Factors ) :: NamedTuple
+    facs = factorsfromsession()
+    @info "getoutput facs=" facs
+    nvc = NonVariableFacts( facs )
+    @info "getoutput; nvc = " nvc 
+    @info "getoutput keys are " keys(CACHED_RESULTS)
+    output = ""
+    if haskey(CACHED_RESULTS, nvc )
+      # u = riskyhash( DEFAULT_FACTORS )
+      @info "got results from CACHED_RESULTS "
+      output = CACHED_RESULTS[nvc]
+      return ( response=output_ready, data=output) |> json
+    end
+    return( response=bad_request, data="" ) |> json  
+end 
+
+
 
 function make_and_cache_base_results()
   settings = Conjoint.make_default_settings()
@@ -86,7 +127,7 @@ function make_and_cache_base_results()
   results = Conjoint.doonerun!( DEFAULT_FACTORS, obs; settings=settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
   output = results_to_html_conjoint( ( results..., examples=exres  ))  
-  cacheout( DEFAULT_FACTORS, output )
+  save_output_to_cache( DEFAULT_FACTORS, output )
 end 
 
 const DEFAULT_RESULTS = make_and_cache_base_results()
@@ -169,19 +210,7 @@ end
 return output for the 
 """
 function getoutput() 
-    facs = factorsfromsession()
-    @info "getoutput facs=" facs
-    u = riskyhash(facs)
-    @info "getoutput; u = " u 
-    @info "getoutput keys are " keys(CACHED_RESULTS)
-    output = ""
-    if haskey(CACHED_RESULTS, u )
-      # u = riskyhash( DEFAULT_FACTORS )
-      @info "got results from CACHED_RESULTS "
-      output = CACHED_RESULTS[u]
-      return ( response=output_ready, data=output) |> json
-    end
-    return( response=bad_request, data="" ) |> json
+    return get_output_from_cache()
 end
 
 
@@ -202,7 +231,7 @@ function dorun( session::Session, facs :: Factors )
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
   output = results_to_html_conjoint( ( results..., examples=exres  ))  
   GenieSession.set!( :facs, facs ) # save again since poverty, etc. is overwritten in doonerun!
-  cacheout( facs, output )
+  save_output_to_cache( facs, output )
 end
 
 function submit_job()
