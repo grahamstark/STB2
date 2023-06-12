@@ -83,7 +83,7 @@ function make_and_cache_base_results()
   of = on(obs) do p
     tot += p.step
   end
-  results = Conjoint.doonerun( DEFAULT_FACTORS, obs; settings=settings )  
+  results = Conjoint.doonerun!( DEFAULT_FACTORS, obs; settings=settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
   output = results_to_html_conjoint( ( results..., examples=exres  ))  
   cacheout( DEFAULT_FACTORS, output )
