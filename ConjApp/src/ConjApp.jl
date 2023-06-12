@@ -192,7 +192,7 @@ function dorun( session::Session, facs :: Factors )
   completed = 0
   of = on(obs) do p
     completed += p.step
-    @info "monitor tot=$tot p = $(p)"
+    @info "monitor completed=$completed p = $(p)"
     GenieSession.set!( session, :progress, (phase=p.phase, completed = completed, size=p.size))
   end  
   results = Conjoint.doonerun( facs, obs; settings = settings )  
@@ -205,6 +205,7 @@ function submit_job()
     session = GenieSession.session() #  :: GenieSession.Session 
     facs = facsfrompayload( rawpayload() )
     u = riskyhash(facs)
+    @info "submit_job facs=" facs
     if ! haskey( CACHED_RESULTS, u )    
       put!( IN_QUEUE, FactorAndSession( facs, session ))
       qp = (phase="queued" ,completed=0, size=0)
