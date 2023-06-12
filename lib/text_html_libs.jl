@@ -402,10 +402,33 @@ function make_examples( example_results :: Vector )
     return cards;
 end
 
-
-function make_popularity_table( pop :: Number )
+"""
+components = (; lev, tx, fun, lxp, mh, elig, mt, cit, pov, ineq )
+return (; avg, components )
+"""
+function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) :: String
   v1 = format(pop*100, precision=1)
-  s = "<table class='table'><tr><th>Popularity<td class='text-right; text-primary'>$v1</td></tr></table>"
+  s = """
+    <table class='table table-sm'>
+        <tr class="text-primary text-bg">
+            <th></th>
+            <th>Now</td>
+            <th>Default</td>
+        </tr>
+        <tr class="text-primary text-bg"><th>Overall Popularity</th>
+            <td class='text-right;'>$(pop.avg)</td>
+            <td class='text-right;'>$(defaultPop.avg)</td>
+        </tr>
+"""
+     for k in keys(pop.components)
+        v = pop.components[k]
+        d = defaultPop.components[k]
+        s *= "<tr><th>$k</th><td>$v</td><td>$d</td></tr>"
+     end
+
+    s *= """
+    </table>
+  """
   return s
 end
 
@@ -501,7 +524,7 @@ function results_to_html_conjoint(
       detailed_cost_dataframe( 
           results.summary.income_summary[1],
           results.summary.income_summary[2] )) 
-  popularity_table = make_popularity_table( results.popularity )
+  popularity_table = make_popularity_table( results.popularity, results.default_popularity )
   outt = ( 
       phase = "end", 
       popularity = popularity_table,
