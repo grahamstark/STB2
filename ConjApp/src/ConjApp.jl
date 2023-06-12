@@ -67,6 +67,7 @@ include( "../../lib/text_html_libs.jl")
 
 const DEFAULT_FACTORS = Factors{Float64}()
 
+@enum Responses output_ready has_progress load_params bad_request
 
 struct NonVariableFacts 
     level :: String 
@@ -176,8 +177,6 @@ function factorsfromsession()::Factors
   end
   return facs
 end
-
-@enum Responses output_ready has_progress load_params bad_request
 
 """
 TODO
