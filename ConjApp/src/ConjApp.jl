@@ -99,7 +99,7 @@ end
 """
 
 """
-function get_output_from_cache()
+function get_output_from_cache()::NamedTuple
     facs = factorsfromsession()
     @info "getoutput facs=" facs
     nvc = NonVariableFacts( facs )
@@ -111,7 +111,7 @@ function get_output_from_cache()
       output = CACHED_RESULTS[nvc]
       return ( response=output_ready, data=output) |> json
     end
-    return( response=bad_request, data="" ) |> json  
+    return( response=bad_request, data="" )  
 end 
 
 
@@ -209,7 +209,7 @@ end
 return output for the 
 """
 function getoutput() 
-    return get_output_from_cache()
+    return get_output_from_cache()|> json 
 end
 
 
