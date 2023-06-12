@@ -465,6 +465,7 @@ function createMainOutputs( result ){
     console.log( result.overall_costs )
     $("#examples").html( result.examples );
     $("#gain-lose-table").html( result.gain_lose );
+    $( '#conjoint-table' ).html( result.popularity );
     createDecileBarChart( 
         "#deciles-graph", 
         result, 
