@@ -138,6 +138,24 @@ function costs_frame_to_table(
     return table
 end
 
+function format_diff( v1 :: Number, v2 :: Number; up_is_good = 0 prec=2,commas=true ) :: NamedTuple
+    change = v2 - v1
+    colour = ""
+    if (up_is_good !== 0) && (! (r.Change ≈ 0))
+        if change > 0
+            colour = up_is_good[i] == 1 ? "text-success" : "text-danger"
+        else
+            colour = up_is_good[i] == 1 ? "text-danger" : "text-success"
+        end # neg diff   
+    end # non zero diff
+    ds = change ≈ 0 ? "-" : format(change, commas=true, precision=prec )
+    if ds != "-" && r.Change > 0
+        ds = "+$(ds)"
+    end 
+    v1s = format(v1, commas=commas, precision=prec)
+    v2s = format(v2, commas=commas, precision=prec)    
+    (; colour, ds, v1s, v2s )
+end
 
 function frame_to_table(
     df :: DataFrame;
@@ -155,6 +173,8 @@ function frame_to_table(
     i = 0
     for r in eachrow( df )
         i += 1
+        fmtd = format_diff( r.Before, r.After, up_is_good=up_is_good[i] )
+        #=
         colour = ""
         if (up_is_good[i] !== 0) && (! (r.Change ≈ 0))
             if r.Change > 0
@@ -167,13 +187,15 @@ function frame_to_table(
         if ds != "-" && r.Change > 0
             ds = "+$(ds)"
         end 
-        row_style = i == totals_col ? "class='text-bold table-info' " : ""
         b = format(r.Before, commas=true, precision=prec)
         a = format(r.After, commas=true, precision=prec)
+        =#
+        
+        row_style = i == totals_col ? "class='text-bold table-info' " : ""
         row = "<tr $row_style><th class='text-left'>$(r.Item)</th>
-                  <td style='text-align:right'>$b</td>
-                  <td style='text-align:right'>$a</td>
-                  <td style='text-align:right' class='$colour'>$ds</td>
+                  <td style='text-align:right'>$(fmtd.v1s)</td>
+                  <td style='text-align:right'>$(fmtd.v2s)</td>
+                  <td style='text-align:right' class='$(fmtd.colour)'>$(fmtd.ds)</td>
                 </tr>"
         table *= row
     end
@@ -406,30 +428,53 @@ end
 components = (; lev, tx, fun, lxp, mh, elig, mt, cit, pov, ineq )
 return (; avg, components )
 """
+
+const POP_LABELS = Dict([
+    :lev=>"Benefit Level",
+    :tx =>"Taxation",
+    :fun => "Funding",
+    :lxp => "Life Expectancy", 
+    :mh => "Mental Health", 
+    :elig => "Eligibility", 
+    :mt => "Means Testing", 
+    :cit=>"Citizenship", 
+    :pov=>"Poverty", 
+    :ineq=>"Inequality    
+])
+
 function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) :: String
-  v = format(pop.avg*100, precision=1)
-  d = format(defaultPop.avg*100,precision=1)
+  v = pop.avg*100
+  d = defaultPop.avg*100
+  fmtd = format_diff( v, d; up_is_good = true, prec=1,commas=false )
   
   s = """
     <table class='table table-sm'>
-        <tr class="text-primary text-bg">
+        <tr class="text-primary text-bold table-info"> 
             <th></th>
-            <th>Now</td>
-            <th>Default</td>
+            <th>Before</td>
+            <th>After</td>
+            <th>Change</td>
         </tr>
         <tr class="text-primary text-bg"><th>Overall Popularity</th>
-            <td class='text-right;'>$v</td>
-            <td class='text-right;'>$d</td>
+            <td class='text-right'>$(fmtd.v1s)</td>
+            <td class='text-right '>$(fmtd.v2s)</td>
+            <td class='text-right  $(fmtd.colour)'>$(fmtd.ds)</td>            
         </tr>
-"""
+        <tr><th colspan='4'>Components:</th></tr>
+    """
      for k in keys(pop.components)
-        v = pop.components[k]
-        d = defaultPop.components[k]
-        v = format(pop.components[k]*100, precision=1)
-        d = format(defaultPop.components[k]*100,precision=1)
-        s *= "<tr><th>$k</th><td>$v</td><td>$d</td></tr>"
+        lab = POP_LABELS[k]
+        v = pop.components[k]*100
+        d = defaultPop.components[k]*100
+        fmtd = format_diff( v, d; up_is_good = true, prec=1,commas=false )
+        s *= """
+            <tr><th>$lab</th>
+                <td class='text-right'>$(fmtd.v1s)</td>
+                <td class='text-right'>$(fmtd.v1s)</td>
+                <td class='text-right $(fmtd.colour)' >$(fmtd.ds)</td>
+            </tr>
+            """
      end
-
     s *= """
     </table>
   """
