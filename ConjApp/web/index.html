@@ -549,12 +549,12 @@ function loadFromForm(){
 }
 
 function loadParams( data ){
-    $("input:radio[name='Level'][value="+data.level+"]" ).prop('checked', true);
-    $("input:radio[name='Tax'][value="+data.tax+"]" ).prop('checked', true);
-    $("input:radio[name='Funding'][value="+data.funding+"]" ).prop('checked', true);
-    $("input:radio[name='Eligibility'][value="+data.eligibility+"]" ).prop('checked', true);
-    $("input:radio[name='Means.Testing'][value="+data.means_testing+"]" ).prop('checked', true);
-    $("input:radio[name='Citizenship'][value="+data.citizenship+"]" ).prop('checked', true);
+    $("input:radio[name='Level'][value='"+data.level+"']" ).prop('checked', true);
+    $("input:radio[name='Tax'][value='"+data.tax+"']" ).prop('checked', true);
+    $("input:radio[name='Funding'][value='"+data.funding+"']" ).prop('checked', true);
+    $("input:radio[name='Eligibility'][value='"+data.eligibility+"']" ).prop('checked', true);
+    $("input:radio[name='Means.Testing'][value='"+data.means_testing+"']" ).prop('checked', true);
+    $("input:radio[name='Citizenship'][value='"+data.citizenship+"']" ).prop('checked', true);
 }
 
 function submitForm( action, target ){
