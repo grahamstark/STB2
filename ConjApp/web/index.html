@@ -479,6 +479,20 @@ function createMainOutputs( result ){
         false );
 }
 
+function loadOutput(){
+    $.ajax(
+        { url: "/conjoint/output",
+        method: 'post',
+        dataType: 'json',
+        contentType: "application/json",
+        data:""
+        }).done(
+            function( outp ){
+                console.log( "submitForm; result %o", outp);
+                createMainOutputs( outp.data );
+            }
+        );            
+}
 
 function updateProgress( data ){
     console.log( "updateSTB  result.phase = " + data.phase );
@@ -508,20 +522,8 @@ function updateProgress( data ){
             break;
         case 'end':
             $("#progress-indicator").html( "<div></div>" );
-            
+            loadOutput();
             updater.stop();
-            $.ajax(
-                { url: "/conjoint/output",
-                method: 'post',
-                dataType: 'json',
-                contentType: "application/json",
-                data:""
-                }).done(
-                    function( outp ){
-                        console.log( "submitForm; result %o", outp);
-                        createMainOutputs( outp.data );
-                    }
-                );            
             break;  
         case 'na':
             updater.stop();
@@ -542,6 +544,15 @@ function loadFromForm(){
         citizenship: $( "input:radio[name='Citizenship']:checked" ).val()
     }
     return data;
+}
+
+function loadParams( data ){
+    $("input:radio[name='Level'][value="+data.level+"]" ).prop('checked', true);
+    $("input:radio[name='Tax'][value="+data.tax+"]" ).prop('checked', true);
+    $("input:radio[name='Funding'][value="+data.funding+"]" ).prop('checked', true);
+    $("input:radio[name='Eligibility'][value="+data.eligibility+"]" ).prop('checked', true);
+    $("input:radio[name='Means.Testing'][value="+data.means_testing+"]" ).prop('checked', true);
+    $("input:radio[name='Citizenship'][value="+data.citizenship+"]" ).prop('checked', true);
 }
 
 function submitForm( action, target ){
@@ -611,6 +622,8 @@ function submitForm( action, target ){
                 case 'reset':
                     // FIXME something to reset parameters
                     // createMainOutputs( result.data );
+                    loadParams( initialResult );
+                    loadOutput();
                     break;
                 }
             }
@@ -627,9 +640,8 @@ $(document).ready(function(){
                 alert('submit intercepted');
                 e.preventDefault(e);
         });
-        // submitForm("params");
+        submitForm("reset"); // FIXME make this params?
         
-        submitForm("reset");
     });
 
 </script>
