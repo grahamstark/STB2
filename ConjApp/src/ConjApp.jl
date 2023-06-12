@@ -76,7 +76,7 @@ struct NonVariableFacts
     means_testing :: String 
     citizenship :: String 
     
-    NonVariableFacts(facs::Factor) = new(
+    NonVariableFacts(facs::Factors) = new(
       facs.level,
       facs.tax,
       facs.funding,
