@@ -101,16 +101,6 @@ function costs_frame_to_table(
     i = 0
     for r in eachrow( df )
         i += 1
-        #=
-        colour = ""
-        if (up_is_good[i] !== 0) && (! (r.Change ≈ 0))
-            if r.Change > 0
-                colour = up_is_good[i] == 1 ? "text-success" : "text-danger"
-             else
-                colour = up_is_good[i] == 1 ? "text-danger" : "text-success"
-            end # neg diff   
-        end # non zero diff
-        =#
         # fixme to a function
         dv = r.dval ≈ 0 ? "-" : format(r.dval, commas=true, precision=1 )
         if dv != "-" && r.dval > 0
@@ -138,8 +128,8 @@ function costs_frame_to_table(
     return table
 end
 
-function format_diff( v1 :: Number, v2 :: Number; up_is_good = 0, prec=2,commas=true ) :: NamedTuple
-    change = round(v1 - v2, digits=6)
+function format_diff(; before :: Number, after :: Number, up_is_good = 0, prec=2,commas=true ) :: NamedTuple
+    change = round(after - before, digits=6)
     colour = ""
     if (up_is_good !== 0) && (! (change ≈ 0))
         if change > 0
@@ -152,9 +142,9 @@ function format_diff( v1 :: Number, v2 :: Number; up_is_good = 0, prec=2,commas=
     if ds != "-" && change > 0
         ds = "+$(ds)"
     end 
-    v1s = format(v1, commas=commas, precision=prec)
-    v2s = format(v2, commas=commas, precision=prec)    
-    (; colour, ds, v1s, v2s )
+    before_s = format(before, commas=commas, precision=prec)
+    after_s = format(after, commas=commas, precision=prec)    
+    (; colour, ds, before_s, afters )
 end
 
 function frame_to_table(
@@ -173,28 +163,11 @@ function frame_to_table(
     i = 0
     for r in eachrow( df )
         i += 1
-        fmtd = format_diff( r.Before, r.After, up_is_good=up_is_good[i] )
-        #=
-        colour = ""
-        if (up_is_good[i] !== 0) && (! (r.Change ≈ 0))
-            if r.Change > 0
-                colour = up_is_good[i] == 1 ? "text-success" : "text-danger"
-             else
-                colour = up_is_good[i] == 1 ? "text-danger" : "text-success"
-            end # neg diff   
-        end # non zero diff
-        ds = r.Change ≈ 0 ? "-" : format(r.Change, commas=true, precision=prec )
-        if ds != "-" && r.Change > 0
-            ds = "+$(ds)"
-        end 
-        b = format(r.Before, commas=true, precision=prec)
-        a = format(r.After, commas=true, precision=prec)
-        =#
-        
+        fmtd = format_diff( before=r.Before, after=r.After, up_is_good=up_is_good[i] )
         row_style = i == totals_col ? "class='text-bold table-info' " : ""
         row = "<tr $row_style><th class='text-left'>$(r.Item)</th>
-                  <td style='text-align:right'>$(fmtd.v1s)</td>
-                  <td style='text-align:right'>$(fmtd.v2s)</td>
+                  <td style='text-align:right'>$(fmtd.before_s)</td>
+                  <td style='text-align:right'>$(fmtd.after_s)</td>
                   <td style='text-align:right' class='$(fmtd.colour)'>$(fmtd.ds)</td>
                 </tr>"
         table *= row
@@ -445,7 +418,7 @@ const POP_LABELS = Dict([
 function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) :: String
   v = pop.avg*100
   d = defaultPop.avg*100
-  fmtd = format_diff( v, d; up_is_good = true, prec=1,commas=false )
+  fmtd = format_diff( before=v, after=d; up_is_good = true, prec=1,commas=false )
   
   s = """
     <table class='table table-sm'>
@@ -456,11 +429,11 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
             <th>Change</td>
         </tr>
         <tr class='text-primary text-bg'><th>Overall Popularity</th>
-            <td class='text-right'>$(fmtd.v2s)</td>
-            <td class='text-right'>$(fmtd.v1s)</td>
-            <td class='text-right $(fmtd.colour)'>$(fmtd.ds)</td>            
+            <td style='text-align:right' >$(fmtd.after_s)</td>
+            <td style='text-align:right'>$(fmtd.before_s)</td>
+            <td style='text-align:right' class='$(fmtd.colour)'>$(fmtd.ds)</td>            
         </tr>
-        <tr><th colspan='4'>Components:</th></tr>
+        <tr><th style='text-align:center' class='text-secondary text-bold table-info colspan='4'>Components:</th></tr>
     """
     
     for k in keys(pop.components)
@@ -470,8 +443,8 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
         fmtd = format_diff( v, d; up_is_good = true, prec=1,commas=false )
         s *= """
             <tr><th>$lab</th>
-                <td class='text-right'>$(fmtd.v2s)</td>
-                <td class='text-right'>$(fmtd.v1s)</td>
+                <td class='text-right'>$(fmtd.after_s)</td>
+                <td class='text-right'>$(fmtd.before_s)</td>
                 <td class='text-right $(fmtd.colour)' >$(fmtd.ds)</td>
             </tr>
             """
@@ -537,7 +510,7 @@ end
 
 
 """
-Main output generation for conjoint model
+Main output generation for conjoint model FIXME do the ; [...], thing trick here
 """
 function results_to_html_conjoint( 
   results      :: NamedTuple ) :: NamedTuple
