@@ -418,7 +418,7 @@ const POP_LABELS = Dict([
 function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) :: String
   v = pop.avg*100
   d = defaultPop.avg*100
-  fmtd = format_diff( before=v, after=d; up_is_good = true, prec=1,commas=false )
+  fmtd = format_diff( before=d, after=v, up_is_good = true, prec=1,commas=false )
   
   s = """
     <table class='table table-sm'>
@@ -440,7 +440,7 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
         lab = POP_LABELS[k]
         v = pop.components[k]*100
         d = defaultPop.components[k]*100
-        fmtd = format_diff( v, d; up_is_good = true, prec=1,commas=false )
+        fmtd = format_diff( before=d, after=v, up_is_good = true, prec=1,commas=false )
         s *= """
             <tr><th>$lab</th>
                 <td class='text-right'>$(fmtd.after_s)</td>
