@@ -424,9 +424,9 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
     <table class='table table-sm'>
         <tr class='text-primary text-bold table-info'> 
             <th></th>
-            <th>Before</td>
-            <th>After</td>
-            <th>Change</td>
+            <th style='text-align:right'>Before</td>
+            <th style='text-align:right'>After</td>
+            <th style='text-align:right'>Change</td>
         </tr>
         <tr class='text-primary text-bg'><th>Overall Popularity</th>
             <td style='text-align:right' >$(fmtd.after_s)</td>
