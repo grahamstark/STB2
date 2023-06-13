@@ -1,0 +1,47 @@
+@import "/home/graham_s/node_modules/bootstrap/scss/functions";
+@import "/home/graham_s/node_modules/bootstrap/scss/variables";
+
+$enable-shadows: true;
+
+// Default variable overrides
+$theme-colors: (
+                primary: #000000,
+                secondary: #DDDDDD,
+                success: #1C7C54,
+                info:  #666666,
+                warning: #73683B,
+                danger: #D64933 );
+
+$stb-colours: (
+    s-white: white,
+    s-buff: #dad569,
+    s-light-grey: #cccccc,
+    s-blue-grey: #ccddff,
+    s-bright-red: #d12229 );
+
+$theme-colors: map-merge($theme-colors, $stb-colours );
+
+/* finally, import Bootstrap to set the changes! */
+@import "/home/graham_s/node_modules/bootstrap/scss/bootstrap";
+
+.res-table td{
+    text-align: right;
+}
+
+/* hovering over the clickable bits - examples & big costs */
+div.card:hover{
+    background-color: #cccccc;
+}
+#costs-table:hover{
+    background-color: #cccccc;
+}
+
+.ukreserved{
+    background-color: map-get($theme-colors,'s-blue-grey');
+}
+
+.changed{
+    background-color: map-get($theme-colors,'s-buff');
+}
+
+.error{ color: red;}
