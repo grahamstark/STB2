@@ -163,7 +163,7 @@ function frame_to_table(
     i = 0
     for r in eachrow( df )
         i += 1
-        fmtd = format_diff( before=r.Before, after=r.After, up_is_good=up_is_good[i] )
+        fmtd = format_diff( before=r.Before, after=r.After, up_is_good=up_is_good[i], prec=prec )
         row_style = i == totals_col ? "class='text-bold table-info' " : ""
         row = "<tr $row_style><th class='text-left'>$(r.Item)</th>
                   <td style='text-align:right'>$(fmtd.before_s)</td>
@@ -443,8 +443,8 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
         fmtd = format_diff( before=d, after=v, up_is_good = true, prec=1,commas=false )
         s *= """
             <tr><th>$lab</th>
-                <td style='text-align:right'>$(fmtd.after_s)</td>
                 <td style='text-align:right'>$(fmtd.before_s)</td>
+                <td style='text-align:right'>$(fmtd.after_s)</td>
                 <td style='text-align:right' $(fmtd.colour)' >$(fmtd.ds)</td>
             </tr>
             """
