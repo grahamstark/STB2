@@ -445,7 +445,7 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
             <tr><th>$lab</th>
                 <td style='text-align:right'>$(fmtd.before_s)</td>
                 <td style='text-align:right'>$(fmtd.after_s)</td>
-                <td style='text-align:right' $(fmtd.colour)' >$(fmtd.ds)</td>
+                <td style='text-align:right $(fmtd.colour)' >$(fmtd.ds)</td>
             </tr>
             """
     end
