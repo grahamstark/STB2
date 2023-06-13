@@ -443,9 +443,9 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
         fmtd = format_diff( before=d, after=v, up_is_good = true, prec=1,commas=false )
         s *= """
             <tr><th>$lab</th>
-                <td class='text-right'>$(fmtd.after_s)</td>
-                <td class='text-right'>$(fmtd.before_s)</td>
-                <td class='text-right $(fmtd.colour)' >$(fmtd.ds)</td>
+                <td style='text-align:right'>$(fmtd.after_s)</td>
+                <td style='text-align:right'>$(fmtd.before_s)</td>
+                <td style='text-align:right' $(fmtd.colour)' >$(fmtd.ds)</td>
             </tr>
             """
     end
