@@ -144,7 +144,7 @@ function format_diff(; before :: Number, after :: Number, up_is_good = 0, prec=2
     end 
     before_s = format(before, commas=commas, precision=prec)
     after_s = format(after, commas=commas, precision=prec)    
-    (; colour, ds, before_s, afters )
+    (; colour, ds, before_s, after_s )
 end
 
 function frame_to_table(
