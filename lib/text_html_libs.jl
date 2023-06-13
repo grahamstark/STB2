@@ -433,7 +433,7 @@ function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) ::
             <td style='text-align:right'>$(fmtd.before_s)</td>
             <td style='text-align:right' class='$(fmtd.colour)'>$(fmtd.ds)</td>            
         </tr>
-        <tr><th style='text-align:center' class='text-secondary text-bold table-info colspan='4'>Components:</th></tr>
+        <tr class='text-bold table-info'><td style='text-align:center' colspan='4'>Components:</td></tr>
     """
     
     for k in keys(pop.components)
