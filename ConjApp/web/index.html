@@ -20,7 +20,7 @@
     <script type='text/javascript' src="js/mustache.min.js"></script>
    
 </head>
-<body class='text-primary p-2'>
+<body class='text-primary'>
     
          <header class="">
             <nav class="navbar navbar-dark text-bg-primary  text-center position-relative">
@@ -31,7 +31,7 @@
         <form id='mainform' action="thing" method="POST">       
             <div class='container-fluid'>                 
                 <div class='row'><!-- input row -->
-                    <fieldset class="col border rounded-2 m-1 p-2">
+                    <fieldset class="col border  m-1 p-2">
                         <legend>Basic Income - How much?</legend>
                         <div class="form-check">
                             <input class='form-check-input' checked='' type='radio' name='Level' id='Level-1' value='Child - £0; Adult - £63; Pensioner - £190'  />
@@ -72,7 +72,7 @@
 
                     </fieldset>
                     
-                    <fieldset class='col border rounded-2 m-1 p-2'>
+                    <fieldset class='col border  m-1 p-2'>
                         <legend>How to pay - income tax Rates</legend>
                             <div class="form-check">
                                 <input class='form-check-input' checked='' type='radio' name='Tax' id='Tax-1' value='Basic rate - 20%; Higher rate - 40%; Additional rate - 45%'  />
@@ -104,7 +104,7 @@
                                 </div>
                     </fieldset>
                     
-                    <fieldset class='col border  rounded-2 m-1 p-2'>
+                    <fieldset class='col border   m-1 p-2'>
                         <legend>How to pay- other things</legend>
                         <div class="form-check">
                             <input class='form-check-input' checked='' type='radio' name='Funding' id='Funding-1' value='Removal of income tax-free personal allowance'  />
@@ -138,7 +138,7 @@
                     </fieldset>
                 </div><!-- input row -->
                 <div class='row'><!-- input row -->
-                    <fieldset class='col border rounded-2 m-1 p-2 '>
+                    <fieldset class='col border  m-1 p-2 '>
                             <legend>Basic Income - who is entitled?</legend>  
                             <div class="form-check">
                             <input class='form-check-input' checked=''   disabled='disabled' type='radio' name='Eligibility' id='Eligibility-1' value='People in and out of work are entitled'  />
@@ -159,7 +159,7 @@
                             <p>GKS NOTES: is this supposed to be individual/benunit/household entitlement?</p>
                     </fieldset>   
                     
-                    <fieldset class='col border rounded-2 m-1 p-2 '>
+                    <fieldset class='col border  m-1 p-2 '>
                             <legend>Basic Income - should it be means tested?</legend>  
                         <div class="form-check">
                             <input class='form-check-input' checked='' type='radio' name='Means.testing' id='Means.testing-1' value='People with any or no amount of income are entitled to the full benefit'  />
@@ -180,7 +180,7 @@
                         <p>GKS NOTES: is this supposed to be individual/benunit/household income?  Do you lose 100% if you're over these amounts? Do we use UC/Taxable income?</p>
                     </fieldset>
                     
-                    <fieldset class='col border rounded-2 m-1 p-2 '>
+                    <fieldset class='col border  m-1 p-2 '>
                             <legend>Basic Income - citizens?</legend>  
                             <div class="form-check">
                                 <input class='form-check-input' checked=''   disabled='disabled' type='radio' name='Citizenship' id='Citizenship-1' value='Citizens, permanent residents and anyone residing in the UK for more than six months are entitled'  />
@@ -212,20 +212,20 @@
                     <div class="col">
                         <ul class="nav">
                             <li class="nav-item  p-2">                      
-                                <button  type="button" class='btn btn-warning rounded-2' value='' onclick='submitForm( "reset" )'>Reset</button>
+                                <button  type="button" class='btn btn-warning ' value='' onclick='submitForm( "reset" )'>Reset</button>
                             </li>
                             <!-- means nothing here
                             <li class="nav-item p-2">                      
-                                <button  type="button" class='btn btn-info rounded-2' value='' onclick='submitForm( "save" )'>Save</button>
+                                <button  type="button" class='btn btn-info ' value='' onclick='submitForm( "save" )'>Save</button>
                             </li>
                             -->
                             <li class="nav-item p-2">                      
-                                <button  type="button" class='btn btn-success rounded-2' value='' onclick='submitForm( "run" )'>Run</button>
+                                <button  type="button" class='btn btn-success ' value='' onclick='submitForm( "run" )'>Run</button>
                             </li>
                         </ul>
                     </div>
                 </fieldset> <!-- submission row -->
-                <div class="row  border rounded-2 m-1 p-2">
+                <div class="row  border  m-1 p-2">
                     <div class='col'>
                             <div id='output-fields'>
                                 <div class='row'>
