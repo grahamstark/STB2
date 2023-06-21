@@ -164,7 +164,7 @@ function facsfrompayload( payload ) :: Factors
   facs.funding = pars.funding
   facs.eligibility = pars.eligibility
   facs.citizenship = pars.citizenship
-  facts.means_testing = pars.means_testing
+  facs.means_testing = pars.means_testing
   return facs
 end
 
