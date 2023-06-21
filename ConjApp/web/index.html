@@ -24,7 +24,8 @@
     
          <header class="">
             <nav class="navbar navbar-dark text-bg-primary  text-center position-relative">
-                <a href='https://northumbria.ac.uk'><img src='images/NU_Logo_White.svg' height='120' position-absolute top-0 start-0 /></a> <div class="display-4 position-absolute top-25 start-50 translate-middle-x">Basic Income Conjoint Demo</div>
+                <a href='https://northumbria.ac.uk'><img src='images/NU_Logo_White.svg' height='120' position-absolute top-0 start-0 /></a> 
+                <div class="display-4 position-absolute top-25 start-50 translate-middle-x">Benefits Conjoint Demo</div>
             </nav>
         </header>
         
@@ -32,7 +33,7 @@
             <div class='container-fluid'>                 
                 <div class='row'><!-- input row -->
                     <fieldset class="col border  m-1 p-2">
-                        <legend>Basic Income - How much?</legend>
+                        <legend>Benefit Levels - How much?</legend>
                         <div class="form-check">
                             <input class='form-check-input' checked='' type='radio' name='Level' id='Level-1' value='Child - £0; Adult - £63; Pensioner - £190'  />
                             <label class='form-check-label' for='Level-1'>Child - £0; Adult - £63; Pensioner - £190</label>
@@ -73,7 +74,7 @@
                     </fieldset>
                     
                     <fieldset class='col border  m-1 p-2'>
-                        <legend>How to pay - income tax Rates</legend>
+                        <legend>How to pay - Income Tax Rates</legend>
                             <div class="form-check">
                                 <input class='form-check-input' checked='' type='radio' name='Tax' id='Tax-1' value='Basic rate - 20%; Higher rate - 40%; Additional rate - 45%'  />
                                     <label class='form-check-label' for='Tax-1'>Basic rate - 20%; Higher rate - 40%; Additional rate - 45%</label>
@@ -139,7 +140,7 @@
                 </div><!-- input row -->
                 <div class='row'><!-- input row -->
                     <fieldset class='col border  m-1 p-2 '>
-                            <legend>Basic Income - who is entitled?</legend>  
+                            <legend>Who is entitled?</legend>  
                             <div class="form-check">
                             <input class='form-check-input' checked='' type='radio' name='Eligibility' id='Eligibility-1' value='People in and out of work are entitled'  />
                             <label class='form-check-label' for='Eligibility-1'>People in and out of work are entitled</label>
@@ -156,11 +157,11 @@
                                 <input class='form-check-input' type='radio'  name='Eligibility' id='Eligibility-4' value='Only people out of work are entitled'  />
                                 <label class='form-check-label' for='Eligibility-4'>Only people out of work are entitled</label>
                             </div>
-                            <p>GKS NOTES: is this supposed to be individual/benunit/household entitlement?</p>
+                            <p class='important'>GKS NOTES: Benefit unit level assessment based on legacy benefit entitlements for the benefit unit. Pensioners are always entitled.</p>
                     </fieldset>   
                     
                     <fieldset class='col border  m-1 p-2 '>
-                            <legend>Basic Income - should it be means tested?</legend>  
+                            <legend>Should it be means tested?</legend>  
                         <div class="form-check">
                             <input class='form-check-input' checked='' type='radio' name='Means.testing' id='Means.testing-1' value='People with any or no amount of income are entitled to the full benefit'  />
                             <label class='form-check-label' for='Means.testing-1'>People with any or no amount of income are entitled to the full benefit</label>
@@ -177,7 +178,7 @@
                             <input class='form-check-input' type='radio' name='Means.testing' id='Means.testing-4' value='Only those with incomes less than £125k are entitled to the full benefit'  />
                             <label class='form-check-label' for='Means.testing-4'>Only those with incomes less than £125k are entitled to the full benefit</label>
                         </div>
-                        <p>GKS NOTES: is this supposed to be individual/benunit/household income?  Do you lose 100% if you're over these amounts? Do we use UC/Taxable income?</p>
+                        <p class='important'>GKS NOTES: now based on the UC income definition with £ for £ withdrawal above the limit. Benefit unit level assessment.</p>
                     </fieldset>
                     
                     <fieldset class='col border  m-1 p-2 '>
