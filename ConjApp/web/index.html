@@ -567,7 +567,7 @@ function loadFromForm(){
         tax: $( "input:radio[name='Tax']:checked" ).val(),
         funding: $( "input:radio[name='Funding']:checked" ).val(),
         eligibility: $( "input:radio[name='Eligibility']:checked" ).val(),
-        means_testing: $( "input:radio[name='Means.Testing']:checked" ).val(),
+        means_testing: $( "input:radio[name='Means.testing']:checked" ).val(),
         citizenship: $( "input:radio[name='Citizenship']:checked" ).val()
     }
     return data;
@@ -578,7 +578,7 @@ function loadParams( data ){
     $("input:radio[name='Tax'][value='"+data.tax+"']" ).prop('checked', true);
     $("input:radio[name='Funding'][value='"+data.funding+"']" ).prop('checked', true);
     $("input:radio[name='Eligibility'][value='"+data.eligibility+"']" ).prop('checked', true);
-    $("input:radio[name='Means.Testing'][value='"+data.means_testing+"']" ).prop('checked', true);
+    $("input:radio[name='Means.testing'][value='"+data.means_testing+"']" ).prop('checked', true);
     $("input:radio[name='Citizenship'][value='"+data.citizenship+"']" ).prop('checked', true);
 }
 
