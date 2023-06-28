@@ -292,7 +292,15 @@
          
                </div> <!-- output row -->
                <div class="row">
-                   
+
+                    <div class='col'>
+                        <h4>SF-12 Mental Health</h4>
+                        <div id='sf-12-table'></div>
+                    </div>
+                    <div class='col'>
+                        <h4>Mortality</h4>
+                        <div id='mortality-table'></div>
+                    </div>
                     
                     
                 </div>
@@ -494,6 +502,8 @@ function createMainOutputs( result ){
     $("#pov-table").html( result.poverty );
     $("#ineq-table").html( result.inequality );
     $("#big-costs-table").html( result.big_costs_table );
+    $("sf-12-table").html( result.sf_12_table );
+    $("mortality-table").html( result.mortality_table );
     $("#endnotes").html( result.endnotes );
     createLorenzCurve( 
         "#lorenz", 

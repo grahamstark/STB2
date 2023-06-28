@@ -490,6 +490,8 @@ function results_to_html(
         detailed_cost_dataframe( 
             base_results.summary.income_summary[1],
             results.summary.income_summary[1] )) 
+    mortality_table = "<h3>MORT GOES HERE</h3>"
+    sf_12_table = "<h3>SF-12 GOES HERE</h3>"
     outt = ( 
         phase = "end", 
         gain_lose = gain_lose, 
@@ -503,6 +505,8 @@ function results_to_html(
         lorenz_post=lorenz_post,
         examples = example_text,
         big_costs_table = big_costs,
+        sf_12_table = sf_12_table,
+        mortality_table = mortality_table,
         endnotes = Markdown.html( ENDNOTES ))
     return outt
 end
