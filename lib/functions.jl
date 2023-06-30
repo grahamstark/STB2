@@ -30,8 +30,6 @@ function do_run(
     aout
 end
 
-
-
 function submit_job( 
     session :: GenieSession.Session, 
     simple  :: SimpleParams )
