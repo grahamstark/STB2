@@ -66,7 +66,7 @@ include( "../../lib/table_libs.jl")
 include( "../../lib/examples.jl")
 include( "../../lib/text_html_libs.jl")
 
-const DEFAULT_FACTORS = Factors{Float64}()
+# const DEFAULT_FACTORS = Factors{Float64}()
 
 @enum Responses output_ready has_progress load_params bad_request
 
@@ -269,43 +269,43 @@ Specialised run for conjoint model.
 
 """
 function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DEFAULT_SETTINGS ) :: NamedTuple
-  sys1 = load_system( scotland=false ) 
-  sys2 = deepcopy(sys1)
-  map_features!( sys2, facs )
-  sys = [sys1,sys2]
-  ## , get_system( year=2019, scotland=true )]
-  results = do_one_run( settings, sys, obs )
-  settings.poverty_line = make_poverty_line( results.hh[1], settings )
-  summary = summarise_frames!( results, settings ) 
-
-  outps_pre = create_health_indicator( 
-      results.hh[1], 
-      summary.deciles[1], 
-      settings )
-  outps_post = create_health_indicator( 
-      results.hh[2], 
-      summary.deciles[2], 
-      settings )
-  sf_pre = summarise_sf12( outps_pre, settings )
-  sf_post = summarise_sf12( outps_post, settings )
-
-  facs.mental_health = (sf_post.depressed-sf_pre.depressed)/sf_pre.depressed
-  println( "sf_post.depressed=$(sf_post.depressed); sf_pre.depressed=$(sf_pre.depressed)")
-  facs.poverty = summary.poverty[2].headcount - summary.poverty[1].headcount
-  facs.inequality = summary.inequality[2].gini - summary.inequality[1].gini
-  mainres = (;facs, sys1, sys2, settings, sf_pre, sf_post)
-  preferences = Dict()
-  println( "do_one_conjoint_run! made facs as $facs" )
-  for breakdown in keys(Conjoint.BREAKDOWNS)
-      bvals = Conjoint.BREAKDOWNS[breakdown]
-      for bv in bvals
-          popularity = calc_conjoint_total( bv, facs )
-          default_popularity = calc_conjoint_total( bv, Factors{Float64}() )
-          val = ( ; popularity, default_popularity, summary )
-          preferences[bv] = val
-      end
-  end
-  return (;mainres,preferences)
+    sys1 = load_system( scotland=false ) 
+    sys2 = deepcopy(sys1)
+    map_features!( sys2, facs )
+    sys = [sys1,sys2]
+    println( "sys1 income tax\n $(sys1.it)" )
+    println( "sys2 income tax\n $(sys2.it)" )
+    ## , get_system( year=2019, scotland=true )]
+    results = do_one_run( settings, sys, obs )
+    settings.poverty_line = make_poverty_line( results.hh[1], settings )
+    summary = summarise_frames!( results, settings )
+    outps_pre = create_health_indicator( 
+        results.hh[1], 
+        summary.deciles[1], 
+        settings )
+    outps_post = create_health_indicator( 
+        results.hh[2], 
+        summary.deciles[2], 
+        settings )
+    sf_pre = summarise_sf12( outps_pre, settings )
+    sf_post = summarise_sf12( outps_post, settings )
+    facs.mental_health = (sf_post.depressed-sf_pre.depressed)/sf_pre.depressed
+    println( "sf_post.depressed=$(sf_post.depressed); sf_pre.depressed=$(sf_pre.depressed)")
+    facs.poverty = summary.poverty[2].headcount - summary.poverty[1].headcount
+    facs.inequality = summary.inequality[2].gini - summary.inequality[1].gini
+    mainres = (;facs, sys1, sys2, settings, sf_pre, sf_post)
+    preferences = Dict()
+    println( "do_one_conjoint_run! made facs as $facs" )
+    for breakdown in keys(Conjoint.BREAKDOWNS)
+        bvals = Conjoint.BREAKDOWNS[breakdown]
+        for bv in bvals
+            popularity = calc_conjoint_total( bv, facs )
+            default_popularity = calc_conjoint_total( bv, Factors{Float64}() )
+            val = ( ; popularity, default_popularity, summary )
+            preferences[bv] = val
+        end
+    end
+    return (;mainres,preferences)
 end
 
 function make_and_cache_base_results()
@@ -315,17 +315,19 @@ function make_and_cache_base_results()
   of = on(obs) do p
     tot += p.step
   end
-  facts = Factors{Float64}()
-  facs = deepcopy( DEFAULT_FACTORS )
+  facs = Factors{Float64}()
   println( "made facts as $facs")
   results = do_one_conjoint_run!( facs, obs; settings=settings )  
   println( "made facts as $facs")
-  exres = calc_examples( results.sys1, results.sys2, results.settings )    
+  exres = calc_examples( 
+    results.mainres.sys1, 
+    results.mainres.sys2, 
+    results.mainres.settings )    
   output = results_to_html_conjoint( ( results..., examples=exres  ))  
-  save_output_to_cache( DEFAULT_FACTORS, output )
+  save_output_to_cache( facs, output )
 end 
 
-const DEFAULT_RESULTS = make_and_cache_base_results()
+# const DEFAULT_RESULTS = make_and_cache_base_results()
 
 logger = FileLogger("log/conjapp_log.txt")
 global_logger(logger)
@@ -367,7 +369,7 @@ function factorsfromsession()::Factors
   if( GenieSession.isset( session, :facs ))
       facs = GenieSession.get( session, :facs )
   else
-      facs = deepcopy( DEFAULT_FACTORS )
+      facs = Factors{Float64}()
       GenieSession.set!( session, :facs, facs )
   end
   return facs
@@ -378,7 +380,7 @@ TODO
 """
 function doreset() 
     sess = GenieSession.session()
-    facs = deepcopy( DEFAULT_FACTORS )
+    facs = Factors{Float64}()
     GenieSession.set!( sess, :facs, facs )
     ( response=load_params, data=facs ) |> json
 end
