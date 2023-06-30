@@ -293,7 +293,6 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     println( "sf_post.depressed=$(sf_post.depressed); sf_pre.depressed=$(sf_pre.depressed)")
     facs.poverty = summary.poverty[2].headcount - summary.poverty[1].headcount
     facs.inequality = summary.inequality[2].gini - summary.inequality[1].gini
-    mainres = (;facs, sys1, sys2, settings, sf_pre, sf_post)
     preferences = Dict()
     println( "do_one_conjoint_run! made facs as $facs" )
     for breakdown in keys(Conjoint.BREAKDOWNS)
@@ -301,31 +300,12 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
         for bv in bvals
             popularity = calc_conjoint_total( bv, facs )
             default_popularity = calc_conjoint_total( bv, Factors{Float64}() )
-            val = ( ; popularity, default_popularity, summary )
+            val = ( ; popularity, default_popularity )
             preferences[bv] = val
         end
     end
-    return (;mainres,preferences)
+    return (;facs, sys1, sys2, settings, sf_pre, sf_post, summary,preferences)
 end
-
-function make_and_cache_base_results()
-  settings = make_default_settings()
-  obs = Observable( Progress(settings.uuid, "",0,0,0,0))
-  tot = 0
-  of = on(obs) do p
-    tot += p.step
-  end
-  facs = Factors{Float64}()
-  println( "made facts as $facs")
-  results = do_one_conjoint_run!( facs, obs; settings=settings )  
-  println( "made facts as $facs")
-  exres = calc_examples( 
-    results.mainres.sys1, 
-    results.mainres.sys2, 
-    results.mainres.settings )    
-  output = results_to_html_conjoint( ( results..., examples=exres  ))  
-  save_output_to_cache( facs, output )
-end 
 
 # const DEFAULT_RESULTS = make_and_cache_base_results()
 
@@ -409,13 +389,7 @@ function getoutput()
     return get_output_from_cache()|> json 
 end
 
-
-"""
-Execute a run from the queue.
-"""
-function dorun( session::Session, facs :: Factors )
-  settings = make_default_settings()  
-  @info "dorun entered facs are " facs
+function session_obs()::Observable
   obs = Observable( Progress(settings.uuid, "",0,0,0,0))
   completed = 0
   of = on(obs) do p
@@ -423,6 +397,26 @@ function dorun( session::Session, facs :: Factors )
     @info "monitor completed=$completed p = $(p)"
     GenieSession.set!( session, :progress, (phase=p.phase, completed = completed, size=p.size))
   end  
+  obs
+end 
+
+function screen_obs()::Observable
+    obs = Observable( Progress(settings.uuid, "",0,0,0,0))
+    completed = 0
+    of = on(obs) do p
+        completed += p.step
+        @info "monitor completed=$completed p = $(p)"
+    end
+    obs
+end
+
+"""
+Execute a run from the queue.
+"""
+function dorun( session::Session, facs :: Factors )
+  settings = make_default_settings()  
+  @info "dorun entered facs are " facs
+  obs = session_obs()
   results = do_one_conjoint_run!( facs, obs; settings = settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings )    
   output = results_to_html_conjoint( ( results..., examples=exres  ))  
@@ -468,5 +462,17 @@ for i in 1:NUM_HANDLERS # start n tasks to process requests in parallel
   @info "starting handler $i" 
   errormonitor(@async grab_runs_from_queue())
 end
+
+# do & save a startup run
+settings = make_default_settings()  
+@info "initial startup"
+
+facs = Factors{Float64}()
+obs = screen_obs()
+results = do_one_conjoint_run!( facs, obs; settings = settings )  
+exres = calc_examples( results.sys1, results.sys2, results.settings )    
+output = results_to_html_conjoint( ( results..., examples=exres  ))  
+GenieSession.set!( :facs, facs ) # save again since poverty, etc. is overwritten in doonerun!
+save_output_to_cache( facs, output )
 
 end # module
