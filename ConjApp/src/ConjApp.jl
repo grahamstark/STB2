@@ -279,16 +279,32 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     results = do_one_run( settings, sys, obs )
     settings.poverty_line = make_poverty_line( results.hh[1], settings )
     summary = summarise_frames!( results, settings )
+    # println( summary.gain_lose )
+    println( "settings $settings")
     outps_pre = create_health_indicator( 
         results.hh[1], 
         summary.deciles[1], 
         settings )
+    sz = size( outps_pre )
+    println( "outps_pre size $sz" )
+    sz = size( results.hh[1] )
+    println( "results.hh[1] size $sz" )
     outps_post = create_health_indicator( 
         results.hh[2], 
         summary.deciles[2], 
         settings )
+    
+    sz = size( outps_post )
+    println( "outps_post size $sz" )
+    sz = size( results.hh[2] )
+    println( "results.hh[2] size $sz" )
+
     sf_pre = summarise_sf12( outps_pre, settings )
+    println( "sf_pre=$sf_pre" )
+    println( "summary.deciles[1] $(summary.deciles[1])" )
     sf_post = summarise_sf12( outps_post, settings )
+    println( "sf_pre=$sf_post" )
+    println( "summary.deciles[2] $(summary.deciles[2])" )
     facs.mental_health = (sf_post.depressed-sf_pre.depressed)/sf_pre.depressed
     println( "sf_post.depressed=$(sf_post.depressed); sf_pre.depressed=$(sf_pre.depressed)")
     facs.poverty = summary.poverty[2].headcount - summary.poverty[1].headcount
@@ -304,7 +320,7 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
             preferences[bv] = val
         end
     end
-    return (;facs, sys1, sys2, settings, sf_pre, sf_post, summary,preferences)
+    return (;facs, sys1, sys2, settings, sf_pre, sf_post, summary, preferences )
 end
 
 # const DEFAULT_RESULTS = make_and_cache_base_results()
@@ -472,7 +488,6 @@ obs = screen_obs()
 results = do_one_conjoint_run!( facs, obs; settings = settings )  
 exres = calc_examples( results.sys1, results.sys2, results.settings )    
 output = results_to_html_conjoint( ( results..., examples=exres  ))  
-GenieSession.set!( :facs, facs ) # save again since poverty, etc. is overwritten in doonerun!
 save_output_to_cache( facs, output )
 
 end # module

@@ -551,7 +551,7 @@ function results_to_html_conjoint(
       detailed_cost_dataframe( 
           results.summary.income_summary[1],
           results.summary.income_summary[2] )) 
-  popularity_table = make_popularity_table( results.popularity["Total"], results.default_popularity["Total"] )
+  popularity_table = make_popularity_table( results.preferences["Total"].popularity, results.preferences["Total"].default_popularity )
   outt = ( 
       phase = "end", 
       popularity = popularity_table,
