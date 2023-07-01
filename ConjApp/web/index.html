@@ -326,8 +326,13 @@ var updater;
 function drawRunProgress( data ){
     console.log( "data.completed" + data.completed + "data.size" + data.size );
     var pct = Math.trunc(100 * data.completed / data.size);
+    var runn = "Model Running";
+    if( data.phase == 'health' ){
+        runn = "Estimating Health";
+    }
+
     var prog = 
-        "<p>Model Running</p>"+
+        "<p>" + runn + "</p>"+
         "<div class='progress'>"+
         "<div class='progress-bar bg-success progress-bar-animated progress-bar-striped' role='progressbar' "+
             "aria-valuenow='" + pct + "' " + 
@@ -552,6 +557,9 @@ function updateProgress( data ){
             $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Pre-routines completed; run starting.</div>");
             break;
         case 'run':
+            drawRunProgress( data );
+            break;
+        case 'health':
             drawRunProgress( data );
             break;
         case 'dumping_frames':

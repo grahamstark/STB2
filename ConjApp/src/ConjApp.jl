@@ -284,6 +284,7 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     outps_pre = create_health_indicator( 
         results.hh[1], 
         summary.deciles[1], 
+        obs,
         settings )
     sz = size( outps_pre )
     # println( "outps_pre size $sz" )
@@ -292,6 +293,7 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     outps_post = create_health_indicator( 
         results.hh[2], 
         summary.deciles[2], 
+        obs,
         settings )
     
     sz = size( outps_post )
