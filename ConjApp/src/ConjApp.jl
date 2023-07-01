@@ -406,6 +406,7 @@ function getoutput()
 end
 
 function session_obs()::Observable
+  session = GenieSession.session()
   obs = Observable( Progress(settings.uuid, "",0,0,0,0))
   completed = 0
   of = on(obs) do p
