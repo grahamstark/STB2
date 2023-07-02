@@ -250,16 +250,30 @@
                                     <div class='col-4'></div>
                                 </div>
                                 <div class='row'>
+
                                     <div class='col'>
                                         <h4>Gainers and Losers</h4>
                                         <div class='row'>
-                                            <div class='col' id="gain-lose-table">,</div>
+                                            <div>
+                                                <div
+                                                    data-bs-toggle='modal' 
+                                                    data-bs-target='#gain-lose-popup'>
+                                                    <div id="gain-lose-table"></div>
+                                                </div>                                                
+                                                <div class='col' id="gain-lose-table">,</div>
+                                            </div>
+                                            
                                             <div class='col' id="deciles-graph">,</div>
                                         </div>
                                     </div>
                                                           
                                     <div class='col'>
                                         <h4>Popularity</h4>
+                                        <div
+                                            data-bs-toggle='modal' 
+                                            data-bs-target='#conjoint-popup'>
+                                            <div id="conjoint-table"></div>
+                                        </div>
                                         <div id="conjoint-table"></div>
                                     </div>      
                                     
@@ -271,7 +285,8 @@
                                             <div id="costs-table"></div>
                                         </div>
                                         <div id="overall-costs"></div>
-                                    </div>                            
+                                    </div>
+
                                 </div><!-- row -->
                                 <div class='row'>
                                     <div class='col'>
@@ -308,7 +323,50 @@
         </form>
         
         <div id='endnotes' class='p-4' ></div>
-        
+     
+        <!-- conjoint popup -->
+        <div class='modal fade' id='big-costs-popup' tabindex='-1' role='dialog' aria-labelledby='big-costs-label' aria-hidden='true'>
+            <div class='modal-dialog modal-lg'  role='document'>
+                <div class='modal-content'>
+                    <div class='modal-header'>
+                        <h5 class='modal-title' id='big-costs-table-label'/>Detailed Costs and Counts</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div> <!-- header -->
+                    <div class='modal-body'>
+                        <div id='big-costs-table'></div>
+                    </div>
+                </div><!-- content -->
+            </div> <!--dialog -->
+        </div> <!-- big-table modal -->
+
+        <div class='modal fade' id='conjoint-popup' tabindex='-1' role='dialog' aria-labelledby='conjoint-label' aria-hidden='true'>
+            <div class='modal-dialog modal-lg'  role='document'>
+                <div class='modal-content'>
+                    <div class='modal-header'>
+                        <h5 class='modal-title' id='conjoint-label'/>Broken Down Popularity</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div> <!-- header -->
+                    <div class='modal-body'>
+                        <div id='conjoint-table'></div>
+                    </div>
+                </div><!-- content -->
+            </div> <!--dialog -->
+        </div> <!-- conjoint -table modal -->
+
+        <div class='modal fade' id='gain-lose-popup' tabindex='-1' role='dialog' aria-labelledby='gain-lose-label' aria-hidden='true'>
+            <div class='modal-dialog modal-lg'  role='document'>
+                <div class='modal-content'>
+                    <div class='modal-header'>
+                        <h5 class='modal-title' id='gain-lose-label'/>Gain/Lose Tables</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div> <!-- header -->
+                    <div class='modal-body'>
+                        <div id='gain-lose-table'></div>
+                    </div>
+                </div><!-- content -->
+            </div> <!--dialog -->
+        </div> <!-- conjoint -table modal -->
+
         <footer>
             <nav class="text-bg-primary  text-center position-relative">
             copyright&copy; 2023 Northumbria University/Virtual Worlds Research/Others | Code: <a href='https://mit-license.org/'>MIT Licence</a> | Text: 
@@ -499,7 +557,7 @@ function createMainOutputs( result ){
     console.log( result.overall_costs )
     $("#examples").html( result.examples );
     $("#gain-lose-table").html( result.gain_lose );
-    $( '#conjoint-table' ).html( result.popularity );
+    $( '#conjoint-table' ).html( result.conjoint );
     createDecileBarChart( 
         "#deciles-graph", 
         result, 

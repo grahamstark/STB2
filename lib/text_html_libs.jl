@@ -347,7 +347,7 @@ function hhsummary( hh :: Household )
     table
 end
 
-function make_popups( hh :: ExampleHH, res :: NamedTuple ) :: String
+function make_example_popups( hh :: ExampleHH, res :: NamedTuple ) :: String
     pit = pers_inc_table( res )
     hhtab = hhsummary( hh.hh )
     modal = """
@@ -392,7 +392,7 @@ function make_examples( example_results :: Vector )
     end
     cards *= "</div>"
     for i in 1:n
-        cards *= make_popups( EXAMPLE_HHS[i], example_results[i])
+        cards *= make_example_popups( EXAMPLE_HHS[i], example_results[i])
     end
     return cards;
 end
@@ -490,8 +490,6 @@ function results_to_html(
         detailed_cost_dataframe( 
             base_results.summary.income_summary[1],
             results.summary.income_summary[1] )) 
-    mortality_table = "<h3>MORT GOES HERE</h3>"
-    sf_12_table = "<h3>SF-12 GOES HERE</h3>"
     outt = ( 
         phase = "end", 
         gain_lose = gain_lose, 
@@ -505,8 +503,6 @@ function results_to_html(
         lorenz_post=lorenz_post,
         examples = example_text,
         big_costs_table = big_costs,
-        sf_12_table = sf_12_table,
-        mortality_table = mortality_table,
         endnotes = Markdown.html( ENDNOTES ))
     return outt
 end
@@ -552,6 +548,9 @@ function results_to_html_conjoint(
           results.summary.income_summary[1],
           results.summary.income_summary[2] )) 
   popularity_table = make_popularity_table( results.preferences["Total"].popularity, results.preferences["Total"].default_popularity )
+  mortality_table = "<h3>MORT GOES HERE</h3>"
+  sf_12_table = "<h3>SF-12 GOES HERE</h3>"
+
   outt = ( 
       phase = "end", 
       popularity = popularity_table,
@@ -566,6 +565,8 @@ function results_to_html_conjoint(
       lorenz_post=lorenz_post,
       examples = example_text,
       big_costs_table = big_costs,
+      sf_12_table = sf_12_table,
+      mortality_table = mortality_table,
       endnotes = Markdown.html( CONJOINT_ENDNOTES ))
   return outt
 end
