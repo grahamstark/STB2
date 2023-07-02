@@ -544,7 +544,7 @@ function updateProgress( data ){
         case 'missing':
             $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Waiting for response ..</div>");
             break;
-        case 'start':
+        case 'do-one-run-start':
             $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Run starting: starting pre-run routines.</div>");
             break;
         case 'weights':
@@ -562,8 +562,14 @@ function updateProgress( data ){
         case 'health':
             drawRunProgress( data );
             break;
+        case 'do-one-run-end':
+            $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Main calculations complete.</div>");
+            break;
         case 'dumping_frames':
             $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Calculations complete; now generating output.</div>");
+            break;
+        case 'results-generation':
+            $("#progress-indicator").html( "<div class='alert alert-info' role='alert'>Calculations complete; Converting Results to HTML.</div>");
             break;
         case 'end':
             console.log( "updateProgress; end encountered loading " ); 

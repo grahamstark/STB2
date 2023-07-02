@@ -436,10 +436,12 @@ function dorun( session::Session, facs :: Factors )
   @info "dorun entered facs are " facs
   obs = session_obs(session)
   results = do_one_conjoint_run!( facs, obs; settings = settings )  
-  exres = calc_examples( results.sys1, results.sys2, results.settings )    
+  exres = calc_examples( results.sys1, results.sys2, results.settings ) 
+  obs[]=Progress( settings.uuid, "results-generation", 0, 0, 0, 0 )   
   output = results_to_html_conjoint( ( results..., examples=exres  ))  
   GenieSession.set!( :facs, facs ) # save again since poverty, etc. is overwritten in doonerun!
   save_output_to_cache( facs, output )
+  obs[]= Progress( settings.uuid, "end", -99, -99, -99, -99 )
 end
 
 function submit_job()

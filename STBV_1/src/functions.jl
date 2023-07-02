@@ -27,6 +27,7 @@ function do_run(
 	exres = calc_examples( DEFAULT_WEEKLY_PARAMS, sys, settings )
 	aout = AllOutput( results, outf, gl, exres )
     cacheout(simple,aout)
+    obs[]= Progress( settings.uuid, "end", -99, -99, -99, -99 )
     aout
 end
 
