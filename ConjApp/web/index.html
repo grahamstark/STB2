@@ -327,14 +327,16 @@ function drawRunProgress( data ){
     console.log( "data.completed" + data.completed + "data.size" + data.size );
     var pct = Math.trunc(100 * data.completed / data.size);
     var runn = "Model Running";
+    var colour = "bg-success";
     if( data.phase == 'health' ){
         runn = "Estimating Health";
+        colour = "bg-info";
     }
 
     var prog = 
         "<p>" + runn + "</p>"+
         "<div class='progress'>"+
-        "<div class='progress-bar bg-success progress-bar-animated progress-bar-striped' role='progressbar' "+
+        "<div class='progress-bar " + colour +" progress-bar-animated progress-bar-striped' role='progressbar' "+
             "aria-valuenow='" + pct + "' " + 
             "style='width: "+pct+"%' " +
             "aria-valuemin='0' " +

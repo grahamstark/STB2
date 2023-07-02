@@ -408,10 +408,14 @@ function getoutput()
 end
 
 function session_obs(session::GenieSession.Session)::Observable
-  obs = Observable( Progress(settings.uuid, "",0,0,0,0))
-  completed = 0
-  of = on(obs) do p
-    completed += p.step
+    obs = Observable( Progress(settings.uuid, "",0,0,0,0))
+    completed = 0
+    of = on(obs) do p
+        if p.phase == "do-one-run-end"
+            completed = 0
+        end
+        completed += p.step
+    end
     @info "monitor completed=$completed p = $(p)"
     GenieSession.set!( session, :progress, (phase=p.phase, completed = completed, size=p.size))
   end  
@@ -423,6 +427,9 @@ function screen_obs()::Observable
     completed = 0
     of = on(obs) do p
         completed += p.step
+        if p.phase == "do-one-run-end"
+          completed = 0
+        end
         @info "monitor completed=$completed p = $(p)"
     end
     obs
