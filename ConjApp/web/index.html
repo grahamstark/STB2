@@ -260,7 +260,7 @@
                                                     data-bs-target='#gain-lose-popup'>
                                                     <div id="gain-lose-table"></div>
                                                 </div>                                                
-                                                <div class='col' id="gain-lose-table">,</div>
+                                                <div class='col' id="dissag-gain-lose-table"></div>
                                             </div>
                                             
                                             <div class='col' id="deciles-graph">,</div>
@@ -274,7 +274,7 @@
                                             data-bs-target='#conjoint-popup'>
                                             <div id="conjoint-table"></div>
                                         </div>
-                                        <div id="conjoint-table"></div>
+                                        <div id="dissag-conjoint-table"></div>
                                     </div>      
                                     
                                     <div class='col'>
@@ -557,7 +557,7 @@ function createMainOutputs( result ){
     console.log( result.overall_costs )
     $("#examples").html( result.examples );
     $("#gain-lose-table").html( result.gain_lose );
-    $( '#conjoint-table' ).html( result.conjoint );
+    $('#conjoint-table' ).html( result.conjoint );
     createDecileBarChart( 
         "#deciles-graph", 
         result, 
