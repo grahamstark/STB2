@@ -30,10 +30,11 @@ $theme-colors: map-merge($theme-colors, $stb-colours );
 
 /* hovering over the clickable bits - examples & big costs */
 div.card:hover{
-    background-color: #cccccc;
+    background-color: map-get($theme-colors,'s-blue-grey');
 }
-#costs-table:hover{
-    background-color: #cccccc;
+
+#costs-table:hover, #conjoint-table:hover, #gain-lose-table:hover{
+    background-color: map-get($theme-colors,'s-blue-grey');
 }
 
 .ukreserved{
