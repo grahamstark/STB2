@@ -11057,11 +11057,11 @@ textarea.form-control-lg {
 
 /* hovering over the clickable bits - examples & big costs */
 div.card:hover {
-  background-color: #cccccc;
+  background-color: #ccddff;
 }
 
-#costs-table:hover {
-  background-color: #cccccc;
+#costs-table:hover, #conjoint-table:hover, #gain-lose-table:hover {
+  background-color: #ccddff;
 }
 
 .ukreserved {
