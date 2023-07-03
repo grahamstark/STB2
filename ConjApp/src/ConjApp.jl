@@ -322,7 +322,8 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
             preferences[bv] = val
         end
     end
-    return (;facs, sys1, sys2, settings, sf_pre, sf_post, summary, preferences )
+    sf12_depression_limit = settings.sf12_depression_limit
+    return (;facs, sys1, sys2, settings, sf_pre, sf_post, summary, preferences, sf12_depression_limit )
 end
 
 # const DEFAULT_RESULTS = make_and_cache_base_results()

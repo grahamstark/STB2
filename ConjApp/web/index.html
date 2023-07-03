@@ -316,7 +316,7 @@
                         <h4>Mortality</h4>
                         <div id='mortality-table'></div>
                     </div>
-                    
+                    <div class='col'></div>
                     
                 </div>
             </div> <!-- main container -->
@@ -574,7 +574,7 @@ function createMainOutputs( result ){
     $('#conjoint-table' ).html( result.popularity );
     $('#big-conjoint-table' ).html( result.big_popularity );    
 
-    $("sf-12-table").html( result.sf_12_table );
+    $("#sf-12-table").html( result.sf_12_table );
     $("mortality-table").html( result.mortality_table );
     $("#endnotes").html( result.endnotes );
     createLorenzCurve( 

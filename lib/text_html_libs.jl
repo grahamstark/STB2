@@ -429,9 +429,9 @@ function make_popularity_table(
         <thead><caption>$caption</caption></thead>
         <tr> 
             <th></th>
-            <th style='text-align:right'>Before</td>
-            <th style='text-align:right'>After</td>
-            <th style='text-align:right'>Change</td>
+            <th style='text-align:right'>Before</th>
+            <th style='text-align:right'>After</th>
+            <th style='text-align:right'>Change</th>
         </tr>
         <tr class='text-primary text-bg'><th>Overall Popularity</th>
             <td style='text-align:right' >$(fmtd.before_s)</td>
@@ -615,7 +615,7 @@ end
 
 function one_gain_lose( gl :: DataFrame, caption :: String ) :: String
     nr,nc = size( gl )
-    nms = names( gl )
+    nms = pretty.(names( gl ))
     s = """
     <table class='table table-sm'>
         <thead><caption>By $(caption), 000s of People.</caption></thead>
@@ -689,6 +689,77 @@ function make_disaggregated_gain_lose_tables( gain_lose :: NamedTuple ) :: Strin
     """
 end
 
+function make_sf_12_table( 
+    sf_pre::NamedTuple, 
+    sf_post::NamedTuple, 
+    sf12_depression_limit::Number ) :: String
+    pre = format( sf_pre.depressed/1000, commas=true, precision=0 )
+    post = format( sf_post.depressed/1000, commas=true, precision=0 )
+    pre_pct = format( sf_pre.depressed_pct, commas=false, precision=1 )
+    post_pct = format( sf_post.depressed_pct, commas=false, precision=1 )
+    fmtd = format_diff( 
+        before=sf_pre.depressed/1000, 
+        after=sf_post.depressed/1000, 
+        up_is_good=false, 
+        prec=0 )
+    chpct = (sf_post.depressed-sf_pre.depressed)/sf_pre.depressed
+    changepct = format( chpct, commas=false, precision=2 )
+
+    pre_mean = format( sf_pre.average, commas=false, precision=1 )
+    post_mean = format( sf_post.average, commas=false, precision=1 )
+    fmtd_mean = format_diff( 
+        before=sf_pre.average, 
+        after=sf_post.average, 
+        up_is_good=true, 
+        prec=1 )
+    pre_median = format( sf_pre.med, commas=false, precision=1 )
+    post_median = format( sf_post.med, commas=false, precision=1 )
+    fmtd_median = format_diff( 
+        before=sf_pre.med, 
+        after=sf_post.med, 
+        up_is_good=true, 
+        prec=1 )
+    
+    # (; colour, ds, before_s, after_s )
+    caption = """
+    The estimated number of adults with <a href='https://www.rand.org/health-care/surveys_tools/mos/12-item-short-form.html'>SF-12 Mental Health Component</a> less than $(sf12_depression_limit),
+    and the average and median SF-12 score for the adult population.
+    SF-12 is a simple, widely used, questionnaire used to summarise a patients' health.
+    """
+
+    return """
+    <table class='table table-sm'>
+    <thead><caption>$(caption), 000s of adults.</caption></thead>
+    <tr> 
+        <th></th>
+        <th style='text-align:right'>Before</th>
+        <th style='text-align:right'>After</th>
+        <th style='text-align:right'>Change</th>
+    </tr>
+    <tr>
+        <th>Below Critical Threshold ($sf12_depression_limit)</th>
+        <td style='text-align:right'> $pre ($pre_pct)%</td>
+        <td style='text-align:right'> $post ($post_pct)%</td>
+        <td  style='text-align:right' class="$(fmtd.colour)">$(fmtd.ds) ($(changepct)%)</td>
+    </tr>
+
+    <tr>
+        <th>Mean Score (range 0-100)</th>
+        <td style='text-align:right'> $pre_mean </td>
+        <td style='text-align:right'> $post_mean </td>
+        <td  style='text-align:right' class="$(fmtd_mean.colour)">$(fmtd_mean.ds)</td>
+    </tr>
+    <tr>
+        <th>Median Score (range 0-100)</th>
+        <td style='text-align:right'> $pre_median </td>
+        <td style='text-align:right'> $post_median </td>
+        <td  style='text-align:right' class="$(fmtd_median.colour)">$(fmtd_median.ds)</td>
+    </tr>
+
+    </table>
+    """
+end
+
 """
 Main output generation for conjoint model FIXME do the ; [...], thing trick here
 """
@@ -744,7 +815,10 @@ function results_to_html_conjoint(
     results.preferences )
 
   mortality_table = "<h3>MORT GOES HERE</h3>"
-  sf_12_table = "<h3>SF-12 GOES HERE</h3>"
+  sf_12_table = make_sf_12_table( 
+    results.sf_pre, 
+    results.sf_post, 
+    results.sf12_depression_limit )
 
   outt = ( 
       phase = "end", 
@@ -768,6 +842,9 @@ function results_to_html_conjoint(
       examples = example_text,
       big_costs_table = big_costs,
       sf_12_table = sf_12_table,
+      sf12_depression_limit = results.sf12_depression_limit,
+      sf_12_thresholds_pre = results.sf_pre.thresholds,
+      sf_12_thresholds_post = results.sf_post.thresholds,
       mortality_table = mortality_table,
       endnotes = Markdown.html( CONJOINT_ENDNOTES ))
   return outt
