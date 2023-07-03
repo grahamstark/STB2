@@ -612,6 +612,10 @@ function make_disaggregated_popularity_table(
 """
 end
 
+function make_disaggregated_gain_lose_table( gain_lose ) :: String
+    return "<h2>DISAGG</h2>"
+end
+
 """
 Main output generation for conjoint model FIXME do the ; [...], thing trick here
 """
@@ -624,7 +628,9 @@ function results_to_html_conjoint(
           popn = results.summary.gain_lose[2].popn )
 
   gain_lose = gain_lose_table( gls )
-  big_gain_lose = "<h3>BIG GAIN LOSE</h3>"
+  big_gain_lose = make_disaggregated_gain_lose_table(
+    results.summary.gain_lose
+  )
 
   gains_by_decile = results.summary.deciles[2][:,4] -
         results.summary.deciles[1][:,4]
