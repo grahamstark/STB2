@@ -520,15 +520,17 @@ function results_to_html_conjoint(
           nc=results.summary.gain_lose[2].nc,
           popn = results.summary.gain_lose[2].popn )
   gain_lose = gain_lose_table( gls )
+  big-gain_lose = "<h3>BIG GAIN LOSE</h3>"
   gains_by_decile = results.summary.deciles[2][:,4] -
         results.summary.deciles[1][:,4]
   @info "gains_by_decile = $gains_by_decile"
-  costs = costs_table( 
+  costs = overall_cost( 
       results.summary.income_summary[1],
       results.summary.income_summary[2])
-  overall_costs = overall_cost( 
-      results.summary.income_summary[1],
-      results.summary.income_summary[2])
+  big_costs = costs_table( 
+        results.summary.income_summary[1],
+        results.summary.income_summary[2])
+  
   mrs = mr_table(
       results.summary.metrs[1], 
       results.summary.metrs[2] )       
@@ -547,17 +549,26 @@ function results_to_html_conjoint(
       detailed_cost_dataframe( 
           results.summary.income_summary[1],
           results.summary.income_summary[2] )) 
-  popularity_table = make_popularity_table( results.preferences["Total"].popularity, results.preferences["Total"].default_popularity )
+  popularity = make_popularity_table( results.preferences["Total"].popularity, results.preferences["Total"].default_popularity )
+  big_popularity = "<h3>BIG POPUL</h3>"
+
   mortality_table = "<h3>MORT GOES HERE</h3>"
   sf_12_table = "<h3>SF-12 GOES HERE</h3>"
 
   outt = ( 
       phase = "end", 
-      popularity = popularity_table,
+      
+      popularity = popularity,
+      big_popularity = big_popularity,
+
       gain_lose = gain_lose, 
+      big_gain_lose = big_gain_lose,
+
+      costs = costs, 
+      big_costs = overall_costs,
+
       gains_by_decile = gains_by_decile,
       costs = costs, 
-      overall_costs = overall_costs,
       mrs = mrs, 
       poverty=poverty, 
       inequality=inequality, 
