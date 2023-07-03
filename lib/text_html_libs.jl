@@ -415,13 +415,17 @@ const POP_LABELS = Dict([
     :ineq=>"Inequality"    
 ])
 
-function make_popularity_table( pop :: NamedTuple, defaultPop :: NamedTuple ) :: String
+function make_popularity_table( 
+    pop :: NamedTuple, 
+    defaultPop :: NamedTuple,
+    caption :: AbstractString  ) :: String
   v = pop.avg*100
   d = defaultPop.avg*100
   fmtd = format_diff( before=d, after=v, up_is_good = true, prec=1,commas=false )
   
   s = """
     <table class='table table-sm'>
+        <thead><caption>$caption</caption></thead>
         <tr> 
             <th></th>
             <th style='text-align:right'>Before</td>
@@ -508,6 +512,105 @@ function results_to_html(
 end
 
 
+function make_disaggregated_popularity_table( 
+    preferences :: Dict ) :: String
+    d = Dict()
+    for( k, v ) in preferences
+        lab = k == "Total" ? "Whole Population" : k
+        popularity = make_popularity_table( 
+            v.popularity, v.default_popularity, lab )
+        d[k] = popularity 
+    end
+    return """
+<div>
+    <div class='row'  id='conjoint-total'>
+        <div class='col'></div>
+        <div class='col'><h4>Whole Population</h4></div>
+        <div class='col'></div>
+    </div>
+    <div class='row'>
+        <div class='col'></div>
+        <div class='col'>$(d["Total"])</div>
+        <div class='col'></div>
+    </div>
+    <div class='row' id='conjoint-left-right'>
+        <div class='col'></div>
+        <div class='col'><h4>Left/Right Orientation</h4></div>
+        <div class='col'></div>
+    </div>
+    <div class='row'>
+        <div class='col'><h5>Left</h5></div>
+        <div class='col'><h5>Did Not Vote / Other</h5></div>
+        <div class='col'><h5>Right</h5></div>
+    </div>
+    <div class='row'>
+        <div class='col'>$(d["Left"])</div>
+        <div class='col'>$(d["DNV/Other"])</div>
+        <div class='col'>$(d["Right"])</div>
+    </div>
+    <div class='row' id='conjoint-party'>
+        <div class='col'></div>
+        <div class='col'><h4>Party Identification</h4></div>
+        <div class='col'></div>
+    </div>
+    <div class='row'>
+        <div class='col'><h5>Labour</h5></div>
+        <div class='col'><h5>Did Not Vote / Other</h5></div>
+        <div class='col'><h5>Conservative</h5></div>
+    </div>
+    <div class='row'>
+        <div class='col'>$(d["Labour"])</div>
+        <div class='col'>$(d["DNV"])</div>
+        <div class='col'>$(d["Tory"])</div>
+    </div>
+    <div class='row' id='conjoint-gender'>
+        <div class='col'></div>
+        <div class='col'><h4>Gender</h4></div>
+        <div class='col'></div>
+    </div>
+    <div class='row'>
+        <div class='col'><h5>Male</h5></div>
+        <div class='col'><h5>Female</h5></div>
+        <div class='col'></div>
+    </div>
+    <div class='row'>
+        <div class='col'>$(d["Male"])</div>
+        <div class='col'>$(d["Female"])</div>
+        <div class='col'></div>
+    </div>
+    <div class='row' id='conjoint-financial'>
+        <div class='col'></div>
+        <div class='col'><h4>Financial Wellbeing</h4></div>
+        <div class='col'></div>
+    </div>
+    <div class='row'>
+        <div class='col'><h5>Not difficult</h5></div>
+        <div class='col'><h5>Just about getting by</h5></div>
+        <div class='col'><h5>Difficult</h5></div>
+    </div>
+    <div class='row'>
+        <div class='col'>$(d["Not difficult"])</div>
+        <div class='col'>$(d["Just about getting by"])</div>
+        <div class='col'>$(d["Difficult"])</div>
+    </div>
+    <div class='row' id='conjoint-age'>
+        <div class='col'></div>
+        <div class='col'><h4>Age Range</h4></div>
+        <div class='col'></div>
+    </div>
+    <div class='row'>
+        <div class='col'><h5>18-54</h5></div>
+        <div class='col'><h5>55+</h5></div>
+        <div class='col'></div>
+    </div>
+    <div class='row'>
+        <div class='col'>$(d["18-54"])</div>
+        <div class='col'>$(d["55+"])</div>
+        <div class='col'></div>
+    </div>
+</div>
+"""
+end
 
 """
 Main output generation for conjoint model FIXME do the ; [...], thing trick here
@@ -554,8 +657,12 @@ function results_to_html_conjoint(
   lorenz_post = results.summary.deciles[2][:,2]
   example_text = make_examples( results.examples )
            
-  popularity = make_popularity_table( results.preferences["Total"].popularity, results.preferences["Total"].default_popularity )
-  big_popularity = "<h3>BIG POPUL</h3>"
+  popularity = make_popularity_table( 
+    results.preferences["Total"].popularity, 
+    results.preferences["Total"].default_popularity,
+    "Preferences for the whole population." )
+  big_popularity = make_disaggregated_popularity_table( 
+    results.preferences )
 
   mortality_table = "<h3>MORT GOES HERE</h3>"
   sf_12_table = "<h3>SF-12 GOES HERE</h3>"
@@ -571,7 +678,7 @@ function results_to_html_conjoint(
 
       costs = costs, 
       costs_one_liner = costs_one_liner,
-      big_costs = overall_costs,
+      big_costs = big_costs,
 
       gains_by_decile = gains_by_decile,
       mrs = mrs, 
