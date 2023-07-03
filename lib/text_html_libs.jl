@@ -722,14 +722,14 @@ function make_sf_12_table(
     
     # (; colour, ds, before_s, after_s )
     caption = """
-    The estimated number of adults with <a href='https://www.rand.org/health-care/surveys_tools/mos/12-item-short-form.html'>SF-12 Mental Health Component</a> less than $(sf12_depression_limit),
+    The estimated number of adults (in 000s) with <a href='https://www.rand.org/health-care/surveys_tools/mos/12-item-short-form.html'>SF-12 Mental Health Component</a> score of less than $(sf12_depression_limit),
     and the average and median SF-12 score for the adult population.
     SF-12 is a simple, widely used, questionnaire used to summarise a patients' health.
     """
 
     return """
     <table class='table table-sm'>
-    <thead><caption>$(caption), 000s of adults.</caption></thead>
+    <thead><caption>$(caption)</caption></thead>
     <tr> 
         <th></th>
         <th style='text-align:right'>Before</th>
@@ -737,7 +737,7 @@ function make_sf_12_table(
         <th style='text-align:right'>Change</th>
     </tr>
     <tr>
-        <th>Below Critical Threshold ($sf12_depression_limit)</th>
+        <th>Adults below Critical Threshold ($sf12_depression_limit) (000s)</th>
         <td style='text-align:right'> $pre ($pre_pct)%</td>
         <td style='text-align:right'> $post ($post_pct)%</td>
         <td  style='text-align:right' class="$(fmtd.colour)">$(fmtd.ds) ($(changepct)%)</td>
@@ -819,7 +819,10 @@ function results_to_html_conjoint(
     results.sf_pre, 
     results.sf_post, 
     results.sf12_depression_limit )
-
+  pre_thresh = results.sf_pre.thresholds .* results.sf_pre.popn
+  post_thresh = results.sf_post.thresholds .* results.sf_post.popn
+  @info "post_thresh = $post_thresh"
+  sf_12_ranges = collect(results.sf_post.range) .* 100.0
   outt = ( 
       phase = "end", 
       
@@ -843,8 +846,9 @@ function results_to_html_conjoint(
       big_costs_table = big_costs,
       sf_12_table = sf_12_table,
       sf12_depression_limit = results.sf12_depression_limit,
-      sf_12_thresholds_pre = results.sf_pre.thresholds,
-      sf_12_thresholds_post = results.sf_post.thresholds,
+      sf_12_thresholds_pre = pre_thresh,
+      sf_12_thresholds_post = post_thresh,
+      sf_12_ranges = sf_12_ranges,
       mortality_table = mortality_table,
       endnotes = Markdown.html( CONJOINT_ENDNOTES ))
   return outt
