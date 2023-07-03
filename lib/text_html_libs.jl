@@ -177,6 +177,7 @@ function frame_to_table(
 end
 
 
+
 function costs_table( incs1 :: DataFrame, incs2 :: DataFrame )
     df = costs_dataframe( incs1, incs2 )
     return frame_to_table( df, prec=0, up_is_good=COST_UP_GOOD, 
@@ -612,8 +613,80 @@ function make_disaggregated_popularity_table(
 """
 end
 
-function make_disaggregated_gain_lose_table( gain_lose ) :: String
-    return "<h2>DISAGG</h2>"
+function one_gain_lose( gl :: DataFrame, caption :: String ) :: String
+    nr,nc = size( gl )
+    nms = names( gl )
+    s = """
+    <table class='table table-sm'>
+        <thead><caption>By $(caption), 000s of People.</caption></thead>
+        <tr> 
+            <th>$caption</th>
+    """
+    for c = 2:nc 
+       s *= "<th style='text-align:right'>$(nms[c])</th>"
+    end
+    s *= """
+    </tr>
+    """
+    for r in 1:nr
+        v = gl[r,1]
+        s *=  """
+            <tr><th>$v</th>
+        """
+        for c in 2:nc 
+            v = gl[r,c]/1_000.0
+            vs = format(v, commas=true, precision=0)
+            s *= "<td style='text-align:right'>$vs</td>"
+        end
+        s *= """
+        </tr>
+        """
+    end
+    s *= """
+        </table>
+    """
+    return s
+end
+
+function make_disaggregated_gain_lose_tables( gain_lose :: NamedTuple ) :: String
+    ten_gl = one_gain_lose( gain_lose.ten_gl, "Tenure" )
+    dec_gl = one_gain_lose( gain_lose.dec_gl, "Decile" )
+    children_gl = one_gain_lose( gain_lose.children_gl, "Number of Children" )
+    hhtype_gl = one_gain_lose( gain_lose.hhtype_gl, "Household Size" )
+    
+    return """
+        <div>
+    
+            <div class='row'>
+                <div class='col'>
+                    <h5>By Household Size</h5>
+                    $hhtype_gl
+                </div>
+            </div>
+
+            <div class='row'>
+                <div class='col'>
+                    <h5>By Income Decile</h5>
+                    $dec_gl
+                </div>
+            </div>
+
+            <div class='row'>
+                <div class='col'>
+                    <h5>By Tenure</h5>
+                    $ten_gl
+                </div>
+            </div>
+
+            <div class='row'>
+                <div class='col'>
+                    <h5>By Number of Children</h5>
+                    $children_gl
+                </div>
+            </div>
+
+        </div>
+    """
 end
 
 """
@@ -628,8 +701,8 @@ function results_to_html_conjoint(
           popn = results.summary.gain_lose[2].popn )
 
   gain_lose = gain_lose_table( gls )
-  big_gain_lose = make_disaggregated_gain_lose_table(
-    results.summary.gain_lose
+  big_gain_lose = make_disaggregated_gain_lose_tables(
+    results.summary.gain_lose[2]
   )
 
   gains_by_decile = results.summary.deciles[2][:,4] -
