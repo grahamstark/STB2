@@ -259,8 +259,7 @@
                                                     data-bs-toggle='modal' 
                                                     data-bs-target='#gain-lose-popup'>
                                                     <div id="gain-lose-table"></div>
-                                                </div>                                                
-                                                <div class='col' id="big-gain-lose-table"></div>
+                                                </div>                                                                                                
                                             </div>
                                             
                                             <div class='col' id="deciles-graph">,</div>
@@ -274,7 +273,7 @@
                                             data-bs-target='#conjoint-popup'>
                                             <div id="conjoint-table"></div>
                                         </div>
-                                        <div id="big-conjoint-table"></div>
+                                        
                                     </div>      
                                     
                                     <div class='col'>
@@ -283,8 +282,9 @@
                                             data-bs-toggle='modal' 
                                             data-bs-target='#big-costs-popup'>
                                             <div id="costs-table"></div>
+                                            <div id="costs-one-liner"></div>
                                         </div>
-                                        <div id="big-costs-table"></div>
+                                        
                                     </div>
 
                                 </div><!-- row -->
@@ -347,7 +347,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div> <!-- header -->
                     <div class='modal-body'>
-                        <div id='conjoint-table'></div>
+                        <div id='big-conjoint-table'></div>
                     </div>
                 </div><!-- content -->
             </div> <!--dialog -->
@@ -361,7 +361,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div> <!-- header -->
                     <div class='modal-body'>
-                        <div id='gain-lose-table'></div>
+                        <div id='big-gain-lose-table'></div>
                     </div>
                 </div><!-- content -->
             </div> <!--dialog -->
@@ -568,6 +568,7 @@ function createMainOutputs( result ){
     $("#big-gain-lose-table").html( result.big_gain_lose );
 
     $("#costs-table").html( result.costs );
+    $("#costs-one-liner").html( result.costs_one_liner );
     $("#big-costs-table").html( result.big_costs );
 
     $('#conjoint-table' ).html( result.popularity );

@@ -519,18 +519,26 @@ function results_to_html_conjoint(
           losers=results.summary.gain_lose[2].losers, 
           nc=results.summary.gain_lose[2].nc,
           popn = results.summary.gain_lose[2].popn )
+
   gain_lose = gain_lose_table( gls )
-  big-gain_lose = "<h3>BIG GAIN LOSE</h3>"
+  big_gain_lose = "<h3>BIG GAIN LOSE</h3>"
+
   gains_by_decile = results.summary.deciles[2][:,4] -
         results.summary.deciles[1][:,4]
   @info "gains_by_decile = $gains_by_decile"
-  costs = overall_cost( 
+
+  costs = costs_table( 
+    base_results.summary.income_summary[1],
+    results.summary.income_summary[1])
+
+  costs_one_liner = overall_cost( 
       results.summary.income_summary[1],
       results.summary.income_summary[2])
-  big_costs = costs_table( 
-        results.summary.income_summary[1],
-        results.summary.income_summary[2])
-  
+  big_costs = costs_frame_to_table( 
+        detailed_cost_dataframe( 
+            results.summary.income_summary[1],
+            results.summary.income_summary[2] ))
+    
   mrs = mr_table(
       results.summary.metrs[1], 
       results.summary.metrs[2] )       
@@ -545,10 +553,7 @@ function results_to_html_conjoint(
   lorenz_pre = results.summary.deciles[1][:,2]
   lorenz_post = results.summary.deciles[2][:,2]
   example_text = make_examples( results.examples )
-  big_costs = costs_frame_to_table( 
-      detailed_cost_dataframe( 
-          results.summary.income_summary[1],
-          results.summary.income_summary[2] )) 
+           
   popularity = make_popularity_table( results.preferences["Total"].popularity, results.preferences["Total"].default_popularity )
   big_popularity = "<h3>BIG POPUL</h3>"
 
@@ -565,10 +570,10 @@ function results_to_html_conjoint(
       big_gain_lose = big_gain_lose,
 
       costs = costs, 
+      costs_one_liner = costs_one_liner,
       big_costs = overall_costs,
 
       gains_by_decile = gains_by_decile,
-      costs = costs, 
       mrs = mrs, 
       poverty=poverty, 
       inequality=inequality, 
