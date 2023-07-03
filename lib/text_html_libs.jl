@@ -528,8 +528,8 @@ function results_to_html_conjoint(
   @info "gains_by_decile = $gains_by_decile"
 
   costs = costs_table( 
-    base_results.summary.income_summary[1],
-    results.summary.income_summary[1])
+    results.summary.income_summary[1],
+    results.summary.income_summary[2])
 
   costs_one_liner = overall_cost( 
       results.summary.income_summary[1],
