@@ -702,8 +702,8 @@ function make_sf_12_table(
         after=sf_post.depressed/1000, 
         up_is_good=false, 
         prec=0 )
-    chpct = (sf_post.depressed-sf_pre.depressed)/sf_pre.depressed
-    changepct = format( chpct, commas=false, precision=2 )
+    chpct = 100*(sf_post.depressed-sf_pre.depressed)/sf_pre.depressed
+    changepct = format( chpct, commas=false, precision=1 )
 
     pre_mean = format( sf_pre.average, commas=false, precision=1 )
     post_mean = format( sf_post.average, commas=false, precision=1 )
@@ -819,10 +819,10 @@ function results_to_html_conjoint(
     results.sf_pre, 
     results.sf_post, 
     results.sf12_depression_limit )
-  pre_thresh = results.sf_pre.thresholds .* results.sf_pre.popn
-  post_thresh = results.sf_post.thresholds .* results.sf_post.popn
+  pre_thresh = results.sf_pre.thresholds # .* results.sf_pre.popn
+  post_thresh = results.sf_post.thresholds # .* results.sf_post.popn
   @info "post_thresh = $post_thresh"
-  sf_12_ranges = collect(results.sf_post.range) .* 100.0
+  sf_12_ranges = collect(results.sf_post.range) .* results.sf_post.popn
   outt = ( 
       phase = "end", 
       
@@ -849,6 +849,7 @@ function results_to_html_conjoint(
       sf_12_thresholds_pre = pre_thresh,
       sf_12_thresholds_post = post_thresh,
       sf_12_ranges = sf_12_ranges,
+      sf_12_popn = results.sf_post.popn,
       mortality_table = mortality_table,
       endnotes = Markdown.html( CONJOINT_ENDNOTES ))
   return outt
