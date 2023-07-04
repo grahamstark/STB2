@@ -50,32 +50,23 @@ Written by [Graham Stark](https://virtual-worlds.scot) | email: [graham.stark@vi
 
 const CONJOINT_ENDNOTES = md"""
 
-## NOTES - Please Read.
+## NOTES 
 
 This is my impression of what Elliot, Daniel, and I talked about when we met 2 weeks ago. It's very buggy and incomplete but offered to get a conversation started.
 
 1. The calculations use my Scottish Tax Benefit model, for now. Since the conjoint calculations use %changes, this may be OK for now;
 2. There are notes under the individual items for some queries;
 3. **BUGS** : 
-    - sometimes the run results don't show through first time; I'm not clear why - possibly a timing issue. Press 'run' again if results don't change.
     - povery effect not zero in base case
 4. **NOT IMPLEMENTED** (most of it..):
     - Funding
     - Life Expectancy
-    - Mental Health
-    - Eligibility 
-    - Means Testing
     - Citizenship
 5. **CLARIFICATION NEEED**
     - default values for things - for example, we can't select 'none' from the funding options, I think.
-6. **TODO**
-    - move to the Azure Server
-    - Northumbria - like formatting & logos.
 7. Source code (not my finest..):
     - [Conjoint Code](https://github.com/grahamstark/Conjoint)
     - [Server Code](https://github.com/grahamstark/STB2/)
   
-Anyway...
-
 
 """

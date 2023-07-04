@@ -576,7 +576,7 @@ function make_disaggregated_popularity_table(
     </div>    
     <div class='row  border-bottom border-primary pb-2 mb-2'>
         <div class='col'>
-            <h>Labour</h4>
+            <h4>Labour</h4>
             $(d["Labour"])       
         </div>
         <div class='col'>
