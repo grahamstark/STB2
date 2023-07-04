@@ -436,10 +436,10 @@ POPULARITY_CAPTIONS = Dict(
         "DNV/Other"=>"In the 2019 general election, either did not vote, or voted for an Independent.",
         "Right"=> "In the 2019 general election, voted for the Conservatives, Brexit Party, or another right-wing party.",
         "Labour"=> "Voted Labour at the 2019 General Election.",
-        "DNV"=> "In the 2019 Election, voted for some other party, inc. SNP, Greens, Brexit, Libdems, Independent, or did not vote."
+        "DNV"=> "In the 2019 Election, voted for some other party, inc. SNP, Greens, Brexit, Libdems, Independent, or did not vote.",
         "Tory"=>"Voted Conservative at the 2019 General Election.",
         "Not difficult"=>"Living comfortably/doing alright financially.",
-        "Just about getting by"=>"Just about managing financially".
+        "Just about getting by"=>"Just about managing financially",
         "Difficult"=> "Finding things quite or very difficult financially."
     ]
 )
