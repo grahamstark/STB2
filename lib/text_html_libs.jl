@@ -546,10 +546,10 @@ function make_disaggregated_popularity_table(
             </li>
         </ul>
     </nav>
-    <div class='row border-top border-primary'  id='conjoint-total'>
+    <div class='row border-top border-primary pt-2'  id='conjoint-total'>
         <div class='col-3'><h3 class="text-center">Whole Population</h3></div>
     </div>
-    <div class='row'>
+    <div class='row border-bottom border-primary pb-2'>
         <div class='col'></div>
         <div class='col'>$(d["Total"])</div>
         <div class='col'></div>
@@ -557,7 +557,7 @@ function make_disaggregated_popularity_table(
     <div class='row' id='conjoint-left-right'>
         <div class='col-3'><h3 class="text-center">Left/Right Orientation</h3></div>
     </div>
-    <div class='row border-bottom border-primary pb-2'>
+    <div class='row border-bottom border-primary pb-2 mb-2'>
         <div class='col'>
             <h5>Left</h5>
             $(d["Left"])
@@ -574,7 +574,7 @@ function make_disaggregated_popularity_table(
     <div class='row' id='conjoint-party'>
         <div class='col-3'><h3  class="text-center">Party Identification</h3></div>
     </div>    
-    <div class='row  border-bottom border-primary pb-2'>
+    <div class='row  border-bottom border-primary pb-2 mb-2'>
         <div class='col'>
             <h>Labour</h5>
             $(d["Labour"])       
@@ -591,7 +591,7 @@ function make_disaggregated_popularity_table(
     <div class='row' id='conjoint-gender'>
         <div class='col-3'><h3 class="text-center">Gender</h3></div>
     </div>
-    <div class='row  border-bottom border-primary pb-2'>
+    <div class='row  border-bottom border-primary pb-2 mb-2'>
         <div class='col'>
             <h5>Male</h5>
             $(d["Male"])
@@ -605,7 +605,7 @@ function make_disaggregated_popularity_table(
     <div class='row' id='conjoint-financial'>
         <div class='col-3'><h3 class="text-center">Financial Wellbeing</h3></div>
     </div>
-    <div class='row  border-bottom border-primary pb-2'>
+    <div class='row  border-bottom border-primary pb-2 mb-2'>
         <div class='col'>
             <h5>Not difficult</h5>
             $(d["Not difficult"])
