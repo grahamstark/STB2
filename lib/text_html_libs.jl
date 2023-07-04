@@ -559,15 +559,15 @@ function make_disaggregated_popularity_table(
     </div>
     <div class='row border-bottom border-primary pb-2 mb-2'>
         <div class='col'>
-            <h5>Left</h5>
+            <h4>Left</h4>
             $(d["Left"])
         </div>
         <div class='col'>
-            <h5>Did Not Vote / Other</h5>
+            <h4>Did Not Vote / Other</h4>
             $(d["DNV/Other"])
         </div>
         <div class='col'>
-            <h5>Right</h5>
+            <h4>Right</h4>
             $(d["Right"])
         </div>
     </div>
@@ -576,15 +576,15 @@ function make_disaggregated_popularity_table(
     </div>    
     <div class='row  border-bottom border-primary pb-2 mb-2'>
         <div class='col'>
-            <h>Labour</h5>
+            <h>Labour</h4>
             $(d["Labour"])       
         </div>
         <div class='col'>
-            <h5>Did Not Vote / Other</h5>
+            <h4>Did Not Vote / Other</h4>
             $(d["DNV"])
         </div>
         <div class='col'>
-            <h5>Conservative</h5>
+            <h4>Conservative</h4>
             $(d["Tory"])
         </div>
     </div>
@@ -593,11 +593,11 @@ function make_disaggregated_popularity_table(
     </div>
     <div class='row  border-bottom border-primary pb-2 mb-2'>
         <div class='col'>
-            <h5>Male</h5>
+            <h4>Male</h4>
             $(d["Male"])
         </div>
         <div class='col'>
-            <h5>Female</h5>
+            <h4>Female</h4>
             $(d["Female"])
         </div>
         <div class='col'></div>
@@ -607,15 +607,15 @@ function make_disaggregated_popularity_table(
     </div>
     <div class='row  border-bottom border-primary pb-2 mb-2'>
         <div class='col'>
-            <h5>Not difficult</h5>
+            <h4>Not difficult</h4>
             $(d["Not difficult"])
         </div>
         <div class='col'>
-            <h5>Just about getting by</h5>
+            <h4>Just about getting by</h4>
             $(d["Just about getting by"])
         </div>
         <div class='col'>
-            <h5>Difficult</h5>
+            <h4>Difficult</h4>
             $(d["Difficult"])
         </div>
     </div>
@@ -624,11 +624,11 @@ function make_disaggregated_popularity_table(
     </div>
     <div class='row'>
         <div class='col'>
-            <h5>18-54</h5>
+            <h4>18-54</h4>
             $(d["18-54"])
         </div>
         <div class='col'>
-            <h5>55+</h5>
+            <h4>55+</h4>
             $(d["55+"])
         </div>
         <div class='col'></div>
@@ -746,9 +746,13 @@ function make_sf_12_table(
     
     # (; colour, ds, before_s, after_s )
     caption = """
-    The estimated number of adults (in 000s) with <a href='https://www.rand.org/health-care/surveys_tools/mos/12-item-short-form.html'>SF-12 Mental Health Component</a> score of less than $(sf12_depression_limit),
-    and the average and median SF-12 score for the adult population.
-    SF-12 is a simple, widely used, questionnaire used to summarise a patients' health.
+    The estimated number of adults (in 000s) with 
+    <a href='https://www.rand.org/health-care/surveys_tools/mos/12-item-short-form.html'>SF-12 Mental Health Component</a> 
+    score of less than $(sf12_depression_limit),
+    and the mean and median SF-12 score for the adult population.
+    SF-12 is a 12-question survey often used to summarise a patients' mental health.
+    Higher scores are better; a score of less than $(sf12_depression_limit) may 
+    indicate a mental health problem.
     """
 
     return """
