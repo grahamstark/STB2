@@ -432,9 +432,9 @@ const POP_LABELS = Dict([
 POPULARITY_CAPTIONS = Dict(
     [
         "Total"=>"Whole Population",
-        "Left"=> "In the 2019 general election, voted for Labour, the Greens, the SNP, Plaid Cymru, the Lib Dems or another left-wing party."
+        "Left"=> "In the 2019 general election, voted for Labour, the Greens, the SNP, Plaid Cymru, the Lib Dems or another left-wing party.",
         "DNV/Other"=>"In the 2019 general election, either did not vote, or voted for an Independent.",
-        "Right"=> "In the 2019 general election, voted for the Conservatives, Brexit Party, or another right-wing party."
+        "Right"=> "In the 2019 general election, voted for the Conservatives, Brexit Party, or another right-wing party.",
         "Labour"=> "Voted Labour at the 2019 General Election.",
         "DNV"=> "In the 2019 Election, voted for some other party, inc. SNP, Greens, Brexit, Libdems, Independent, or did not vote."
         "Tory"=>"Voted Conservative at the 2019 General Election.",
