@@ -523,11 +523,31 @@ function make_disaggregated_popularity_table(
         d[k] = popularity 
     end
     return """
-<div>
-    <div class='row'  id='conjoint-total'>
-        <div class='col'></div>
-        <div class='col'><h4>Whole Population</h4></div>
-        <div class='col'></div>
+<div id='conjoint-top'>
+    <nav>
+        <ul class='nav'>
+            <li class="nav-item">
+                <a class='nav-link active' href='#conjoint-total'>Whole Population</a>
+            </li>
+            <li class='nav-item'>
+                <a class='nav-link' href='#conjoint-left-right'>Left/Right Orientation</a>
+            </li>
+            <li class='nav-item'>
+                <a class='nav-link' href='#conjoint-party'>Party Identification</a>
+            </li>
+            <li class='nav-item'>
+                <a class='nav-link' href='#conjoint-gender'>Gender</a>
+            </li>
+            <li class='nav-item'>
+                <a class='nav-link' href='#conjoint-financial'>Financial Wellbeing</a>
+            </li>
+            <li class='nav-item'>
+                <a class='nav-link' href='#conjoint-age'>Age</a>
+            </li>
+        </ul>
+    </nav>
+    <div class='row border-top border-primary'  id='conjoint-total'>
+        <div class='col-3'><h3 class="text-center">Whole Population</h3></div>
     </div>
     <div class='row'>
         <div class='col'></div>
@@ -535,78 +555,82 @@ function make_disaggregated_popularity_table(
         <div class='col'></div>
     </div>
     <div class='row' id='conjoint-left-right'>
-        <div class='col'></div>
-        <div class='col'><h4>Left/Right Orientation</h4></div>
-        <div class='col'></div>
+        <div class='col-3'><h3 class="text-center">Left/Right Orientation</h3></div>
     </div>
-    <div class='row'>
-        <div class='col'><h5>Left</h5></div>
-        <div class='col'><h5>Did Not Vote / Other</h5></div>
-        <div class='col'><h5>Right</h5></div>
-    </div>
-    <div class='row'>
-        <div class='col'>$(d["Left"])</div>
-        <div class='col'>$(d["DNV/Other"])</div>
-        <div class='col'>$(d["Right"])</div>
+    <div class='row border-bottom border-primary pb-2'>
+        <div class='col'>
+            <h5>Left</h5>
+            $(d["Left"])
+        </div>
+        <div class='col'>
+            <h5>Did Not Vote / Other</h5>
+            $(d["DNV/Other"])
+        </div>
+        <div class='col'>
+            <h5>Right</h5>
+            $(d["Right"])
+        </div>
     </div>
     <div class='row' id='conjoint-party'>
-        <div class='col'></div>
-        <div class='col'><h4>Party Identification</h4></div>
-        <div class='col'></div>
-    </div>
-    <div class='row'>
-        <div class='col'><h5>Labour</h5></div>
-        <div class='col'><h5>Did Not Vote / Other</h5></div>
-        <div class='col'><h5>Conservative</h5></div>
-    </div>
-    <div class='row'>
-        <div class='col'>$(d["Labour"])</div>
-        <div class='col'>$(d["DNV"])</div>
-        <div class='col'>$(d["Tory"])</div>
+        <div class='col-3'><h3  class="text-center">Party Identification</h3></div>
+    </div>    
+    <div class='row  border-bottom border-primary pb-2'>
+        <div class='col'>
+            <h>Labour</h5>
+            $(d["Labour"])       
+        </div>
+        <div class='col'>
+            <h5>Did Not Vote / Other</h5>
+            $(d["DNV"])
+        </div>
+        <div class='col'>
+            <h5>Conservative</h5>
+            $(d["Tory"])
+        </div>
     </div>
     <div class='row' id='conjoint-gender'>
-        <div class='col'></div>
-        <div class='col'><h4>Gender</h4></div>
-        <div class='col'></div>
+        <div class='col-3'><h3 class="text-center">Gender</h3></div>
     </div>
-    <div class='row'>
-        <div class='col'><h5>Male</h5></div>
-        <div class='col'><h5>Female</h5></div>
-        <div class='col'></div>
-    </div>
-    <div class='row'>
-        <div class='col'>$(d["Male"])</div>
-        <div class='col'>$(d["Female"])</div>
+    <div class='row  border-bottom border-primary pb-2'>
+        <div class='col'>
+            <h5>Male</h5>
+            $(d["Male"])
+        </div>
+        <div class='col'>
+            <h5>Female</h5>
+            $(d["Female"])
+        </div>
         <div class='col'></div>
     </div>
     <div class='row' id='conjoint-financial'>
-        <div class='col'></div>
-        <div class='col'><h4>Financial Wellbeing</h4></div>
-        <div class='col'></div>
+        <div class='col-3'><h3 class="text-center">Financial Wellbeing</h3></div>
     </div>
-    <div class='row'>
-        <div class='col'><h5>Not difficult</h5></div>
-        <div class='col'><h5>Just about getting by</h5></div>
-        <div class='col'><h5>Difficult</h5></div>
-    </div>
-    <div class='row'>
-        <div class='col'>$(d["Not difficult"])</div>
-        <div class='col'>$(d["Just about getting by"])</div>
-        <div class='col'>$(d["Difficult"])</div>
+    <div class='row  border-bottom border-primary pb-2'>
+        <div class='col'>
+            <h5>Not difficult</h5>
+            $(d["Not difficult"])
+        </div>
+        <div class='col'>
+            <h5>Just about getting by</h5>
+            $(d["Just about getting by"])
+        </div>
+        <div class='col'>
+            <h5>Difficult</h5>
+            $(d["Difficult"])
+        </div>
     </div>
     <div class='row' id='conjoint-age'>
-        <div class='col'></div>
-        <div class='col'><h4>Age Range</h4></div>
-        <div class='col'></div>
+        <div class='col-3'><h3  class="text-center">Age Range</h3></div>
     </div>
     <div class='row'>
-        <div class='col'><h5>18-54</h5></div>
-        <div class='col'><h5>55+</h5></div>
-        <div class='col'></div>
-    </div>
-    <div class='row'>
-        <div class='col'>$(d["18-54"])</div>
-        <div class='col'>$(d["55+"])</div>
+        <div class='col'>
+            <h5>18-54</h5>
+            $(d["18-54"])
+        </div>
+        <div class='col'>
+            <h5>55+</h5>
+            $(d["55+"])
+        </div>
         <div class='col'></div>
     </div>
 </div>
