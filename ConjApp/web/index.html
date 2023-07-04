@@ -427,22 +427,28 @@ function createLorenzCurve( targetId, result, thumbnail ){
     console.log( "deciles" + result.lorenz_pre.toString());
     console.log( "lorenz_pre length" + result.lorenz_pre.length );
     // deciles levels are rhs. so push a 0,0
-    data.push( {"popn1":0, "pre":0 });
+    data.push( {"Population Share":0, "Income Share":0,
+            "Which System":"Before"  });
     popn = 0.0;
     incr = 1/result.lorenz_pre.length;
     for( var i = 0; i < result.lorenz_pre.length; i++){
         popn += incr;
-        data.push( {"popn1":popn, "pre":result.lorenz_pre[i] });
+        data.push( {"Population Share":popn, 
+                    "Income Share":result.lorenz_pre[i], 
+                    "Which System":"Before"
+                });
     }
     // var data_post= [];
-    data.push( {"popn2":0, "post":0 });
+    data.push( {"Population Share":0, "Income Share":0,
+            "Which System":"After" });
     popn = 0.0;
     for( var i = 0; i < result.lorenz_post.length; i++){
         popn += incr;
-        data.push( {"popn2":popn, "post":result.lorenz_post[i] });
+        data.push( {"Population Share":popn, "Income Share":result.lorenz_post[i],
+            "Which System":"After" });
     }
-    data.push( {"popn3":0.0, "base":0.0});
-    data.push( {"popn3":1.0, "base":1.0});
+    data.push( {"Population Share":0.0, "Income Share":0.0, "Which System":"Line of Equality"});
+    data.push( {"Population Share":1.0, "Income Share":1.0, "Which System":"Line of Equality"});
     var gini_vg = {
         "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
         "title": title,
@@ -450,52 +456,14 @@ function createLorenzCurve( targetId, result, thumbnail ){
         "height": height,
         "description": title,
         "data": {"values": data }, // , "post":data_post
-        "layer":[
-            {
-                "mark": "line",
-                "encoding":{
+        "mark": {"type":"line"},
+        "encoding":{
                     "x": { "type": "quantitative",
-                           "field": "popn1",
-                           "axis":{
-                               "title": xtitle
-                           }},
+                        "field": "Population Share"},
                     "y": { "type": "quantitative",
-                           "field": "pre",
-                           "axis":{
-                              "title": ytitle
-                           } },
-                    "color": {"value":"blue"}
-                } // encoding
-            }, // pre layer line
-            {
-                "mark": "line",
-                "encoding":{
-                    "x": { "type": "quantitative",
-                           "field": "popn2",
-                           "axis":{
-                              "title": xtitle
-                           }},
-                    "y": { "type": "quantitative",
-                           "field": "post",
-                           "axis":{
-                              "title": ytitle
-                           } },
-                   "color": {"value":"red"}
-               } // encoding
-           }, // post line
-          { // diagonal in grey
-               "mark": "line",
-               "encoding":{
-                   "x": { "type": "quantitative",
-                          "field": "popn3" },
-                   "y": { "type": "quantitative",
-                          "field": "base" },
-                   "color": {"value":"#ccc"},
-                   "strokeWidth": {"value": 1.0}
-                   // "strokeDash":
-               } // encoding
-           },
-        ]
+                        "field": "Income Share"},
+                    "color": {"field":"Which System", "type":"Nominal"}
+        }
     }
     vegaEmbed( targetId, gini_vg );
 }
@@ -559,19 +527,25 @@ function createSF12Chart( targetId, result ){
     var data = [];
     // data.push( {"score1":0.0, "pre":0.0 });
     for( var i = 0; i < result.sf_12_ranges.length; i++){
-        data.push( {"pre":result.sf_12_ranges[i], 
-            "score1":result.sf_12_thresholds_pre[i] });
+        data.push( {"Adult Population":result.sf_12_ranges[i], 
+            "SF-12 Score":result.sf_12_thresholds_pre[i],
+            "Which System":"Before" });
     }    
     // data.push( {"score2":0.0, "post":0.0 });
     for( var i = 0; i < result.sf_12_ranges.length; i++){
-        data.push( {"post":result.sf_12_ranges[i], 
-            "score2":result.sf_12_thresholds_post[i] });
-    } 
-    // vertical line at thresh   
-    data.push( {"threshx":result.sf12_depression_limit, 
-                "threshy": 0.0 });
-    data.push( {"threshx":result.sf12_depression_limit, 
-                "threshy":result.sf_12_popn });
+        data.push( {"Adult Population":result.sf_12_ranges[i], 
+            "SF-12 Score":result.sf_12_thresholds_post[i],
+            "Which System":"After" });
+    }
+
+    // vertical line at thresh  
+
+    data.push( {"SF-12 Score":result.sf12_depression_limit, 
+                "Adult Population": 0.0,
+                "Which System":"Critical Threshold" });
+    data.push( {"SF-12 Score":result.sf12_depression_limit, 
+                "Adult Population":result.sf_12_popn,
+                "Which System":"Critical Threshold" });
     var sf12 = {
         "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
         "title": title,
@@ -579,52 +553,14 @@ function createSF12Chart( targetId, result ){
         "height": height,
         "description": title,
         "data": {"values": data }, // , "post":data_post
-        "layer":[
-            {
-                "mark": "line",
-                "encoding":{
+        "mark": {"type":"line"},
+        "encoding":{
                     "x": { "type": "quantitative",
-                        "field": "score1",
-                        "axis":{
-                            "title": xtitle
-                        }},
+                        "field": "SF-12 Score"},
                     "y": { "type": "quantitative",
-                        "field": "pre",
-                        "axis":{
-                            "title": ytitle
-                        } },
-                    "color": {"value":"blue"}
-                } // encoding
-            }, // pre layer line
-            {
-                "mark": "line",
-                "encoding":{
-                    "x": { "type": "quantitative",
-                        "field": "score2",
-                        "axis":{
-                            "title": xtitle
-                        }},
-                    "y": { "type": "quantitative",
-                        "field": "post",
-                        "axis":{
-                            "title": ytitle
-                        } },
-                "color": {"value":"red"}
-            } // encoding
-        }, // post line
-        { // threshold in green
-            "mark": "line",
-            "encoding":{
-                "x": { "type": "quantitative",
-                        "field": "threshx" },
-                "y": { "type": "quantitative",
-                        "field": "threshy" },
-                "color": {"value":"green"},
-                "strokeWidth": {"value": 1.0}
-                // "strokeDash":
-            } // encoding
-        },
-        ]
+                        "field": "Adult Population"},
+                    "color": {"field":"Which System", "type":"Nominal"}
+        }
     }
     vegaEmbed( targetId, sf12 );
 }
