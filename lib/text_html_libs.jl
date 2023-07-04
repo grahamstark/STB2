@@ -762,8 +762,8 @@ function make_sf_12_table(
     </tr>
     <tr>
         <th>Adults below Critical Threshold ($sf12_depression_limit) (000s)</th>
-        <td style='text-align:right'> $pre ($pre_pct)%</td>
-        <td style='text-align:right'> $post ($post_pct)%</td>
+        <td style='text-align:right'> $pre ($(pre_pct)%)</td>
+        <td style='text-align:right'> $post ($(post_pct)%)</td>
         <td  style='text-align:right' class="$(fmtd.colour)">$(fmtd.ds) ($(changepct)%)</td>
     </tr>
 
