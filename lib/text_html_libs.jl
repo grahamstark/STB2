@@ -549,7 +549,7 @@ function make_disaggregated_popularity_table(
     <div class='row border-top border-primary pt-2'  id='conjoint-total'>
         <div class='col-3'><h3 class="text-center">Whole Population</h3></div>
     </div>
-    <div class='row border-bottom border-primary pb-2'>
+    <div class='row border-bottom border-primary pb-2 mb-2'>
         <div class='col'></div>
         <div class='col'>$(d["Total"])</div>
         <div class='col'></div>
