@@ -204,7 +204,7 @@ function map_features!( tb :: TaxBenefitSystem, facs :: Factors )
 
   if facs.funding ==
       "Removal of income tax-free personal allowance"
-      tb.it.personal_allowance = 0.0
+      tb.it.personal_allowance = 0.0  
   elseif facs.funding in [
       "Increased government borrowing",
       "Corporation tax increase",
