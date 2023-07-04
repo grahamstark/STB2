@@ -416,6 +416,34 @@ const POP_LABELS = Dict([
     :ineq=>"Inequality"    
 ])
 
+# Joe's note:
+# Graham, I also need to clarify what left-right means in this instance. 
+# Both the Labour-Tory and Left-Right variables are drawn from the same 
+# survey question asking for their 2019 vote (rather than affiliation). 
+# But the Left-Right variable groups Labour, Green, SNP, Plaid Cymru, and Lib Dems 
+# together on the one side and Tory/Brexit party on the other. 
+# This also means the Other category means something quite different 
+# for the two options (The Labour-Tory variable includes all Green SNP Plaid Lib Dem Brexit in 
+# “Other/DNV” while Left-Right variable only has independents and if they say actually other). So it is not left-right orientation per se. We might only want to include one of the two if it is overcomplicating it but I wanted to give us two options depending on what people preferred. 
+# Or we could leave both but be clearer about what left-right means in this context.
+# On the financial well-being variable it might be worth stating the categories under the hood 
+# rather than just Difficult-not Difficult. Not difficult = either “Living comfortably” 
+# or “Doing alright”, while Difficult = either “Finding it quite difficult” or “Finding it very difficult”. “Just about managing” is just one category as already stated.
+POPULARITY_CAPTIONS = Dict(
+    [
+        "Total"=>"Whole Population",
+        "Left"=> "In the 2019 general election, voted for Labour, the Greens, the SNP, Plaid Cymru, the Lib Dems or another left-wing party."
+        "DNV/Other"=>"In the 2019 general election, either did not vote, or voted for an Independent.",
+        "Right"=> "In the 2019 general election, voted for the Conservatives, Brexit Party, or another right-wing party."
+        "Labour"=> "Voted Labour at the 2019 General Election.",
+        "DNV"=> "In the 2019 Election, voted for some other party, inc. SNP, Greens, Brexit, Libdems, Independent, or did not vote."
+        "Tory"=>"Voted Conservative at the 2019 General Election.",
+        "Not difficult"=>"Living comfortably/doing alright financially.",
+        "Just about getting by"=>"Just about managing financially".
+        "Difficult"=> "Finding things quite or very difficult financially."
+    ]
+)
+
 function make_popularity_table( 
     pop :: NamedTuple, 
     defaultPop :: NamedTuple,
@@ -423,10 +451,10 @@ function make_popularity_table(
   v = pop.avg*100
   d = defaultPop.avg*100
   fmtd = format_diff( before=d, after=v, up_is_good = true, prec=1,commas=false )
-  
+  caption_text = get(POPULARITY_CAPTIONS, caption, caption ) # one of Joe's explanations above, or just the key itself.
   s = """
     <table class='table table-sm'>
-        <thead><caption>$caption</caption></thead>
+        <thead><caption>$caption_text</caption></thead>
         <tr> 
             <th></th>
             <th style='text-align:right'>Before</th>
@@ -517,9 +545,9 @@ function make_disaggregated_popularity_table(
     preferences :: Dict ) :: String
     d = Dict()
     for( k, v ) in preferences
-        lab = k == "Total" ? "Whole Population" : k
+        # lab = k == "Total" ? "Whole Population" : k
         popularity = make_popularity_table( 
-            v.popularity, v.default_popularity, lab )
+            v.popularity, v.default_popularity, k )
         d[k] = popularity 
     end
     return """
@@ -572,7 +600,7 @@ function make_disaggregated_popularity_table(
         </div>
     </div>
     <div class='row' id='conjoint-party'>
-        <div class='col-3'><h3  class="text-center">Party Identification</h3></div>
+        <div class='col-3'><h3  class="text-center">Party Vote 2019</h3></div>
     </div>    
     <div class='row  border-bottom border-primary pb-2 mb-2'>
         <div class='col'>
