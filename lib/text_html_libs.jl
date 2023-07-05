@@ -59,7 +59,7 @@ function thing_table(
     table = "<table class='table'>"
     table *= "<thead>
         <tr>
-            <th></th><th>Before</th><th>After</th><th>Change</th>
+            <th></th><th>Baseline Policy</th><th>Your Policy</th><th>Change</th>
         </tr>
         </thead>"
 
@@ -89,7 +89,7 @@ function costs_frame_to_table(
     table = "<table class='table table-sm'>"
     table *= "<thead>
         <tr>
-            <th></th><th colspan='2'>Before</th><th colspan='2'>After</th><th colspan=2>Change</th>            
+            <th></th><th colspan='2'>Baseline Policy</th><th colspan='2'>Your Policy</th><th colspan=2>Change</th>            
         </tr>
         <tr>
             <th></th><th style='text-align:right'>Costs £m</th><th style='text-align:right'>(Counts)</th>
@@ -156,7 +156,7 @@ function frame_to_table(
     table = "<table class='table table-sm'>"
     table *= "<thead>
         <tr>
-            <th></th><th style='text-align:right'>Before</th><th style='text-align:right'>After</th><th style='text-align:right'>Change</th>            
+            <th></th><th style='text-align:right'>Baseline Policy</th><th style='text-align:right'>Your Policy</th><th style='text-align:right'>Change</th>            
         </tr>
         </thead>"
     table *= "<caption>$caption</caption>"
@@ -444,12 +444,24 @@ POPULARITY_CAPTIONS = Dict(
     ]
 )
 
+
+"""
+see Dan's email of 5 Jul. Kinda sorta normalise round 50 & use the whole range 0..100.
+if the range is 40-60 then this works
+"""
+function dannify( v :: Number; minr = 0.4, maxr=0.6 ) :: Number
+    rng = maxr - minr
+    (100*(v - minr)/rng)
+    ### (100*(v - 0.5)) + 50
+end
+
+
 function make_popularity_table( 
     pop :: NamedTuple, 
     defaultPop :: NamedTuple,
     caption :: AbstractString  ) :: String
-  v = pop.avg*100
-  d = defaultPop.avg*100
+  v = dannify(pop.avg)
+  d = dannify(defaultPop.avg)
   fmtd = format_diff( before=d, after=v, up_is_good = true, prec=1,commas=false )
   caption_text = get(POPULARITY_CAPTIONS, caption, caption ) # one of Joe's explanations above, or just the key itself.
   s = """
@@ -457,8 +469,8 @@ function make_popularity_table(
         <thead><caption>$caption_text</caption></thead>
         <tr> 
             <th></th>
-            <th style='text-align:right'>Before</th>
-            <th style='text-align:right'>After</th>
+            <th style='text-align:right'>Baseline</th>
+            <th style='text-align:right'>Your Policy</th>
             <th style='text-align:right'>Change</th>
         </tr>
         <tr class='text-primary text-bg'><th>Overall Popularity</th>
@@ -471,8 +483,8 @@ function make_popularity_table(
     
     for k in keys(pop.components)
         lab = POP_LABELS[k]
-        v = pop.components[k]*100
-        d = defaultPop.components[k]*100
+        v = dannify(pop.components[k])
+        d = dannify(defaultPop.components[k])
         fmtd = format_diff( before=d, after=v, up_is_good = true, prec=1,commas=false )
         s *= """
             <tr><th>$lab</th>
@@ -788,8 +800,8 @@ function make_sf_12_table(
     <thead><caption>$(caption)</caption></thead>
     <tr> 
         <th></th>
-        <th style='text-align:right'>Before</th>
-        <th style='text-align:right'>After</th>
+        <th style='text-align:right'>Baseline</th>
+        <th style='text-align:right'>Your Policy</th>
         <th style='text-align:right'>Change</th>
     </tr>
     <tr>
