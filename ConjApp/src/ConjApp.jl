@@ -130,7 +130,11 @@ end
 function map_features!( tb :: TaxBenefitSystem, facs :: Factors )
   tb.ubi.abolished = false
   tb.ubi.mt_bens_treatment = ub_as_is # ub_keep_housing
-
+  #= these are true
+  sys.ubi.abolish_pensions
+  sys.ubi.abolish_jsa_esa 
+  sys.ubi.abolish_others 
+  =#
   if facs.level ==
       "Child - £0; Adult - £63; Pensioner - £190"
       tb.ubi.adult_amount = 63
@@ -277,46 +281,26 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     map_features!( sys1, Factors{Float64}()) # make the default system with default values??
     map_features!( sys2, facs )
     sys = [sys1,sys2]
-    # println( "sys1 income tax\n $(sys1.it)" )
-    # println( "sys2 income tax\n $(sys2.it)" )
-    ## , get_system( year=2019, scotland=true )]
     results = do_one_run( settings, sys, obs )
     settings.poverty_line = make_poverty_line( results.hh[1], settings )
     summary = summarise_frames!( results, settings )
-    # println( summary.gain_lose )
-    # println( "settings $settings")
     outps_pre = create_health_indicator( 
         results.hh[1], 
         summary.deciles[1], 
         obs,
         settings )
-    sz = size( outps_pre )
-    # println( "outps_pre size $sz" )
-    sz = size( results.hh[1] )
-    # println( "results.hh[1] size $sz" )
     outps_post = create_health_indicator( 
         results.hh[2], 
         summary.deciles[2], 
         obs,
         settings )
     
-    sz = size( outps_post )
-    # println( "outps_post size $sz" )
-    sz = size( results.hh[2] )
-    # println( "results.hh[2] size $sz" )
-
     sf_pre = summarise_sf12( outps_pre, settings )
-    # println( "sf_pre=$sf_pre" )
-    # println( "summary.deciles[1] $(summary.deciles[1])" )
     sf_post = summarise_sf12( outps_post, settings )
-    # println( "sf_pre=$sf_post" )
-    # println( "summary.deciles[2] $(summary.deciles[2])" )
     facs.mental_health = (sf_post.depressed-sf_pre.depressed)/sf_pre.depressed
-    # println( "sf_post.depressed=$(sf_post.depressed); sf_pre.depressed=$(sf_pre.depressed)")
     facs.poverty = summary.poverty[2].headcount - summary.poverty[1].headcount
     facs.inequality = summary.inequality[2].gini - summary.inequality[1].gini
     preferences = Dict()
-    # println( "do_one_conjoint_run! made facs as $facs" )
     for breakdown in keys(Conjoint.BREAKDOWNS)
         bvals = Conjoint.BREAKDOWNS[breakdown]
         for bv in bvals
