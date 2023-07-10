@@ -99,9 +99,12 @@ function save_output_to_cache(facs::Factors,allo::NamedTuple)
 end
 
 function make_default_settings() :: Settings
-  settings = Settings()
+  # settings = Settings()
+  settings = get_all_uk_settings_2023()
   settings.do_marginal_rates = false
   settings.requested_threads = 4
+  settings.means_tested_routing = uc_full
+  settings.do_health_esimates = true
   return settings
 end
 
@@ -109,12 +112,12 @@ end
 const DEFAULT_SETTINGS = make_default_settings()
 
 """
-FIXME this shouldn't be here.
+load 23/4 
 """
 function load_system(; scotland = false )::TaxBenefitSystem
-    sys = load_file( joinpath( Definitions.MODEL_PARAMS_DIR, "sys_2022-23.jl"))
-    if ! scotland 
-        load_file!( sys, joinpath( Definitions.MODEL_PARAMS_DIR, "sys_2022-23_ruk.jl"))
+    sys = load_file( joinpath( Definitions.MODEL_PARAMS_DIR, "sys_2023_24_ruk.jl"))
+    if scotland 
+        load_file!( sys, joinpath( Definitions.MODEL_PARAMS_DIR, "sys_2023_24_scotland.jl"))
     end
     weeklyise!( sys )
     return sys
@@ -271,6 +274,7 @@ Specialised run for conjoint model.
 function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DEFAULT_SETTINGS ) :: NamedTuple
     sys1 = load_system( scotland=false ) 
     sys2 = deepcopy(sys1)
+    map_features!( sys1, Factors{Float64}()) # make the default system with default values??
     map_features!( sys2, facs )
     sys = [sys1,sys2]
     # println( "sys1 income tax\n $(sys1.it)" )
