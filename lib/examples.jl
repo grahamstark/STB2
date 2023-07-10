@@ -5,6 +5,7 @@ to make things simpler.
 function make_hh( 
 	;
 	tenure              :: Tenure_Type = Private_Rented_Unfurnished,
+	council             :: Symbol = :SCOTLAND,
 	bedrooms            :: Int = 2, 
 	hcost               :: Real = 100.0, 
 	marrstat            :: Marital_Status = Single, 
@@ -20,6 +21,7 @@ function make_hh(
 	spouse_private_pens :: Real = 0.0 ) :: Household
 	hh = deepcopy(get_example( single_hh ))
 	hh.region = Scotland
+	hh.council = council
 	head = get_head(hh)
 	head.age = head_age
 	head.marital_status = marrstat

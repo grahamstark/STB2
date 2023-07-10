@@ -178,10 +178,11 @@ end
 
 
 
-function costs_table( incs1 :: DataFrame, incs2 :: DataFrame )
-    df = costs_dataframe( incs1, incs2 )
+function costs_table( incs1 :: DataFrame, incs2 :: DataFrame; scotland = true )
+    
+    df = scotland ? costs_dataframe( incs1, incs2 ) : uk_costs_dataframe( incs1, incs2 )
     return frame_to_table( df, prec=0, up_is_good=COST_UP_GOOD, 
-        caption="Tax Liabilities and Benefit Entitlements, £m pa, 2021/22" )
+        caption="Tax Liabilities and Benefit Entitlements, £m pa, 2023/24" )
 end
 
 

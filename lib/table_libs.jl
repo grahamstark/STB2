@@ -12,7 +12,17 @@ const COST_ITEMS = [
     :non_means_tested_bens,
     :sickness_illness,
     :scottish_benefits] 
-
+const UK_COST_ITEMS = [
+    :income_tax,
+    :national_insurance,
+    :employers_ni,
+    :total_benefits,
+    :means_tested_bens,
+    :legacy_mtbs,
+    :universal_credit,
+    :non_means_tested_bens,
+    :sickness_illness] 
+    
 const COST_LABELS = [
     "Total Income Tax",
     "Employee's National Insurance",
@@ -27,6 +37,19 @@ const COST_LABELS = [
     "Non Means Tested Benefits",
     "Disability, Sickness-Related Benefits",
     "Scottish Benefits" ]
+
+const UK_COST_LABELS = [
+    "Total Income Tax",
+    "Employee's National Insurance",
+    "Employer's National Insurance",
+    
+    "Total Benefit Spending",
+
+    "All Means Tested Benefits",
+    "Legacy Means-Tested Benefits",
+    "Universal Credit",
+    "Non Means Tested Benefits",
+    "Disability, Sickness-Related Benefits" ]    
 
 const MR_LABELS = 
     ["Negative or Zero",
@@ -68,6 +91,13 @@ function costs_dataframe(  incs1 :: DataFrame, incs2 :: DataFrame ) :: DataFrame
     post = extract_incs( incs2, COST_ITEMS ) ./ 1_000_000
     diff = post-pre
     return DataFrame( Item=COST_LABELS, Before=pre, After=post, Change=diff )
+end
+
+function uk_costs_dataframe(  incs1 :: DataFrame, incs2 :: DataFrame ) :: DataFrame
+    pre = extract_incs( incs1, UK_COST_ITEMS ) ./ 1_000_000
+    post = extract_incs( incs2, UK_COST_ITEMS ) ./ 1_000_000
+    diff = post-pre
+    return DataFrame( Item=UK_COST_LABELS, Before=pre, After=post, Change=diff )
 end
 
 function mr_dataframe( mr1::Histogram, mr2::Histogram, mean1::Real, mean2 :: Real ) :: DataFrame
