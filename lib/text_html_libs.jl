@@ -851,7 +851,8 @@ function results_to_html_conjoint(
 
   costs = costs_table( 
     results.summary.income_summary[1],
-    results.summary.income_summary[2])
+    results.summary.income_summary[2],
+    scotland = false )
 
   costs_one_liner = overall_cost( 
       results.summary.income_summary[1],
