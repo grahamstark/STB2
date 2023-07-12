@@ -35,6 +35,7 @@ using .SingleHouseholdCalculations
 using .STBIncomes
 using .STBOutput
 using .STBParameters
+using .TheEqualiser
 using .Utils
 
 const up = Genie.up
@@ -272,6 +273,43 @@ function get_output_from_cache() # removed bacause json doesn't like ::Union{Nam
 end 
 
 """
+Equalising run 
+"""
+function do_equaliser( facs::Factors, sys::Vector{TaxBenefitSystem}, settings::Settings, obs::Observable )
+    obs[]=Progress( settings.uuid, "equaliser-initial-run", 0, 0, 0, 0 )   
+    base_res = do_one_run(
+        settings,
+        sys[1],
+        obs )
+    summary = summarise_frames!(base_res,settings)
+    base_cost = summary.income_summary[1][1,:net_cost]
+    obs[]=Progress( settings.uuid, "equaliser-seaching", 0, 0, 0, 0 )   
+    if facs.funding == "Tax on wealth"
+        eq = equalise( 
+            eq_wealth_tax, 
+            sys[2], 
+            settings, 
+            base_cost, 
+            obs )
+        sys[2].othertaxes.wealth_tax = eq
+        rate = 100.0*WEEKS_PER_YEAR*eq
+    elseif facs.funding == "Corporation tax increase"
+        eq = equalise( 
+            eq_corporation_tax, 
+            sys[2], 
+            settings, 
+            base_cost, 
+            obs )
+        sys[2].othertaxes.implicit_wage_tax = eq
+        rate = 100.0*WEEKS_PER_YEAR*eq
+    # ... and the rest
+    end
+    obs[]=Progress( settings.uuid, "equaliser-final-run", 0, 0, 0, 0 )   
+    results = do_one_run( settings, sys, obs )
+    results = (; results..., rate )  # plus wild guess at actual CT rate?
+end
+
+"""
 Specialised run for conjoint model.
 
 """
@@ -281,7 +319,21 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     map_features!( sys1, Factors{Float64}()) # make the default system with default values??
     map_features!( sys2, facs )
     sys = [sys1,sys2]
-    results = do_one_run( settings, sys, obs )
+    results = nothing
+    if facs.funding in [
+        # "Increased government borrowing",
+        "Corporation tax increase",
+        # "Tax for businesses based on carbon emissions",
+        # "Tax for individuals based on carbon emissions",
+        "Tax on wealth"]
+    
+        #"VAT increase"]
+        results = do_equaliser( facs, sys, settings, obs )
+    else
+        results = do_one_run( settings, sys, obs )
+    end
+
+
     settings.poverty_line = make_poverty_line( results.hh[1], settings )
     summary = summarise_frames!( results, settings )
     outps_pre = create_health_indicator( 
