@@ -52,21 +52,31 @@ const CONJOINT_ENDNOTES = md"""
 
 ## NOTES 
 
-This is my impression of what Elliot, Daniel, and I talked about when we met 2 weeks ago. It's very buggy and incomplete but offered to get a conversation started.
+The Public Policy Preference Calculator (PPPC) is a means of estimating public preferences for customisable welfare policies. It allows you to choose a number of policy features – namely payment amounts, income tax rates, other forms of funding, employment status and citizenship status eligibility, and means-testing – and see estimates of the effects on income distribution, life expectancy, and mental health. It also provides an estimate of likely popularity, either for the whole population, or for population subgroups based on voting behaviour, gender, age, or financial situation.  
 
-1. The calculations use my Scottish Tax Benefit model, for now. Since the conjoint calculations use %changes, this may be OK for now;
-2. There are notes under the individual items for some queries;
-3. **BUGS** : 
-    - povery effect not zero in base case
-4. **NOT IMPLEMENTED** (most of it..):
-    - Funding
-    - Life Expectancy
-    - Citizenship
-5. **CLARIFICATION NEEED**
-    - default values for things - for example, we can't select 'none' from the funding options, I think.
-7. Source code (not my finest..):
-    - [Conjoint Code](https://github.com/grahamstark/Conjoint)
-    - [Server Code](https://github.com/grahamstark/STB2/)
-  
+Distributional and fiscal consequences are estimate using an economic microsimulation of the UK population. Health effects are inferred from data on the relationships between income and health in the Understanding Society study.  
+
+Popularity is derived from a discrete choice experiment with 697 age-representative UK adults conducted in 2023. Participants repeatedly chose between welfare policies differing in design, costs and consequences. From their choices we extracted the marginal values attribute to all the possible policy features and consequences, both for the whole population and each subgroup.  
+
+Popularity values will be between 0 and 100. This should not be interpreted as the proportion of people who would vote for a policy. It is an index of the propensity of a representative person to choose the policy given its features, costs and consequences (some of which they might like and some dislike). We also include the popularity of a baseline policy for comparison.  
+
+If you have any questions about the calculator or the findings used to produce it, please contact Matthew Johnson at matthew.johnson@northumbria.ac.uk. 
+
+Note that PPC is in development and some features are missing:
+
+* Funding: some options are missing
+* Life Expectancy
+* Citizenship
+
+This model is Open Source; the code is available as follows:
+* [Conjoint Modelling Code](https://github.com/grahamstark/Conjoint)
+* [Tax-Benefit Model](https://github.com/grahamstark/ScottishTaxBenefitModel.jl)
+* [Web Server Code](https://github.com/grahamstark/STB2/)
+
+PPPC is written in the [Julia](https://julialang.org) language. Conjoint analysis used
+the [R Conjoint Package](http://keii.ue.wroc.pl/conjoint).
+
+PPPC is part of the [Health Case for UBI](https://hosting.northumbria.ac.uk/healthcaseforubi/) project, funded by [NIHR](https://www.nihr.ac.uk/).
+    
 
 """
