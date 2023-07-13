@@ -50,7 +50,7 @@ Written by [Graham Stark](https://virtual-worlds.scot) | email: [graham.stark@vi
 
 const CONJOINT_ENDNOTES = md"""
 
-## NOTES 
+## What's this model all about?
 
 The Public Policy Preference Calculator (PPPC) is a means of estimating public preferences for customisable welfare policies. It allows you to choose a number of policy features – namely payment amounts, income tax rates, other forms of funding, employment status and citizenship status eligibility, and means-testing – and see estimates of the effects on income distribution, life expectancy, and mental health. It also provides an estimate of likely popularity, either for the whole population, or for population subgroups based on voting behaviour, gender, age, or financial situation.  
 
@@ -61,11 +61,11 @@ Popularity is derived from a discrete choice experiment with 697 age-representat
 Popularity values will be between 0 and 100. This should not be interpreted as the proportion of people who would vote for a policy. It is an index of the propensity of a representative person to choose the policy given its features, costs and consequences (some of which they might like and some dislike). We also include the popularity of a baseline policy for comparison.  
 
 The baseline assumes a basic, low cost, version of the policy is already in place, replacing the State Pension and Child Benefit. The rest of the UK
-tax and benefit system remains as it is in July 2023 (except for Scotland were UK income tax rates are applied). All the changes in outcomes
-and popularity shown are relative to this base. We show effects on the poulation of Great Britain
+tax and benefit system remains as it is in July 2023 (except for Scotland where UK income tax rates are applied). All the changes in outcomes
+and popularity shown are relative to this base. We show effects on the population of Great Britain
 (so, excluding Northern Ireland).
 
-If you have any questions about the calculator or the findings used to produce it, please contact Matthew Johnson at [matthew.johnson@northumbria.ac.uk](mailto:matthew.johnson@northumbria.ac.uk). 
+If you have any questions about the calculator or the findings used to produce it, please contact Matthew Johnson [matthew.johnson@northumbria.ac.uk](mailto:matthew.johnson@northumbria.ac.uk). 
 
 Note that PPC is in development and some features are missing:
 
