@@ -275,16 +275,31 @@ end
 """
 Equalising run 
 """
-function do_equaliser( facs::Factors, sys::Vector{TaxBenefitSystem}, settings::Settings, obs::Observable )
+function do_equaliser( 
+    facs::Factors, 
+    sys :: Vector{TaxBenefitSystem{T}}, 
+    settings::Settings, 
+    obs::Observable ) where T 
+    for sysno in eachindex(sys)
+        sys[sysno].othertaxes.wealth_tax = 0.0
+        sys[sysno].othertaxes.implicit_wage_tax = 0.0
+    end
+
     obs[]=Progress( settings.uuid, "equaliser-initial-run", 0, 0, 0, 0 )   
     base_res = do_one_run(
         settings,
-        sys[1],
+        sys,
         obs )
+    # settings.poverty_line = make_poverty_line( base_res.hh[1], settings )
+        
     summary = summarise_frames!(base_res,settings)
     base_cost = summary.income_summary[1][1,:net_cost]
+    ref_cost = summary.income_summary[2][1,:net_cost]
     obs[]=Progress( settings.uuid, "equaliser-seaching", 0, 0, 0, 0 )   
     if facs.funding == "Tax on wealth"
+        if ref_cost <= base_cost # no tax increase needed - just go back. 
+            return base_res # FIXME with VAT ... 
+        end
         eq = equalise( 
             eq_wealth_tax, 
             sys[2], 
@@ -294,6 +309,8 @@ function do_equaliser( facs::Factors, sys::Vector{TaxBenefitSystem}, settings::S
         sys[2].othertaxes.wealth_tax = eq
         rate = 100.0*WEEKS_PER_YEAR*eq
     elseif facs.funding == "Corporation tax increase"
+        # this could be negative
+        sys[2].othertaxes.corporation_tax_changed = true
         eq = equalise( 
             eq_corporation_tax, 
             sys[2], 
@@ -332,24 +349,12 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     else
         results = do_one_run( settings, sys, obs )
     end
-
-
-    settings.poverty_line = make_poverty_line( results.hh[1], settings )
     summary = summarise_frames!( results, settings )
-    outps_pre = create_health_indicator( 
-        results.hh[1], 
-        summary.deciles[1], 
-        obs,
-        settings )
-    outps_post = create_health_indicator( 
-        results.hh[2], 
-        summary.deciles[2], 
-        obs,
-        settings )
-    
-    sf_pre = summarise_sf12( outps_pre, settings )
-    sf_post = summarise_sf12( outps_post, settings )
-    facs.mental_health = (sf_post.depressed-sf_pre.depressed)/sf_pre.depressed
+
+    obs[]=Progress( settings.uuid, "health", 0, 0, 0, 0 )       
+    health = do_health_regressions!( results, settings )
+
+    facs.mental_health = (health[2].depressed-health[1].depressed)/health[1].depressed
     facs.poverty = summary.poverty[2].headcount - summary.poverty[1].headcount
     facs.inequality = summary.inequality[2].gini - summary.inequality[1].gini
     preferences = Dict()
@@ -363,7 +368,7 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
         end
     end
     sf12_depression_limit = settings.sf12_depression_limit
-    return (;facs, sys1, sys2, settings, sf_pre, sf_post, summary, preferences, sf12_depression_limit )
+    return ( ; facs, sys1, sys2, settings, sf_pre=health[1], sf_post=health[2], summary, preferences, sf12_depression_limit )
 end
 
 # const DEFAULT_RESULTS = make_and_cache_base_results()
