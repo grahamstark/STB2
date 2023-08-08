@@ -90,7 +90,7 @@ struct NonVariableFacts
     
 end
 
-const CACHED_RESULTS = Dict{NonVariableFacts,Any}()
+const CACHED_RESULTS = LRU{NonVariableFacts,Any}(maxsize=50)
 
 """
 Save output to the cache
