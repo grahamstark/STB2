@@ -12,6 +12,7 @@ using DataFrames
 using Formatting
 using JSON3
 using Logging, LoggingExtras
+using LRUCache
 using Markdown
 using Observables
 using PovertyAndInequalityMeasures
