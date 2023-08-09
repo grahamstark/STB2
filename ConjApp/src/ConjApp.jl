@@ -91,7 +91,7 @@ struct NonVariableFacts
     
 end
 
-const CACHED_RESULTS = LRU{NonVariableFacts,Any}(maxsize=50)
+const CACHED_RESULTS = LRU{NonVariableFacts,Any}(maxsize=25)
 
 """
 Save output to the cache
