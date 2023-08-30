@@ -274,16 +274,21 @@ function get_output_from_cache() # removed bacause json doesn't like ::Union{Nam
 end 
 
 """
-Equalising run 
+Equalising run for funding options like 'vat increase', "Corporation tax increase", etc.
+@return all usual results, plus 'rate': a number representing the needed equalising rate - meaning depends on funding type.
+TODO: we should be able to remove the final run here.
 """
 function do_equaliser( 
     facs::Factors, 
     sys :: Vector{TaxBenefitSystem{T}}, 
     settings::Settings, 
-    obs::Observable ) where T 
-    for sysno in eachindex(sys)
+    obs::Observable ) :: NamedTuple where T 
+    for sysno in eachindex(sys) # set back any lingering values for optimising variables.
         sys[sysno].othertaxes.wealth_tax = 0.0
         sys[sysno].othertaxes.implicit_wage_tax = 0.0
+        if sysno > 1
+            sys[sysno].indirect = deepcopy( sys[1].indirect )
+        end
     end
 
     obs[]=Progress( settings.uuid, "equaliser-initial-run", 0, 0, 0, 0 )   
@@ -299,16 +304,16 @@ function do_equaliser(
     obs[]=Progress( settings.uuid, "equaliser-seaching", 0, 0, 0, 0 )   
     if facs.funding == "Tax on wealth"
         if ref_cost <= base_cost # no tax increase needed - just go back. 
-            return base_res # FIXME with VAT ... 
+            return base_res
         end
         eq = equalise( 
-            eq_wealth_tax, 
+            eq_all_vat, 
             sys[2], 
             settings, 
             base_cost, 
             obs )
         sys[2].othertaxes.wealth_tax = eq
-        rate = 100.0*WEEKS_PER_YEAR*eq
+        rate = 100.0*WEEKS_PER_YEAR*eq # FIXME use Wealth Tax commission 20 year assumption??
     elseif facs.funding == "Corporation tax increase"
         # this could be negative
         sys[2].othertaxes.corporation_tax_changed = true
@@ -319,10 +324,24 @@ function do_equaliser(
             base_cost, 
             obs )
         sys[2].othertaxes.implicit_wage_tax = eq
-        rate = 100.0*WEEKS_PER_YEAR*eq
+        rate = 100.0*WEEKS_PER_YEAR*eq # FIXME convert this into a CT equivalent? needed / (actual CT Revenues) ?? 
+    # ... and the rest
+    elseif facs.funding == "VAT increase"
+        # this also could be negative
+        eq = equalise( 
+            eq_all_vat, 
+            sys[2], 
+            settings, 
+            base_cost, 
+            obs )
+        sys[2].indirect.vat.standard_rate += eq
+        sys[2].indirect.vat.reduced_rate += eq
+        sys[2].indirect.vat.assumed_exempt_rate += eq*0.5    
+        rate = 100.0*sys[2].indirect.vat.standard_rate
     # ... and the rest
     end
     obs[]=Progress( settings.uuid, "equaliser-final-run", 0, 0, 0, 0 )   
+    # FIXME find a way for TheEqualiser to just return the final run.
     results = do_one_run( settings, sys, obs )
     results = (; results..., rate )  # plus wild guess at actual CT rate?
 end
@@ -343,9 +362,10 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
         "Corporation tax increase",
         # "Tax for businesses based on carbon emissions",
         # "Tax for individuals based on carbon emissions",
+        "VAT increase",
         "Tax on wealth"]
     
-        #"VAT increase"]
+        #]
         results = do_equaliser( facs, sys, settings, obs )
     else
         results = do_one_run( settings, sys, obs )
