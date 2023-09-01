@@ -24,6 +24,7 @@ using ScottishTaxBenefitModel
 using .BCCalcs
 using .Definitions
 using .ExampleHelpers
+using .ExampleHouseholdGetter
 using .FRSHouseholdGetter
 using .GeneralTaxComponents
 using .HealthRegressions
@@ -63,10 +64,12 @@ end
 const MR_UP_GOOD = [1,0,0,0,0,0,0,-1,-1]
 const COST_UP_GOOD = [1,1,1,1,-1,-1,-1,-1,-1,-1,-1]
   
+# FIXME Should all this not be loaded automatically?
 include( "../../lib/static_texts.jl")
 include( "../../lib/table_libs.jl")
 include( "../../lib/examples.jl")
 include( "../../lib/text_html_libs.jl")
+include( "../config/env/dev.jl")
 
 # const DEFAULT_FACTORS = Factors{Float64}()
 
@@ -282,7 +285,7 @@ function do_equaliser(
     facs::Factors, 
     sys :: Vector{TaxBenefitSystem{T}}, 
     settings::Settings, 
-    obs::Observable ) :: NamedTuple where T 
+    obs::Observable ) :: Tuple where T 
     for sysno in eachindex(sys) # set back any lingering values for optimising variables.
         sys[sysno].othertaxes.wealth_tax = 0.0
         sys[sysno].othertaxes.implicit_wage_tax = 0.0
@@ -299,21 +302,22 @@ function do_equaliser(
     # settings.poverty_line = make_poverty_line( base_res.hh[1], settings )
         
     summary = summarise_frames!(base_res,settings)
-    base_cost = summary.income_summary[1][1,:net_cost]
-    ref_cost = summary.income_summary[2][1,:net_cost]
+    base_cost = summary.income_summary[1][1,:net_inc_indirect]
+    ref_cost = summary.income_summary[2][1,:net_inc_indirect]
+    net_cost = ref_cost - base_cost
     obs[]=Progress( settings.uuid, "equaliser-seaching", 0, 0, 0, 0 )   
     if facs.funding == "Tax on wealth"
         if ref_cost <= base_cost # no tax increase needed - just go back. 
             return base_res
         end
         eq = equalise( 
-            eq_all_vat, 
+            eq_wealth_tax, 
             sys[2], 
             settings, 
             base_cost, 
             obs )
         sys[2].othertaxes.wealth_tax = eq
-        rate = 100.0*WEEKS_PER_YEAR*eq # FIXME use Wealth Tax commission 20 year assumption??
+        rate = 100.0*WEEKS_PER_YEAR*eq*20 # FIXME use Wealth Tax commission 20 year assumption??
     elseif facs.funding == "Corporation tax increase"
         # this could be negative
         sys[2].othertaxes.corporation_tax_changed = true
@@ -343,7 +347,7 @@ function do_equaliser(
     obs[]=Progress( settings.uuid, "equaliser-final-run", 0, 0, 0, 0 )   
     # FIXME find a way for TheEqualiser to just return the final run.
     results = do_one_run( settings, sys, obs )
-    results = (; results..., rate )  # plus wild guess at actual CT rate?
+    return results, rate, net_cost  # plus wild guess at actual CT rate?
 end
 
 """
@@ -357,6 +361,9 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     map_features!( sys2, facs )
     sys = [sys1,sys2]
     results = nothing
+    is_eq_run = false
+    optimised_rate = -1 # next 2 for equalising runs, otherwise ignored.
+    amount_needed = -1
     if facs.funding in [
         # "Increased government borrowing",
         "Corporation tax increase",
@@ -366,7 +373,8 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
         "Tax on wealth"]
     
         #]
-        results = do_equaliser( facs, sys, settings, obs )
+        results, optimised_rate, amount_needed = do_equaliser( facs, sys, settings, obs )
+        is_eq_run = true
     else
         results = do_one_run( settings, sys, obs )
     end
@@ -389,7 +397,8 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
         end
     end
     sf12_depression_limit = settings.sf12_depression_limit
-    return ( ; facs, sys1, sys2, settings, sf_pre=health[1], sf_post=health[2], summary, preferences, sf12_depression_limit )
+    funding = facs.funding
+    return ( ; facs, sys1, sys2, settings, sf_pre=health[1], sf_post=health[2], summary, preferences, sf12_depression_limit, funding, is_eq_run, optimised_rate, amount_needed )
 end
 
 # const DEFAULT_RESULTS = make_and_cache_base_results()
@@ -559,7 +568,9 @@ end
 # do & save a startup run
 settings = make_default_settings()  
 @info "initial startup"
-
+settings.num_households, settings.num_people, nhh2 = 
+    FRSHouseholdGetter.initialise( settings; reset=true ) # force UK dataset 
+ExampleHouseholdGetter.initialise( settings ) # force a reload for reasons I don't quite understand.
 facs = Factors{Float64}()
 obs = screen_obs()
 results = do_one_conjoint_run!( facs, obs; settings = settings )  

@@ -21,6 +21,8 @@ const UK_COST_ITEMS = [
     :legacy_mtbs,
     :universal_credit,
     :non_means_tested_bens,
+    :VAT,
+    :other_tax,
     :sickness_illness] 
     
 const COST_LABELS = [
@@ -49,6 +51,8 @@ const UK_COST_LABELS = [
     "Legacy Means-Tested Benefits",
     "Universal Credit",
     "Non Means Tested Benefits",
+    "VAT",
+    "XXX", # could be wealth ... 
     "Disability, Sickness-Related Benefits" ]    
 
 const MR_LABELS = 
@@ -93,11 +97,24 @@ function costs_dataframe(  incs1 :: DataFrame, incs2 :: DataFrame ) :: DataFrame
     return DataFrame( Item=COST_LABELS, Before=pre, After=post, Change=diff )
 end
 
-function uk_costs_dataframe(  incs1 :: DataFrame, incs2 :: DataFrame ) :: DataFrame
-    pre = extract_incs( incs1, UK_COST_ITEMS ) ./ 1_000_000
-    post = extract_incs( incs2, UK_COST_ITEMS ) ./ 1_000_000
+"""
+with a hack to display something in other_tax slot if other_tax_name !== ""
+"""
+function uk_costs_dataframe(  incs1 :: DataFrame, incs2 :: DataFrame, other_tax_name = "" ) :: DataFrame
+    cost_items = deepcopy(UK_COST_ITEMS)
+    cost_labels = deepcopy(UK_COST_LABELS)
+    # we have 1 extra slot "other_tax": if other_tax_name is set, use 
+    p = findall(k->k==:other_tax, cost_items)[1]
+    if other_tax_name !== "" 
+        cost_labels[p] = other_tax_name
+    else
+        deleteat!(cost_items,p)
+        deleteat!(cost_labels,p)
+    end
+    pre = extract_incs( incs1, cost_items  ) ./ 1_000_000
+    post = extract_incs( incs2, cost_items ) ./ 1_000_000
     diff = post-pre
-    return DataFrame( Item=UK_COST_LABELS, Before=pre, After=post, Change=diff )
+    return DataFrame( Item=cost_labels, Before=pre, After=post, Change=diff )
 end
 
 function mr_dataframe( mr1::Histogram, mr2::Histogram, mean1::Real, mean2 :: Real ) :: DataFrame

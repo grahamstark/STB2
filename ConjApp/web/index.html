@@ -224,6 +224,7 @@
                 <div class="row  border  m-1 p-2">
                     <div class='col'>
                             <div id='output-fields'>
+
                                 <div class='row'>
         
                                     <div class='col-4'></div>
@@ -244,6 +245,12 @@
                                     </div>
                                     <div class='col-4'></div>
                                 </div>
+                                <div class="row">
+                                    <div class='col-4'></div>
+                                    <div class='col-4' id='optchange'></div>
+                                    <div class='col-4'></div>
+                                </div>
+
                                 <div class='row'>
 
                                     <div class='col'>
@@ -593,6 +600,7 @@ function createMainOutputs( result ){
     createSF12Chart("#sf-12-chart", result );
     $("mortality-table").html( result.mortality_table );
     $("#endnotes").html( result.endnotes );
+    $("#optchange").html( result.optchange );
     createLorenzCurve( 
         "#lorenz", 
         result,

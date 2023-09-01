@@ -160,8 +160,8 @@ end
 
 
 function overall_cost( incs1:: DataFrame, incs2:: DataFrame ) :: String
-    n1 = incs1[1,:net_cost]
-    n2 = incs2[1,:net_cost]
+    n1 = incs1[1,:net_inc_indirect]
+    n2 = incs2[1,:net_inc_indirect]
     # add in employer's NI
     eni1 = incs1[1,:employers_ni]
     eni2 = incs2[1,:employers_ni]
@@ -360,6 +360,7 @@ function make_popups( hh :: ExampleHH, res :: NamedTuple ) :: String
 end
 
 function make_examples( example_results :: Vector )
+    EXAMPLE_HHS = get_example_hhs()
     cards = "<div class='card-group'>"
     n = size( EXAMPLE_HHS )[1]
     for i in 1:n

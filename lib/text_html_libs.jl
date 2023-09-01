@@ -20,6 +20,8 @@ const ARROWS_1 = Dict([
     "negative_med"    => "<i class='bi bi-arrow-down-circle'></i>",
     "negative_weak"   => "<i class='bi bi-arrow-down'></i>" ])
 
+
+
 function format_and_class( change :: Real ) :: Tuple
     gnum = format( abs(change), commas=true, precision=2 )
     glclass = "";
@@ -48,6 +50,40 @@ function format_and_class( change :: Real ) :: Tuple
         gnum = "";
     end
     ( gnum, glclass, glstr )
+end
+
+"""
+funding - one of the strings from the 'funding' conjoint ops - Tax on wealth, etc.
+rate - value of VAT, etc. needed to equalise 
+amount_needed - FIXME better name - amount needed to equalise.
+"""
+function format_optimising_change( funding :: AbstractString, rate :: Number, amount_needed :: Number )::String
+    s = ""
+    amv = format(abs(amount_needed/1_000_000.0),commas=true, precision=0)
+    colour = "alert-danger"
+    amstr = ""
+    if amount_needed > 0
+        amstr = "This raises approx <strong>£$amv</strong> mn p.a."
+    else
+        colour = "alert-success"
+        amstr = "This is a cut of approx <strong>£$amv</strong> mn p.a."
+    end
+    if funding == "Tax on wealth"
+        s = "a Wealth Tax of <strong>" * format(rate,precision=2)*"%</strong> of total non-pension wealth, payable over 20 years, with the first £1m wealth exempt. $amstr"
+    elseif funding == "Corporation tax increase" 
+        if amount_needed > 0
+            s = "extra Corporation Tax of <strong>£$amv</strong>mn p.a. "
+        else 
+            s = "Corporation Tax reductions of <strong>£$amv</strong>mn p.a. "
+        end
+        s *= ""
+    elseif funding == "VAT increase"
+        s = "a Standard VAT Rate of <strong>"*format(rate,precision=2)*"%</strong>, with simulilar increases in the Reduced Rate. $amstr"
+    end
+    if s !== ""
+       s = "<div class='alert $colour'>For revenue neutrality, your changes require  $s</div>"
+    end
+    s
 end
 
 function thing_table(
@@ -177,18 +213,24 @@ function frame_to_table(
 end
 
 
-
-function costs_table( incs1 :: DataFrame, incs2 :: DataFrame; scotland = true )
-    
-    df = scotland ? costs_dataframe( incs1, incs2 ) : uk_costs_dataframe( incs1, incs2 )
+"""
+FIXME just break UK/Scot in 2 here
+"""
+function costs_table( incs1 :: DataFrame, incs2 :: DataFrame; scotland = true, other_tax_name="" )
+    df = DataFrame()
+    if scotland
+        df = costs_dataframe( incs1, incs2 )
+    else
+        df = uk_costs_dataframe( incs1, incs2, other_tax_name )
+    end
     return frame_to_table( df, prec=0, up_is_good=COST_UP_GOOD, 
         caption="Tax Liabilities and Benefit Entitlements, £m pa, 2023/24" )
 end
 
 
 function overall_cost( incs1:: DataFrame, incs2:: DataFrame ) :: String
-    n1 = incs1[1,:net_cost]
-    n2 = incs2[1,:net_cost]
+    n1 = incs1[1,:net_inc_indirect]
+    n2 = incs2[1,:net_inc_indirect]
     # add in employer's NI
     eni1 = incs1[1,:employers_ni]
     eni2 = incs2[1,:employers_ni]
@@ -196,7 +238,7 @@ function overall_cost( incs1:: DataFrame, incs2:: DataFrame ) :: String
     d /= 1_000_000
     colour = "alert-info"
     extra = ""
-    change_str = "In total, your changes cost less than £1m"
+    change_str = "In total, your changes are revenue-neutral (to within £1m pa.)"
     change_val = ""
     if abs(d) > 1
         change_val = f0(abs(d))
@@ -388,6 +430,7 @@ end
 
 function make_examples( example_results :: Vector )
     cards = "<div class='card-group'>"
+    EXAMPLE_HHS = get_example_hhs()
     n = size( EXAMPLE_HHS )[1]
     for i in 1:n
         cards *= make_example_card( EXAMPLE_HHS[i], example_results[i])
@@ -848,11 +891,19 @@ function results_to_html_conjoint(
   gains_by_decile = results.summary.deciles[2][:,4] -
         results.summary.deciles[1][:,4]
   @info "gains_by_decile = $gains_by_decile"
+  other_tax_name = if results.funding == "Tax on wealth"
+    "Wealth Tax"
+  elseif results.funding == "Corporation tax increase"
+    "Corporation Tax Increase"
+  else # and so on...
+    ""
+  end
 
   costs = costs_table( 
     results.summary.income_summary[1],
     results.summary.income_summary[2],
-    scotland = false )
+    scotland = false,
+    other_tax_name = other_tax_name )
 
   costs_one_liner = overall_cost( 
       results.summary.income_summary[1],
@@ -893,9 +944,12 @@ function results_to_html_conjoint(
   post_thresh = results.sf_post.thresholds # .* results.sf_post.popn
   @info "post_thresh = $post_thresh"
   sf_12_ranges = collect(results.sf_post.range) .* results.sf_post.popn
+  optchange = format_optimising_change( results.funding, results.optimised_rate, results.amount_needed )
   outt = ( 
       phase = "end", 
       
+      optchange = optchange,
+
       popularity = popularity,
       big_popularity = big_popularity,
 

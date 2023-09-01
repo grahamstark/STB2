@@ -19,7 +19,7 @@ function make_hh(
 	spouse_hours        :: Real = 0.0,
 	spouse_age          :: Int = 0,
 	spouse_private_pens :: Real = 0.0 ) :: Household
-	hh = deepcopy(get_example( single_hh ))
+	hh = deepcopy( get_example( single_hh ))
 	hh.region = Scotland
 	hh.council = council
 	head = get_head(hh)
@@ -99,7 +99,8 @@ struct ExampleHH
 	hh :: Household 
 end
 
-const EXAMPLE_HHS = [
+function get_example_hhs()
+	return  [
 		ExampleHH("family1","Single Person, £25k", "Single female, aged 25, earning £25,000",
 			make_hh(
 				head_earn = 25_000/WEEKS_PER_YEAR,
@@ -168,9 +169,12 @@ const EXAMPLE_HHS = [
 				spouse_age = 80,
 				marrstat = Married_or_Civil_Partnership ))
 	]
+end 
+
 
 function calc_examples( base :: TaxBenefitSystem, sys :: TaxBenefitSystem, settings :: Settings ) :: Vector
 	v = []
+	EXAMPLE_HHS = get_example_hhs()
 	for ehh in EXAMPLE_HHS
 		bres = do_one_calc( ehh.hh, base, settings )
 		pres = do_one_calc( ehh.hh, sys, settings )
