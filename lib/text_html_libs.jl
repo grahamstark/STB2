@@ -79,7 +79,7 @@ function format_optimising_change( funding :: AbstractString, rate :: Number, am
         end
         s *= ""
     elseif funding == "VAT increase"
-        s = "a Standard VAT Rate of <strong>"*format(rate,precision=2)*"%</strong>, with simulilar increases in the Reduced Rate. $amstr"
+        s = "a Standard VAT Rate of <strong>"*format(rate,precision=2)*"%</strong>, with the same increase in the Reduced Rate. $amstr"
     end
     if s !== ""
        s = "<div class='alert $colour'>For revenue neutrality, your changes require  $s</div>"
@@ -553,8 +553,8 @@ function results_to_html(
     results      :: AllOutput ) :: NamedTuple
     
     gain_lose = gain_lose_table( results.gain_lose )
-    gains_by_decile = results.summary.deciles[1][:,4] -
-			    base_results.summary.deciles[1][:,4]
+    gains_by_decile = trunc.(results.summary.deciles[1][:,4] - base_results.summary.deciles[1][:,4],digits=5,base=10)
+
     @info "gains_by_decile = $gains_by_decile"
     costs = costs_table( 
         base_results.summary.income_summary[1],
@@ -742,9 +742,15 @@ function one_gain_lose( gl :: DataFrame, caption :: String ) :: String
         s *=  """
             <tr><th>$v</th>
         """
-        for c in 2:nc 
-            v = gl[r,c]/1_000.0
-            vs = format(v, commas=true, precision=0)
+        for c in 2:nc
+            vs = ""
+            v = gl[r,c]
+            if c < nc # format last col (average change) with more precision 
+                v /= 1_000.0
+                vs = format(v, commas=true, precision=0)
+            else 
+                vs = format(v, commas=true, precision=2 )
+            end
             s *= "<td style='text-align:right'>$vs</td>"
         end
         s *= """
@@ -888,9 +894,18 @@ function results_to_html_conjoint(
   big_gain_lose = make_disaggregated_gain_lose_tables(
     results.summary.gain_lose[2]
   )
+  # Round to stop Vega printing silly graphs with all-ish zero changes.
+  #= FIXME make this 'Rawls' version swappable with the gl "Marx" version below. 
+  v1. Gains by decile allowing the hhls in the bottom decile to change with e.g. wealth tax.
+  gains_by_decile = trunc.( results.summary.deciles[2][:,4] -
+        results.summary.deciles[1][:,4]; digits=5,base=10)
+  =#
 
-  gains_by_decile = results.summary.deciles[2][:,4] -
-        results.summary.deciles[1][:,4]
+  # v2: Decgains - average again by fixed system1 decile, in case the decile changes in sys2 e.g with big wealth tax changes
+  decgains = results.summary.gain_lose[2].dec_gl."Average Change(£s)" # FIXME silly column name.
+  gains_by_decile = trunc.(decgains,digits=5,base=10)[2:end] # skipping 1st 0 entry
+
+    
   @info "gains_by_decile = $gains_by_decile"
   other_tax_name = if results.funding == "Tax on wealth"
     "Wealth Tax"
