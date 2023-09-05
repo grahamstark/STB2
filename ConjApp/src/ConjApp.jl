@@ -310,14 +310,23 @@ function do_equaliser(
         if ref_cost <= base_cost # no tax increase needed - just go back. 
             return base_res
         end
+        sys[2].wealth.rates = [0.0]
+        sys[2].wealth.thresholds = []
+        sys[2].wealth.abolished = false
+        sys[2].wealth.allowance = 500_000.0
+        sys[2].wealth.one_off = true
+        sys[2].wealth.aggregation = household
+        sys[2].wealth.payment_years = 5
         eq = equalise( 
             eq_wealth_tax, 
             sys[2], 
             settings, 
             base_cost, 
             obs )
-        sys[2].othertaxes.wealth_tax = eq
-        rate = 100.0*WEEKS_PER_YEAR*eq*20 # FIXME use Wealth Tax commission 20 year assumption??
+    
+        sys[2].wealth.rate .= eq
+        weeklyise!( sys[2].wealth.rate )
+        rate = 100.0*sys[2].wealth.rate[1] # FIXME use Wealth Tax commission 20 year assumption??
     elseif facs.funding == "Corporation tax increase"
         # this could be negative
         sys[2].othertaxes.corporation_tax_changed = true
@@ -356,10 +365,10 @@ Specialised run for conjoint model.
 """
 function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DEFAULT_SETTINGS ) :: NamedTuple
     sys1 = load_system( scotland=false ) 
-    sys2 = deepcopy(sys1)
+    sys[2] = deepcopy(sys1)
     map_features!( sys1, Factors{Float64}()) # make the default system with default values??
-    map_features!( sys2, facs )
-    sys = [sys1,sys2]
+    map_features!( sys[2], facs )
+    sys = [sys1,sys[2]]
     results = nothing
     is_eq_run = false
     optimised_rate = -1 # next 2 for equalising runs, otherwise ignored.
@@ -398,7 +407,7 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     end
     sf12_depression_limit = settings.sf12_depression_limit
     funding = facs.funding
-    return ( ; facs, sys1, sys2, settings, sf_pre=health[1], sf_post=health[2], summary, preferences, sf12_depression_limit, funding, is_eq_run, optimised_rate, amount_needed )
+    return ( ; facs, sys1, sys[2], settings, sf_pre=health[1], sf_post=health[2], summary, preferences, sf12_depression_limit, funding, is_eq_run, optimised_rate, amount_needed )
 end
 
 # const DEFAULT_RESULTS = make_and_cache_base_results()
@@ -518,7 +527,7 @@ function dorun( session::Session, facs :: Factors )
   @info "dorun entered facs are " facs
   obs = session_obs(session)
   results = do_one_conjoint_run!( facs, obs; settings = settings )  
-  exres = calc_examples( results.sys1, results.sys2, results.settings ) 
+  exres = calc_examples( results.sys1, results.sys[2], results.settings ) 
   obs[]=Progress( settings.uuid, "results-generation", 0, 0, 0, 0 )   
   output = results_to_html_conjoint( ( results..., examples=exres  ))  
   GenieSession.set!( :facs, facs ) # save again since poverty, etc. is overwritten in doonerun!
@@ -574,7 +583,7 @@ ExampleHouseholdGetter.initialise( settings ) # force a reload for reasons I don
 facs = Factors{Float64}()
 obs = screen_obs()
 results = do_one_conjoint_run!( facs, obs; settings = settings )  
-exres = calc_examples( results.sys1, results.sys2, results.settings )    
+exres = calc_examples( results.sys1, results.sys[2], results.settings )    
 output = results_to_html_conjoint( ( results..., examples=exres  ))  
 save_output_to_cache( facs, output )
 

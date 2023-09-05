@@ -53,6 +53,7 @@ function format_and_class( change :: Real ) :: Tuple
 end
 
 """
+FIXME send parameters in here for Wealth Tax options
 funding - one of the strings from the 'funding' conjoint ops - Tax on wealth, etc.
 rate - value of VAT, etc. needed to equalise 
 amount_needed - FIXME better name - amount needed to equalise.
@@ -69,7 +70,7 @@ function format_optimising_change( funding :: AbstractString, rate :: Number, am
         amstr = "This is a cut of approx <strong>£$amv</strong> mn p.a."
     end
     if funding == "Tax on wealth"
-        s = "a Wealth Tax of <strong>" * format(rate,precision=2)*"%</strong> of total non-pension wealth, payable over 20 years, with the first £1m wealth exempt. $amstr"
+        s = "a Wealth Tax of <strong>" * format(rate,precision=2)*"%</strong> of total non-pension household wealth, payable over 5 years, with the first £500,000 wealth exempt. $amstr"
     elseif funding == "Corporation tax increase" 
         if amount_needed > 0
             s = "extra Corporation Tax of <strong>£$amv</strong>mn p.a. "
