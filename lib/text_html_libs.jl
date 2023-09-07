@@ -429,9 +429,9 @@ function make_example_popups( hh :: ExampleHH, res :: NamedTuple ) :: String
     return modal
 end
 
-function make_examples( example_results :: Vector )
+function make_examples( settings::Settings, example_results :: Vector )
     cards = "<div class='card-group'>"
-    EXAMPLE_HHS = get_example_hhs()
+    EXAMPLE_HHS = get_example_hhs(settings)
     n = size( EXAMPLE_HHS )[1]
     for i in 1:n
         cards *= make_example_card( EXAMPLE_HHS[i], example_results[i])
@@ -549,6 +549,7 @@ end
 Main output generation for standard model
 """
 function results_to_html( 
+    settings     :: Settings, 
     base_results :: AllOutput, 
     results      :: AllOutput ) :: NamedTuple
     
@@ -575,7 +576,7 @@ function results_to_html(
         results.summary.inequality[1])
     lorenz_pre = base_results.summary.deciles[1][:,2]
     lorenz_post = results.summary.deciles[1][:,2]
-    example_text = make_examples( results.examples )
+    example_text = make_examples( settings, results.examples )
     big_costs = costs_frame_to_table( 
         detailed_cost_dataframe( 
             base_results.summary.income_summary[1],

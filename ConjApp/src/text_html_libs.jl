@@ -359,8 +359,8 @@ function make_popups( hh :: ExampleHH, res :: NamedTuple ) :: String
     return modal
 end
 
-function make_examples( example_results :: Vector )
-    EXAMPLE_HHS = get_example_hhs()
+function make_examples( settings::Settings, example_results :: Vector )
+    EXAMPLE_HHS = get_example_hhs(settings)
     cards = "<div class='card-group'>"
     n = size( EXAMPLE_HHS )[1]
     for i in 1:n
@@ -401,7 +401,7 @@ function results_to_html(
         results.summary.inequality[1])
     lorenz_pre = base_results.summary.deciles[1][:,2]
     lorenz_post = results.summary.deciles[1][:,2]
-    example_text = make_examples( results.examples )
+    example_text = make_examples(settings, results.examples )
     big_costs = costs_frame_to_table( 
         detailed_cost_dataframe( 
             base_results.summary.income_summary[1],

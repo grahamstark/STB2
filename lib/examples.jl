@@ -3,6 +3,7 @@ Retrieve one of the model's example households & overwrite a few fields
 to make things simpler.
 """
 function make_hh( 
+	settings            :: Settings
 	;
 	tenure              :: Tenure_Type = Private_Rented_Unfurnished,
 	council             :: Symbol = :SCOTLAND,
@@ -27,7 +28,9 @@ function make_hh(
 	head.marital_status = marrstat
 	empty!(head.income)
 	head.income[wages] = head_earn
+	hh.net_financial_wealth = head_earn * 52 * 5
 	head.income[private_pensions] = head_private_pens
+	
 	head.employment_status = if head_age > 66
 		Retired 
 		else
@@ -48,6 +51,7 @@ function make_hh(
 		hh.mortgage_payment = hcost
 		hh.mortgage_interest = hcost
 		hh.gross_rent = 0
+		hh.net_housing_wealth = 150_000.0
 	else
 		hh.mortgage_payment = 0
 		hh.mortgage_interest = 0
@@ -89,6 +93,9 @@ function make_hh(
 		add_child!( hh, age, sex )
 	end
 	# set_wage!( head, 0, 10 )
+	if settings.indirect_method == matching 
+		ExampleHouseholdGetter.find_consumption_for_example!( hh, settings )
+	end
 	return hh
 end
 
@@ -99,19 +106,22 @@ struct ExampleHH
 	hh :: Household 
 end
 
-function get_example_hhs()
+function get_example_hhs(settings::Settings)
 	return  [
 		ExampleHH("family1","Single Person, £25k", "Single female, aged 25, earning £25,000",
 			make_hh(
+				settings,
 				head_earn = 25_000/WEEKS_PER_YEAR,
 				head_hours = 40 )),
 		ExampleHH("family2","Single Parent, £25k", "Working single parent, earning £25,000, with one 3-year old daughter",
 			make_hh(
+				settings,
 				head_earn = 25_000/WEEKS_PER_YEAR,
 				head_hours = 40,
 				chu5 = 1 )),
 		ExampleHH("family3","Unemployed Couple, 2 children", "Couple, neither currently working, with 2 children aged 7 and 9",
 			make_hh(
+				settings,
 				head_earn = 0.0,
 				head_hours = 0,
 				head_age = 30,
@@ -122,6 +132,7 @@ function get_example_hhs()
 				ch5p = 2 )),
 		ExampleHH("family4","Working Family £12k, 2 children", "Couple, on low wages, with 2 children aged 6 and 10. She works, he says at home with the kids",
 			make_hh(
+				settings,
 				head_earn = 12_000/WEEKS_PER_YEAR,
 				head_hours = 30,
 				head_age = 35,
@@ -132,6 +143,7 @@ function get_example_hhs()
 				ch5p = 2 )),
 		ExampleHH("family5","Working Family £35k, 2 children", "A couple with 3 year old twins. He works, she says at home with the kids",
 			make_hh(
+				settings,
 				tenure  = Mortgaged_Or_Shared,
 				hcost = 220.0,
 				head_earn = 35_000/WEEKS_PER_YEAR,
@@ -144,6 +156,7 @@ function get_example_hhs()
 				chu5 = 2 )),
 		ExampleHH("family6","Working Family £100k, 2 children", "A couple, with 2 children aged 6 and 2. Both work, each earning £50,000pa",
 			make_hh(
+				settings,
 				tenure  = Mortgaged_Or_Shared,
 				hcost = 320.0,
 				head_earn = 50_000/WEEKS_PER_YEAR,
@@ -157,11 +170,13 @@ function get_example_hhs()
 				chu5 = 1 )),
 		ExampleHH("family8","Single female pensioner, aged 80", "A single pensioner, aged 80, with no private pension.",
 			make_hh(
+				settings,
 				hcost = 100,
 				head_age = 80,
 				marrstat = Single )),
 		ExampleHH("family9","Pensioner couple, both aged 80", "A pensioner couple, both aged 80, with £100pw private pension.",
 			make_hh(
+				settings,
 				tenure  = Owned_outright,
 				hcost = 0.0,
 				head_private_pens = 100.0,
@@ -174,7 +189,7 @@ end
 
 function calc_examples( base :: TaxBenefitSystem, sys :: TaxBenefitSystem, settings :: Settings ) :: Vector
 	v = []
-	EXAMPLE_HHS = get_example_hhs()
+	EXAMPLE_HHS = get_example_hhs(settings)
 	for ehh in EXAMPLE_HHS
 		bres = do_one_calc( ehh.hh, base, settings )
 		pres = do_one_calc( ehh.hh, sys, settings )

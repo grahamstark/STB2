@@ -11,7 +11,7 @@
 ### UI 
 
 * progress indicator for Equaliser (VAT,Wealth..) runs
-* deciles graph using fixed system 1 deciles
+* deciles graph using fixed system 1 deciles DONE needs further test.
 
 ### New Components
 
@@ -22,6 +22,7 @@
 
 * model - infer wealth
 * model - match consumption
+* not all Scottish
 * front - add wealth, consumption, others to outcomes
 
 ### Documentation
