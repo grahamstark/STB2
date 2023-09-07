@@ -585,7 +585,7 @@ facs = Factors{Float64}()
 obs = screen_obs()
 results = do_one_conjoint_run!( facs, obs; settings = settings )  
 exres = calc_examples( results.sys1, results.sys2, results.settings )    
-output = results_to_html_conjoint( ( results..., examples=exres  ))  
+output = results_to_html_conjoint( settings, ( results..., examples=exres  ))  
 save_output_to_cache( facs, output )
 
 end # module

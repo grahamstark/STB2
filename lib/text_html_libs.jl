@@ -884,6 +884,7 @@ end
 Main output generation for conjoint model FIXME do the ; [...], thing trick here
 """
 function results_to_html_conjoint( 
+  settings     :: Settings,  
   results      :: NamedTuple ) :: NamedTuple
   # table expects a tuple
   gls = ( gainers = results.summary.gain_lose[2].gainers, 
@@ -943,7 +944,7 @@ function results_to_html_conjoint(
       results.summary.inequality[2])
   lorenz_pre = results.summary.deciles[1][:,2]
   lorenz_post = results.summary.deciles[2][:,2]
-  example_text = make_examples( results.examples )
+  example_text = make_examples( settings, results.examples )
            
   popularity = make_popularity_table( 
     results.preferences["Total"].popularity, 
