@@ -20,10 +20,10 @@
 
 ### Examples
 
-* model - infer wealth
-* model - match consumption
-* not all Scottish
-* front - add wealth, consumption, others to outcomes
+* model - infer wealth XX
+* model - match consumption XX
+* not all Scottish XX
+* front - add wealth, consumption, others to outcomes XX
 
 ### Documentation
 

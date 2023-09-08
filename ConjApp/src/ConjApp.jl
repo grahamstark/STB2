@@ -309,7 +309,7 @@ function do_equaliser(
     obs[]=Progress( settings.uuid, "equaliser-seaching", 0, 0, 0, 0 )   
     if facs.funding == "Tax on wealth"
         if ref_cost <= base_cost # no tax increase needed - just go back. 
-            return base_res
+            return base_res, 0.0, ref_cost
         end
         sys[2].wealth.rates = [0.0]
         sys[2].wealth.thresholds = []
@@ -530,7 +530,7 @@ function dorun( session::Session, facs :: Factors )
   results = do_one_conjoint_run!( facs, obs; settings = settings )  
   exres = calc_examples( results.sys1, results.sys2, results.settings ) 
   obs[]=Progress( settings.uuid, "results-generation", 0, 0, 0, 0 )   
-  output = results_to_html_conjoint( ( results..., examples=exres  ))  
+  output = results_to_html_conjoint( settings, ( results..., examples=exres  ))  
   GenieSession.set!( :facs, facs ) # save again since poverty, etc. is overwritten in doonerun!
   save_output_to_cache( facs, output )
   obs[]= Progress( settings.uuid, "end", -99, -99, -99, -99 )
