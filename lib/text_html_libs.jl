@@ -328,7 +328,7 @@ end
  arrows_1 is prettiest
 =#
     
-function make_example_card( hh :: ExampleHH, res :: NamedTuple ) :: String
+function make_example_card( settings :: Settings, hh :: ExampleHH, res :: NamedTuple ) :: String
     change = res.pres.bhc_net_income - res.bres.bhc_net_income
     ( gnum, glclass, glstr ) = format_and_class( change )
     i2sp = inctostr(res.pres.income )
@@ -363,8 +363,22 @@ function pers_inc_table( res :: NamedTuple ) :: String
     for i in 1:n
        up_is_good[i] =  (df[i,:Inc] in DIRECT_TAXES_AND_DEDUCTIONS) ? -1 : 1
     end
+    # indirect tax stuff FIXME make a function somewhere
+    push!( up_is_good, -1 )
+    push!( df.Item, "VAT")
+    push!( df.Inc, OTHER_TAX )     # not actually used
+    push!( df.Before, res.bres.indirect.VAT )
+    push!( df.After, res.pres.indirect.VAT )
+    push!( df.Change, res.pres.indirect.VAT - res.bres.indirect.VAT)
+    @info "pers_in_table; final df=$df"
     return frame_to_table( df, prec=2, up_is_good=up_is_good, 
         caption="Household incomes £pw" )    
+end
+
+function indirect_table( res :: NamedTuple ) :: String
+    up_is_good = [-1]
+    df = DataFrame( :Inc=>items, :Before => pres, :After => posts, :)
+    ## yada 
 end
 
 function hhsummary( hh :: Household )
@@ -372,6 +386,7 @@ function hhsummary( hh :: Household )
     ten = pretty(hh.tenure)
     rm = "Rent"
     hc = format( hh.gross_rent, commas=true, precision=2)
+    hregion = pretty(hh.region)
     if is_owner_occupier( hh.tenure )
         hc = format(hh.mortgage_payment, commas=true, precision=2)
         rm = "Mortgage"
@@ -387,12 +402,13 @@ function hhsummary( hh :: Household )
         <tbody>"
     table *= "<tr><th>Tenure</th><td style='text-align:right'>$ten</td></tr>"
     table *= "<tr><th>$rm</th><td style='text-align:right'>$hc</td></tr>"
+    table *= "<tr><th>Living in:</th><td style='text-align:right'>$hregion</td></tr>"
     # ... and so on
     table *= "</tbody></table>"
     table
 end
 
-function make_example_popups( hh :: ExampleHH, res :: NamedTuple ) :: String
+function make_example_popups( settings :: Settings, hh :: ExampleHH, res :: NamedTuple ) :: String
     pit = pers_inc_table( res )
     hhtab = hhsummary( hh.hh )
     modal = """
@@ -434,11 +450,11 @@ function make_examples( settings::Settings, example_results :: Vector )
     EXAMPLE_HHS = get_example_hhs(settings)
     n = size( EXAMPLE_HHS )[1]
     for i in 1:n
-        cards *= make_example_card( EXAMPLE_HHS[i], example_results[i])
+        cards *= make_example_card( settings, EXAMPLE_HHS[i], example_results[i])
     end
     cards *= "</div>"
     for i in 1:n
-        cards *= make_example_popups( EXAMPLE_HHS[i], example_results[i])
+        cards *= make_example_popups( settings, EXAMPLE_HHS[i], example_results[i])
     end
     return cards;
 end

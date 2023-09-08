@@ -21,7 +21,23 @@ function make_hh(
 	spouse_age          :: Int = 0,
 	spouse_private_pens :: Real = 0.0 ) :: Household
 	hh = deepcopy( get_example( single_hh ))
-	hh.region = Scotland
+	hh.region = if council == :SCOTLAND
+		Scotland
+	elseif council == :ENGLAND
+		rand( [North_East,
+		North_West,
+		Yorks_and_the_Humber,
+		East_Midlands,
+		West_Midlands,
+		East_of_England,
+		London,
+		South_East,
+		South_West] )
+	elseif council == :WALES 
+		Wales 
+	else 
+		Scotland
+	end
 	hh.council = council
 	head = get_head(hh)
 	head.age = head_age
@@ -106,22 +122,36 @@ struct ExampleHH
 	hh :: Household 
 end
 
+function get_country( settings :: Settings ) :: Symbol
+	if settings.target_nation == N_Scotland
+		return :SCOTLAND
+	elseif settings.target_nation == N_Wales 
+		return :WALES
+	elseif settings.target_nation == N_England
+		return :ENGLAND
+	end
+	return rand( [:ENGLAND,:WALES,:SCOTLAND])
+end
+
 function get_example_hhs(settings::Settings)
 	return  [
 		ExampleHH("family1","Single Person, £25k", "Single female, aged 25, earning £25,000",
 			make_hh(
 				settings,
+				council = get_country( settings ),
 				head_earn = 25_000/WEEKS_PER_YEAR,
 				head_hours = 40 )),
 		ExampleHH("family2","Single Parent, £25k", "Working single parent, earning £25,000, with one 3-year old daughter",
 			make_hh(
 				settings,
+				council = get_country( settings ),
 				head_earn = 25_000/WEEKS_PER_YEAR,
 				head_hours = 40,
 				chu5 = 1 )),
 		ExampleHH("family3","Unemployed Couple, 2 children", "Couple, neither currently working, with 2 children aged 7 and 9",
 			make_hh(
 				settings,
+				council = get_country( settings ),
 				head_earn = 0.0,
 				head_hours = 0,
 				head_age = 30,
@@ -133,6 +163,7 @@ function get_example_hhs(settings::Settings)
 		ExampleHH("family4","Working Family £12k, 2 children", "Couple, on low wages, with 2 children aged 6 and 10. She works, he says at home with the kids",
 			make_hh(
 				settings,
+				council = get_country( settings ),
 				head_earn = 12_000/WEEKS_PER_YEAR,
 				head_hours = 30,
 				head_age = 35,
@@ -144,6 +175,7 @@ function get_example_hhs(settings::Settings)
 		ExampleHH("family5","Working Family £35k, 2 children", "A couple with 3 year old twins. He works, she says at home with the kids",
 			make_hh(
 				settings,
+				council = get_country( settings ),
 				tenure  = Mortgaged_Or_Shared,
 				hcost = 220.0,
 				head_earn = 35_000/WEEKS_PER_YEAR,
@@ -157,6 +189,7 @@ function get_example_hhs(settings::Settings)
 		ExampleHH("family6","Working Family £100k, 2 children", "A couple, with 2 children aged 6 and 2. Both work, each earning £50,000pa",
 			make_hh(
 				settings,
+				council = get_country( settings ),
 				tenure  = Mortgaged_Or_Shared,
 				hcost = 320.0,
 				head_earn = 50_000/WEEKS_PER_YEAR,
@@ -171,12 +204,14 @@ function get_example_hhs(settings::Settings)
 		ExampleHH("family8","Single female pensioner, aged 80", "A single pensioner, aged 80, with no private pension.",
 			make_hh(
 				settings,
+				council = get_country( settings ),
 				hcost = 100,
 				head_age = 80,
 				marrstat = Single )),
 		ExampleHH("family9","Pensioner couple, both aged 80", "A pensioner couple, both aged 80, with £100pw private pension.",
 			make_hh(
 				settings,
+				council = get_country( settings ),
 				tenure  = Owned_outright,
 				hcost = 0.0,
 				head_private_pens = 100.0,

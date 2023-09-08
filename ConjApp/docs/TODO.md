@@ -2,6 +2,11 @@
 
 ## 1st Sep 2023
 
+## Model
+
+* CHECK average changes in GL table for correct divisor.
+
+
 ### Health Estimates
 
 * model - re-instate income before indirect taxes in sf6 estimates (maybe...)
