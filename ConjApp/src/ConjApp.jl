@@ -357,6 +357,8 @@ function do_equaliser(
     obs[]=Progress( settings.uuid, "equaliser-final-run", 0, 0, 0, 0 )   
     # FIXME find a way for TheEqualiser to just return the final run.
     results = do_one_run( settings, sys, obs )
+    # FIXME. This should not be needed, but see: https://github.com/JuliaLang/julia/issues/50658 and the out-of-memory issues with the pppc server.
+    GC.gc()
     return results, rate, net_cost  # plus wild guess at actual CT rate?
 end
 
