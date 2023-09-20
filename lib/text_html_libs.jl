@@ -63,7 +63,9 @@ function format_optimising_change( funding :: AbstractString, rate :: Number, am
     amv = format(abs(amount_needed/1_000_000.0),commas=true, precision=0)
     colour = "alert-danger"
     amstr = ""
-    if amount_needed > 0
+    if(amount_needed ≈ 0) && (funding == "Tax on wealth")
+        return "<div class='alert'>Introducing a wealth tax is not needed here given your other tax and benefit changes.</div>"
+    elseif amount_needed > 0
         amstr = "This raises approx <strong>£$amv</strong> mn p.a."
     else
         colour = "alert-success"
@@ -790,12 +792,15 @@ function one_gain_lose( gl :: DataFrame, caption :: String ) :: String
     return s
 end
 
+
 function make_disaggregated_gain_lose_tables( gain_lose :: NamedTuple ) :: String
     ten_gl = one_gain_lose( gain_lose.ten_gl, "Tenure" )
     dec_gl = one_gain_lose( gain_lose.dec_gl, "Decile" )
     children_gl = one_gain_lose( gain_lose.children_gl, "Number of Children" )
     hhtype_gl = one_gain_lose( gain_lose.hhtype_gl, "Household Size" )
-    
+    reg_gl = one_gain_lose( gain_lose.reg_gl, "Region" )
+    # FIXME we don't want region for Scotland-only model
+
     return """
         <div>
     
@@ -803,6 +808,13 @@ function make_disaggregated_gain_lose_tables( gain_lose :: NamedTuple ) :: Strin
                 <div class='col'>
                     <h5>By Household Size</h5>
                     $hhtype_gl
+                </div>
+            </div>
+
+            <div class='row'>
+                <div class='col'>
+                    <h5>By Region</h5>
+                    $reg_gl
                 </div>
             </div>
 
