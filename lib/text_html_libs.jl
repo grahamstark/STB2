@@ -755,18 +755,20 @@ function one_gain_lose( gl :: DataFrame, caption :: String ) :: String
     </tr>
     """
     for r in 1:nr
-        v = gl[r,1]
+        v = pretty(gl[r,1])
         s *=  """
             <tr><th>$v</th>
         """
         for c in 2:nc
             vs = ""
             v = gl[r,c]
-            if c < nc # format last col (average change) with more precision 
+            if c in 2:(nc-1) # format last 2 cols (average change) with more precision 
                 v /= 1_000.0
                 vs = format(v, commas=true, precision=0)
-            else 
+            elseif c == (nc-1) # average equiv change in £s pw
                 vs = format(v, commas=true, precision=2 )
+            elseif( c == nc ) # final total transfer col in £m
+                vs = format(v, commas=true, precision=0 )
             end
             s *= "<td style='text-align:right'>$vs</td>"
         end
@@ -920,7 +922,7 @@ function results_to_html_conjoint(
   =#
 
   # v2: Decgains - average again by fixed system1 decile, in case the decile changes in sys2 e.g with big wealth tax changes
-  decgains = results.summary.gain_lose[2].dec_gl."Average Change(£s)" # FIXME silly column name.
+  decgains = results.summary.gain_lose[2].dec_gl."Total Transfer £m" # FIXME silly column name.
   gains_by_decile = trunc.(decgains,digits=5,base=10)[2:end] # skipping 1st 0 entry
 
     
