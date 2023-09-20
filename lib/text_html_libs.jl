@@ -741,7 +741,10 @@ end
 
 function one_gain_lose( gl :: DataFrame, caption :: String ) :: String
     nr,nc = size( gl )
-    nms = pretty.(names( gl ))
+    nms = names(gl)
+    for c in 2:(n-2)
+        nms[c] = pretty(nms[c])
+    end    
     s = """
     <table class='table table-sm'>
         <thead><caption>By $(caption), 000s of People.</caption></thead>
@@ -753,8 +756,9 @@ function one_gain_lose( gl :: DataFrame, caption :: String ) :: String
     end
     s *= """
     </tr>
-    """
-    for r in 1:nr
+    """    
+    startr = sum( gl[1,2:(nc-2)]) == 0 ? 2 : 1 # skip 1st row if all blank counts
+    for r in startr:nr
         v = pretty(gl[r,1])
         s *=  """
             <tr><th>$v</th>
@@ -762,7 +766,7 @@ function one_gain_lose( gl :: DataFrame, caption :: String ) :: String
         for c in 2:nc
             vs = ""
             v = gl[r,c]
-            if c in 2:(nc-1) # format last 2 cols (average change) with more precision 
+            if c in 2:(nc-2) # format last 2 cols (average change) with more precision 
                 v /= 1_000.0
                 vs = format(v, commas=true, precision=0)
             elseif c == (nc-1) # average equiv change in £s pw
