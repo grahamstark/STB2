@@ -64,7 +64,7 @@ function format_optimising_change( funding :: AbstractString, rate :: Number, am
     colour = "alert-danger"
     amstr = ""
     if(rate ≈ 0) && (funding == "Tax on wealth")
-        return "<div class='alert'>Introducing a wealth tax is not needed here given your other tax and benefit changes.</div>"
+        return "<div class='alert alert-success'>Introducing a wealth tax is not needed here given your other tax and benefit changes.</div>"
     elseif amount_needed > 0
         amstr = "This raises approx <strong>£$amv</strong> mn p.a."
     else
