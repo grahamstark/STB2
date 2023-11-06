@@ -1,0 +1,3 @@
+#!/bin/sh
+node sassbi.js > css/bisite-bootstrap.css
+/bin/cp css/bisite-bootstrap.css ../ConjApp/web/css/

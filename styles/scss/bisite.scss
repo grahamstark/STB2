@@ -1,0 +1,57 @@
+@import "/home/graham_s/node_modules/bootstrap/scss/functions";
+@import "/home/graham_s/node_modules/bootstrap/scss/variables";
+
+$enable-shadows: true;
+
+/* Urbanist font as web import */
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100;0,200;0,300;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/** FIXME this fails!!" Urbanist is wired in */
+$font-family-sans-serif: 'Urbanist', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+
+// Default variable overrides
+$theme-colors: (
+                primary: #4078BF,
+                secondary: #B03B5E,
+                success: #4F7373,
+                info:  #9FBBDF,
+                warning: #B25F24,
+                danger: #D64933 );
+
+
+/* finally, import Bootstrap to set the changes! */
+@import "/home/graham_s/node_modules/bootstrap/scss/bootstrap";
+
+.res-table td{
+    text-align: right;
+}
+
+/* hovering over the clickable bits - examples & big costs */
+div.card:hover{
+    background-color: map-get($theme-colors,$blue-100);
+}
+
+#costs-table:hover, #conjoint-table:hover, #gain-lose-table:hover{
+    background-color: map-get($theme-colors,$blue-100);
+}
+
+.ukreserved{
+    background-color: map-get($theme-colors,$blue-100);
+}
+
+.changed{
+    background-color: map-get($theme-colors,$orange-100);
+}
+
+.error{ color: map-get($theme-colors,$red-400)}
+
+/**  */
+.incpic{
+    width: 62px;
+    height: 55px;
+ }
+
+.fampic{
+    width: 90px;
+    height: 100px;
+}

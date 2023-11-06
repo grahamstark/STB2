@@ -1,5 +1,5 @@
 
-const FAMDIR = "budget" # old budget images; alternative is 'keiko' for VE images
+const FAMDIR = "bisite" # old budget images; alternative is 'keiko' for VE images
 
 const ARROWS_3 = Dict([
     "nonsig"          => "&#x25CF;",
@@ -336,21 +336,25 @@ function make_example_card( settings :: Settings, hh :: ExampleHH, res :: NamedT
     i2sp = inctostr(res.pres.income )
     i2sb = inctostr(res.bres.income )
     changestr = gnum != "" ? "&nbsp;"*ARROWS_1[glstr]*"&nbsp;&pound;"* gnum*"pw" : "No Change"
-    card = "
+    card = """
 
     <div class='card' 
         style='width: 12rem;' 
         data-bs-toggle='modal' 
         data-bs-target='#$(hh.picture)' >
-            <img src='images/families/$(FAMDIR)/$(hh.picture).png'  
-                alt='Picture of Family'  width='100' height='140' />
+            <div class='row'>
+                <img class='align-bottom text-center fampic' src='images/families/$(FAMDIR)/$(hh.picture).svg'  
+                    alt='Picture of Family'/>                    
+                <img class='align-bottom text-center incpic' src='images/families/$(FAMDIR)/$(hh.income).svg'  
+                    alt='Picture of Income' />
+            </div>
             <div class='card-body'>
                 <p class='$glclass'><strong>$changestr</strong></p>
                 <h5 class='card-title'>$(hh.label)</h5>
-                <p class='card-text'>$(hh.description)</p>
+                <p class='card-text text-black'>$(hh.description)</p>
             </div>
         </div><!-- card -->
-";
+""";
     @info "card=$card"
     return card
 end
@@ -426,8 +430,9 @@ function make_example_popups( settings :: Settings, hh :: ExampleHH, res :: Name
       <div class='modal-body'>
         <div class='row'>
             <div class='col'>
-            <img src='images/families/$(FAMDIR)/$(hh.picture).png'  
+            <img src='images/families/$(FAMDIR)/$(hh.picture).svg'  
                 width='100' height='140'
+                class='align-bottom text-center'
                 alt='Picture of Family'
               />
             </div>

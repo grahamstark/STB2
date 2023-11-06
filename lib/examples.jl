@@ -117,6 +117,7 @@ end
 
 struct ExampleHH 
 	picture :: String 
+	income  :: String
 	label :: String
 	description :: String
 	hh :: Household 
@@ -135,20 +136,30 @@ end
 
 function get_example_hhs(settings::Settings)
 	return  [
-		ExampleHH("family1","Single Person, £25k", "Single female, aged 25, earning £25,000",
+		ExampleHH("single-person-employed",
+		   "income-25k", 
+		   "Single Person, £25k", 
+		   "Single female, aged 25, earning £25,000",
 			make_hh(
 				settings,
 				council = get_country( settings ),
 				head_earn = 25_000/WEEKS_PER_YEAR,
 				head_hours = 40 )),
-		ExampleHH("family2","Single Parent, £25k", "Working single parent, earning £25,000, with one 3-year old daughter",
+		ExampleHH("single-parent", 
+		          "income-25k", 
+				  "Working Single Parent",
+				  "Working single parent, earning £25,000, with one 3-year old daughter",
 			make_hh(
 				settings,
 				council = get_country( settings ),
 				head_earn = 25_000/WEEKS_PER_YEAR,
 				head_hours = 40,
 				chu5 = 1 )),
-		ExampleHH("family3","Unemployed Couple, 2 children", "Couple, neither currently working, with 2 children aged 7 and 9",
+		ExampleHH(
+			"family-unemployed",
+			"blank", 
+			"Unemployed Couple, 2 children", 
+			"Couple, neither currently working, with 2 children aged 7 and 9",
 			make_hh(
 				settings,
 				council = get_country( settings ),
@@ -160,7 +171,11 @@ function get_example_hhs(settings::Settings)
 				spouse_age = 30,
 				marrstat = Married_or_Civil_Partnership,
 				ch5p = 2 )),
-		ExampleHH("family4","Working Family £12k, 2 children", "Couple, on low wages, with 2 children aged 6 and 10. She works, he says at home with the kids",
+		ExampleHH(
+			"family-single-income",
+			"income-12k", 
+			"Working Family £12k, 2 children", 
+			"Couple, on low wages, with 2 children aged 6 and 10. She works, he says at home with the kids",
 			make_hh(
 				settings,
 				council = get_country( settings ),
@@ -172,7 +187,10 @@ function get_example_hhs(settings::Settings)
 				spouse_age = 35,
 				marrstat = Married_or_Civil_Partnership,
 				ch5p = 2 )),
-		ExampleHH("family5","Working Family £35k, 2 children", "A couple with 3 year old twins. He works, she says at home with the kids",
+		ExampleHH(
+			"family-single-income",
+			"income-35k", 
+			"Working Family £35k, 2 children", "A couple with 3 year old twins. He works, she says at home with the kids",
 			make_hh(
 				settings,
 				council = get_country( settings ),
@@ -186,7 +204,10 @@ function get_example_hhs(settings::Settings)
 				spouse_age = 35,
 				marrstat = Married_or_Civil_Partnership,
 				chu5 = 2 )),
-		ExampleHH("family6","Working Family £100k, 2 children", "A couple, with 2 children aged 6 and 2. Both work, each earning £50,000pa",
+		ExampleHH(
+			"family-dual-income",
+			"income-100k", 
+			"Working Family £100k, 2 children", "A couple, with 2 children aged 6 and 2. Both work, each earning £50,000pa",
 			make_hh(
 				settings,
 				council = get_country( settings ),
@@ -201,14 +222,18 @@ function get_example_hhs(settings::Settings)
 				marrstat = Married_or_Civil_Partnership,
 				ch5p = 1,
 				chu5 = 1 )),
-		ExampleHH("family8","Single female pensioner, aged 80", "A single pensioner, aged 80, with no private pension.",
+		ExampleHH("single-female-pensioner",
+			"blank",
+			"Single female pensioner, aged 80", "A single pensioner, aged 80, with no private pension.",
 			make_hh(
 				settings,
 				council = get_country( settings ),
 				hcost = 100,
 				head_age = 80,
 				marrstat = Single )),
-		ExampleHH("family9","Pensioner couple, both aged 80", "A pensioner couple, both aged 80, with £100pw private pension.",
+		ExampleHH( "pensioner-couple", 
+			"blank", 
+			"Pensioner couple, both aged 80", "A pensioner couple, both aged 80, with £100pw private pension.",
 			make_hh(
 				settings,
 				council = get_country( settings ),

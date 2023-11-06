@@ -50,8 +50,6 @@ Written by [Graham Stark](https://virtual-worlds.scot) | email: [graham.stark@vi
 
 const CONJOINT_ENDNOTES = md"""
 
-## What's this model all about?
-
 The Public Policy Preference Calculator (PPPC) is a means of estimating public preferences for customisable welfare policies. It allows you to choose a number of policy features – namely payment amounts, income tax rates, other forms of funding, employment status and citizenship status eligibility, and means-testing – and see estimates of the effects on income distribution, life expectancy, and mental health. It also provides an estimate of likely popularity, either for the whole population, or for population subgroups based on voting behaviour, gender, age, or financial situation.  
 
 Distributional and fiscal consequences are estimate using an economic microsimulation of the UK population. Health effects are inferred from data on the relationships between income and health in the Understanding Society study.  
