@@ -10631,11 +10631,11 @@ textarea.form-control-lg {
 /* hovering over the clickable bits - examples & big costs */
 /**  */
 .incpic {
-  width: 62px;
-  height: 55px;
+  width: 100px;
+  height: 75px;
   display: inline;
   padding-top: 20px;
-  padding-left: 30px;
+  padding-left: 10px;
 }
 
 .fampic {
