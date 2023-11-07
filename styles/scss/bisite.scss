@@ -32,18 +32,18 @@ div.card:hover{
 }
 
 #costs-table:hover, #conjoint-table:hover, #gain-lose-table:hover{
-    background-color: map-get($theme-colors,$blue-100);
+    background-color: $blue-100;
 }
 
 .ukreserved{
-    background-color: map-get($theme-colors,$blue-100);
+    background-color: $blue-100;
 }
 
 .changed{
-    background-color: map-get($theme-colors,$orange-100);
+    background-color: $orange-100;
 }
 
-.error{ color: map-get($theme-colors,$red-400)}
+.error{ color: $red-400; }
 
 
 .fampic{

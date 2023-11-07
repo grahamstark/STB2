@@ -10629,6 +10629,22 @@ textarea.form-control-lg {
 }
 
 /* hovering over the clickable bits - examples & big costs */
+#costs-table:hover, #conjoint-table:hover, #gain-lose-table:hover {
+  background-color: #cfe2ff;
+}
+
+.ukreserved {
+  background-color: #cfe2ff;
+}
+
+.changed {
+  background-color: #ffe5d0;
+}
+
+.error {
+  color: #e35d6a;
+}
+
 .fampic {
   width: 130px;
   height: 93px;
