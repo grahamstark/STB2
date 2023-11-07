@@ -28,7 +28,7 @@ $theme-colors: (
 
 /* hovering over the clickable bits - examples & big costs */
 div.card:hover{
-    background-color: map-get($theme-colors,$blue-100);
+    background-color: $blue-100;
 }
 
 #costs-table:hover, #conjoint-table:hover, #gain-lose-table:hover{

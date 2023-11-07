@@ -10629,6 +10629,10 @@ textarea.form-control-lg {
 }
 
 /* hovering over the clickable bits - examples & big costs */
+div.card:hover {
+  background-color: #cfe2ff;
+}
+
 #costs-table:hover, #conjoint-table:hover, #gain-lose-table:hover {
   background-color: #cfe2ff;
 }
