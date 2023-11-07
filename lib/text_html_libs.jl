@@ -431,7 +431,7 @@ function make_example_popups( settings :: Settings, hh :: ExampleHH, res :: Name
         <div class='row'>
             
             <img src='images/families/$(FAMDIR)/$(hh.picture).svg'  
-                width='130' height='93'
+                width='195' height='140'
                 alt='Picture of Family'
               />
             </div>
