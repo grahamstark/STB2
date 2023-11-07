@@ -343,11 +343,11 @@ function make_example_card( settings :: Settings, hh :: ExampleHH, res :: NamedT
         data-bs-toggle='modal' 
         data-bs-target='#$(hh.picture)' >
             <div class='row'>
-                <img class='align-bottom text-center fampic' src='images/families/$(FAMDIR)/$(hh.picture).svg'  
+                <img src='images/families/$(FAMDIR)/$(hh.picture).svg'  
+                    width='130'
+                    height='93'
                     alt='Picture of Family'/>                    
-                <img class='align-bottom text-center incpic' src='images/families/$(FAMDIR)/$(hh.income).svg'  
-                    alt='Picture of Income' />
-            </div>
+             </div>
             <div class='card-body'>
                 <p class='$glclass'><strong>$changestr</strong></p>
                 <h5 class='card-title'>$(hh.label)</h5>
@@ -429,10 +429,9 @@ function make_example_popups( settings :: Settings, hh :: ExampleHH, res :: Name
       </div> <!-- header -->
       <div class='modal-body'>
         <div class='row'>
-            <div class='col'>
+            
             <img src='images/families/$(FAMDIR)/$(hh.picture).svg'  
-                width='100' height='140'
-                class='align-bottom text-center'
+                width='130' height='93'
                 alt='Picture of Family'
               />
             </div>

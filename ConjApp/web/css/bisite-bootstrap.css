@@ -10629,19 +10629,7 @@ textarea.form-control-lg {
 }
 
 /* hovering over the clickable bits - examples & big costs */
-/**  */
-.incpic {
-  width: 100px;
-  height: 75px;
-  display: inline;
-  padding-top: 20px;
-  padding-left: 10px;
-}
-
 .fampic {
-  width: 90px;
-  height: 100px;
-  display: inline;
-  padding-top: 20px;
-  padding-left: 30px;
+  width: 130px;
+  height: 93px;
 }
