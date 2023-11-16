@@ -71,6 +71,10 @@ function paramsfrompayload( payload )
     return pars
 end
 
+function set_param( )
+    
+end
+
 function dorun()
     sess = GenieSession.session()
     pars = paramsfrompayload( rawpayload() )
