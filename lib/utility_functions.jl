@@ -1,35 +1,5 @@
 module Utility
 
-using Parameters
-
-abstract type UFuncs
-
-function hicksian( )
-
-end
-
-function marshallian( prices :: Vector{Number}, y :: Number )::Number
-
-end
-
-function cost()
-
-end
-
-function indirect()
-
-function utility()
-
-
-@with_kw struct U
-    e :: Number = 1
-    β :: Vector{Number} = []
-    cost :: Function
-
-end
-
-end
-
 struct Funcs
     θ :: Number
     β :: AbstractVector{Number}
