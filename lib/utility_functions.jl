@@ -1,7 +1,7 @@
 module Utility
 
 struct Funcs
-    θ :: Number
+    δ :: Number
     β :: AbstractVector{Number}
     utility :: Function
     expenditure :: Function
@@ -12,58 +12,65 @@ end
 
 module CES
 
-    function utility( θ :: Number, x :: Vector)
+    """
+    CES utility u = [ x^δ + y^δ ]^(1/δ) (for 2 goods) for δ != [0,1]
+    δ : δ/(δ-1) is elasticity of substitution.
+    a : shares parameters
+    x : goods
+    """
+    function utility( δ :: Number, a::AbstractVector{Number}, x :: AbstractVector{Number})::Number
         n=length(x)
         u = 0.0
         for i in 1:n
-        u += x[i]^θ
+            u += a[i]*x[i]^δ
         end
-        u^(1/θ)
+        u^(1/δ)
     end
 
-    function expenditure( θ :: Number, u :: Number, p :: AbstractVector{Number} )
+    function expenditure( δ :: Number, a::AbstractVector{Number}, u :: Number, p :: AbstractVector{Number} )
         n=length(p)
-        r = θ/(θ-1)
+        r = δ/(δ-1)
         c = 0.0
         for i in 1:n
-            c += p[i]^r
+            c += a[i]*p[i]^r
         end
         c = c^(1/r)
         c*u
     end
 
-    function indirect( θ :: Number, y :: Number, p :: AbstractVector{Number} )
+    function indirect( δ :: Number, a::AbstractVector{Number}, y :: Number, p :: AbstractVector{Number} )
         n=length(p)
-        r = θ/(θ-1)
+        r = δ/(δ-1)
         u = 0.0
         for i in 1:n
-            u += p[i]^r
+            u += a[i]*p[i]^r
         end
         u = u^(-1/r)
         y*u
     end
 
-    function marshallian( θ :: Number, y :: Number, p :: AbstractVector{Number}, which :: Int) :: Number
-        r = θ/(θ-1)
-        v1 = p[which]^(r-1)
+
+
+    function marshallian( δ :: Number, a::AbstractVector{Number}, y :: Number, p :: AbstractVector{Number}, which :: Int) :: Number
+        r = δ/(δ-1)
+        v1 = a[which]*p[which]^(r-1)
         v2 = 0.0
         n = length(p)
         for i in 1:n
-        v2 += p[i]^r
+            v2 += a[i]*p[i]^r
         end
         y*v1/v2
     end
 
-    function hicksian( θ :: Number, u :: Number, p :: AbstractVector{Number}, which :: Int ) :: Number
-        r = θ/(θ-1)
-        v1=p[which]^(r-1)
+    function hicksian( δ :: Number, a::AbstractVector{Number}, u :: Number, p :: AbstractVector{Number}, which :: Int ) :: Number
+        r = δ/(δ-1)
+        v1=a[which]*p[which]^(r-1)
         v2=0.0
         n = length(p)
         for i in 1:n
-            v2 += p[i]^r
+            v2 += a[i]*p[i]^r
         end
         v2 = v2^((1/r)-1) 
-        # println( "r=$r v1=$v1 v2=$v2 u=$u")
         v2 * v1 * u
     end
 
@@ -71,33 +78,33 @@ end # module CES
 
 module CobbDouglas
 
-    function utility( θ :: Vector, x :: Vector ) :: Number
+    function utility( δ :: Vector, x :: Vector ) :: Number
         u = 0.0
         n=length(x)
         for i in 1:n
-            u += x[i]^θ[i]
+            u += x[i]^δ[i]
         end
         u
     end
 
-    function marshallian( θ :: Number, y :: Number, p :: AbstractVector{Number}, which :: Int) :: Number
-        @assert θ ≈ 1
+    function marshallian( δ :: Number, y :: Number, p :: AbstractVector{Number}, which :: Int) :: Number
+        @assert δ ≈ 1
 
     end
 
-    function hicksian( θ :: Number, u :: Number, p :: AbstractVector{Number}, which :: Int) :: Number
-        @assert θ ≈ 1
+    function hicksian( δ :: Number, u :: Number, p :: AbstractVector{Number}, which :: Int) :: Number
+        @assert δ ≈ 1
     end
 
 end # CobbDouglas
 
-function icurve( θ :: Number, u :: Number, hicks, start_1=5, end_2=5 ) :: AbstractVector{Number}
+function icurve( δ :: Number, u :: Number, hicks, start_1=5, end_2=5 ) :: AbstractVector{Number}
     p = ones(2)
     v = zeros(100,2)
     p[2] = 0.1
     for i in 1:100
-        v[i,1] = hicks( θ, u, p, 1 )
-        v[i,2] = hicks( θ, u, p, 2 )
+        v[i,1] = hicks( δ, u, p, 1 )
+        v[i,2] = hicks( δ, u, p, 2 )
         p[2] += 0.1
     end
     v
