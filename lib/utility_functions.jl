@@ -32,7 +32,7 @@ module CES
         r = δ/(δ-1)
         c = 0.0
         for i in 1:n
-            c += a[i]*p[i]^r
+            c += (p[i]/a[i])^r
         end
         c = c^(1/r)
         c*u
