@@ -50,11 +50,11 @@ Written by [Graham Stark](https://virtual-worlds.scot) | email: [graham.stark@vi
 
 const CONJOINT_ENDNOTES = md"""
 
-The Public Policy Preference Calculator (PPPC) is a means of estimating public preferences for customisable welfare policies. It allows you to choose a number of policy features – namely payment amounts, income tax rates, other forms of funding, employment status and citizenship status eligibility, and means-testing – and see estimates of the effects on income distribution, life expectancy, and mental health. It also provides an estimate of likely popularity, either for the whole population, or for population subgroups based on voting behaviour, gender, age, or financial situation.  
+TriplePC (Public Policy Preference Calculator) is a means of estimating public preferences for customisable welfare policies. It allows you to choose a number of policy features – namely payment amounts, income tax rates, other forms of funding, employment status and citizenship status eligibility, and means-testing – and see estimates of the effects on income distribution, life expectancy, and mental health. It also provides an estimate of likely popularity, either for the whole population, or for population subgroups based on voting behaviour, gender, age, or financial situation.  
 
-Distributional and fiscal consequences are estimate using an economic microsimulation of the UK population. Health effects are inferred from data on the relationships between income and health in the Understanding Society study.  
+Distributional and fiscal consequences are estimate using an economic microsimulation of the UK population. Health effects are inferred from data on the relationships between income and health in the [Understanding Society](https://www.understandingsociety.ac.uk/) study.  
 
-Popularity is derived from a discrete choice experiment with 697 age-representative UK adults conducted in 2023. Participants repeatedly chose between welfare policies differing in design, costs and consequences. From their choices we extracted the marginal values attribute to all the possible policy features and consequences, both for the whole population and each subgroup.  
+Popularity is derived from a discrete choice experiment with 800 age-representative UK adults conducted in 2023. Participants repeatedly chose between welfare policies differing in design, costs and consequences. From their choices we extracted the marginal values attribute to all the possible policy features and consequences, both for the whole population and each subgroup.  
 
 Popularity values will be between 0 and 100. This should not be interpreted as the proportion of people who would vote for a policy. It is an index of the propensity of a representative person to choose the policy given its features, costs and consequences (some of which they might like and some dislike). We also include the popularity of a baseline policy for comparison.  
 
@@ -65,7 +65,7 @@ and popularity shown are relative to this base. We show effects on the populatio
 
 If you have any questions about the calculator or the findings used to produce it, please contact Matthew Johnson [matthew.johnson@northumbria.ac.uk](mailto:matthew.johnson@northumbria.ac.uk). 
 
-Note that PPC is in development and some features are missing:
+Note that TriplePC is in development and some features are missing:
 
 * Funding: some options are missing
 * Life Expectancy
@@ -76,10 +76,10 @@ This model is Open Source; the code is available as follows:
 * [Tax-Benefit Model](https://github.com/grahamstark/ScottishTaxBenefitModel.jl)
 * [Web Server Code](https://github.com/grahamstark/STB2/)
 
-PPPC is written in the [Julia](https://julialang.org) language. Conjoint analysis used
+TriplePC is written in the [Julia](https://julialang.org) language. Conjoint analysis used
 the [R Conjoint Package](http://keii.ue.wroc.pl/conjoint).
 
-PPPC is part of the [Health Case for UBI](https://hosting.northumbria.ac.uk/healthcaseforubi/) project, funded by [NIHR](https://www.nihr.ac.uk/).
+TriplePC is part of the [Basic Income Health](https://hosting.northumbria.ac.uk/healthcaseforubi/) project, funded by [NIHR](https://www.nihr.ac.uk/).
     
 
 """
