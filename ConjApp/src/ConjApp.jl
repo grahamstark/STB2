@@ -400,8 +400,8 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     # see https://docs.julialang.org/en/v1/base/parallel/#Base.ReentrantLock
     # FIXME I don't really understand this stuff.
     #
-    lok = ReentrantLock()
-    lock(lok)
+    # lok = ReentrantLock()
+    # lock(lok)
     health = do_health_regressions!( results, settings ) # nothing
     #=
     try
