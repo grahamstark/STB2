@@ -402,12 +402,14 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     #
     lok = ReentrantLock()
     lock(lok)
-    health = nothing
+    health = do_health_regressions!( results, settings ) # nothing
+    #=
     try
         health = do_health_regressions!( results, settings )
     finally
         unlock(lok)
     end
+    =# 
     facs.mental_health = (health[2].depressed-health[1].depressed)/health[1].depressed
     facs.poverty = summary.poverty[2].headcount - summary.poverty[1].headcount
     facs.inequality = summary.inequality[2].gini - summary.inequality[1].gini
