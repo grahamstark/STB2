@@ -402,6 +402,7 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     #
     lok = ReentrantLock()
     lock(lok)
+    health = nothing
     try
         health = do_health_regressions!( results, settings )
     finally
