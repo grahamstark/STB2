@@ -97,6 +97,8 @@ end
 
 const CACHED_RESULTS = LRU{NonVariableFacts,Any}(maxsize=25)
 
+const HEALTH_SEMAPHORE = Base.Semaphore(1)
+
 """
 Save output to the cache
 """
@@ -368,6 +370,9 @@ Specialised run for conjoint model.
 
 """
 function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DEFAULT_SETTINGS ) :: NamedTuple
+
+    global HEALTH_SEMAPHORE # 
+
     sys1 = load_system( scotland=false ) 
     sys2 = deepcopy(sys1)
     map_features!( sys1, Factors{Float64}()) # make the default system with default values??
@@ -397,19 +402,13 @@ function do_one_conjoint_run!( facs :: Factors, obs :: Observable; settings = DE
     #  
     # I think this health code is failing when accessed simultaneously online, 
     # don't know why but this should prevent it ...
-    # see https://docs.julialang.org/en/v1/base/parallel/#Base.ReentrantLock
+    # see https://docs.julialang.org/en/v1/base/parallel/#Base.Semaphore
     # FIXME I don't really understand this stuff.
     #
-    # lok = ReentrantLock()
-    # lock(lok)
-    health = do_health_regressions!( results, settings ) # nothing
-    #=
-    try
-        health = do_health_regressions!( results, settings )
-    finally
-        unlock(lok)
+    health = []
+    Base.acquire(HEALTH_SEMAPHORE) do
+        health = do_health_regressions!( results, settings )       
     end
-    =# 
     facs.mental_health = (health[2].depressed-health[1].depressed)/health[1].depressed
     facs.poverty = summary.poverty[2].headcount - summary.poverty[1].headcount
     facs.inequality = summary.inequality[2].gini - summary.inequality[1].gini
