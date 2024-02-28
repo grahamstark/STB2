@@ -10,7 +10,7 @@ using GenieSessionFileSession
 import Genie.Renderer.Json: json
 
 using DataFrames
-using Formatting
+using Format
 using JSON3
 using Logging, LoggingExtras
 using LRUCache
