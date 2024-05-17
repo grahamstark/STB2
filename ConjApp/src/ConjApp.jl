@@ -123,12 +123,15 @@ const DEFAULT_SETTINGS = make_default_settings()
 """
 load 23/4 
 """
-function load_system(; scotland = false )::TaxBenefitSystem
+function load_system(; year=2023, scotland = false )::TaxBenefitSystem
+    sys = STBParameters.get_default_system_for_fin_year( year, scotland=scotland )
+    #=
     sys = load_file( joinpath( Definitions.MODEL_PARAMS_DIR, "sys_2023_24_ruk.jl"))
     if scotland 
         load_file!( sys, joinpath( Definitions.MODEL_PARAMS_DIR, "sys_2023_24_scotland.jl"))
     end
     weeklyise!( sys )
+    =#
     return sys
 end
 
