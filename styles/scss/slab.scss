@@ -1,0 +1,40 @@
+@import "/home/graham_s/node_modules/bootstrap/scss/functions";
+@import "/home/graham_s/node_modules/bootstrap/scss/variables";
+
+$enable-shadows: true;
+
+
+/** FIXME this fails!!" Urbanist is wired in */
+$font-family-sans-serif: 'Roboto', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+
+// Default variable overrides
+$theme-colors: (
+                primary: #2256aa,
+                secondary: #B03B5E,
+                success: #4F7373,
+                info:  #4b5771,
+                warning: #B25F24,
+                danger: #D64933 );
+
+
+/* finally, import Bootstrap to set the changes! */
+@import "/home/graham_s/node_modules/bootstrap/scss/bootstrap";
+
+.res-table td{
+    text-align: right;
+}
+
+/* hovering over the clickable bits - examples & big costs */
+div.card:hover{
+    background-color: $blue-100;
+}
+
+#costs-table:hover, #conjoint-table:hover, #gain-lose-table:hover{
+    background-color: $blue-100;
+}
+
+.changed{
+    background-color: $orange-100;
+}
+
+.error{ color: $red-400; }
