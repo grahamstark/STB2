@@ -84,7 +84,7 @@ function dorun()
     output = ""
     if ! isnothing(res)
         @info "output from cache"        
-        output = results_to_html( DEFAULT_RESULTS, res )
+        output = results_to_html( DEFAULT_SETTINGS, DEFAULT_RESULTS, res )
     else
         @info "submitting job"
         submit_job( sess, pars )    
@@ -128,7 +128,7 @@ function getoutput()
     output = ""
     if ! isnothing(res)
         @info "getting cached results"
-        output = results_to_html( DEFAULT_RESULTS, res )
+        output = results_to_html( DEFAULT_SETTINGS, DEFAULT_RESULTS, res )
     end
     (:output=>output) |> json
 end
