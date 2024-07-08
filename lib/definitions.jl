@@ -113,11 +113,11 @@ function nearest( a :: AbstractArray, v :: Number)
     return p
 end
 
-
 function map_simple_to_full( sm :: SimpleParams ) :: TaxBenefitSystem
     sys = deepcopy( DEFAULT_PARAMS )
     no = size( DEFAULT_PARAMS.it.non_savings_rates )[1]
     sys.it.non_savings_rates = copy(sm.taxrates)
+    br = sys.it.non_savings_basic_rate
     orig = DEFAULT_PARAMS.it.non_savings_rates[br]
     sys.it.non_savings_basic_rate = nearest( sys.it.non_savings_rates, orig )
     @info " setting sys.it.non_savings_basic_rate to " sys.it.non_savings_basic_rate
