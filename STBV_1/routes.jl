@@ -29,6 +29,12 @@ route( "/uprate/:v", method = POST) do
   douprate( v )
 end
 
+#=
+
+income_contribution_rates :: RateBands{RT} =  [0.0,33.0,50.0,100.0]
+    income_contribution_limits
+=#
+
 route("/addtax/:n", method = POST) do 
   n::Int = parse(Int, payload(:n))
   addtax( n )
@@ -49,14 +55,7 @@ route("/delni/:n", method = POST ) do
   delni( n )
 end
 
+
 route("/") do
   (:message => "Welcome to Scotben 2022/3.") |> json
 end
-
-route( "/setparam/:name/value/:value", method=GET)do 
-  name = payload(:name)
-  value = parse( Float64, payload(:value))
-  setparam( name, value )
-end
-
-route( "/")
