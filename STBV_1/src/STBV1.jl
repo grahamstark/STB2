@@ -24,6 +24,7 @@ using .Definitions
 using .ExampleHelpers
 using .FRSHouseholdGetter
 using .GeneralTaxComponents
+using .LocalLevelCalculations
 using .ModelHousehold
 using .Monitor
 using .Runner
