@@ -29,6 +29,7 @@ using .ExampleHouseholdGetter
 using .FRSHouseholdGetter
 using .GeneralTaxComponents
 using .HealthRegressions
+using .LocalLevelCalculations
 using .ModelHousehold
 using .Monitor
 using .Runner

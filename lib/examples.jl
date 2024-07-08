@@ -125,7 +125,8 @@ end
 
 function get_country( settings :: Settings ) :: Symbol
 	if settings.target_nation == N_Scotland
-		return :SCOTLAND
+		# we know the IDS of scottish LAs :SCOTLAND
+		return rand( LocalLevelCalculations.LA_CODES ) 
 	elseif settings.target_nation == N_Wales 
 		return :WALES
 	elseif settings.target_nation == N_England

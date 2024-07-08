@@ -37,6 +37,7 @@ function make_base_results()
 	return aout;
 end
 
+const DEFAULT_SETTINGS = initialise_settings()
 const DEFAULT_RESULTS = make_base_results()
-const DEFAULT_TEXT_OUTPUT = results_to_html( DEFAULT_RESULTS, DEFAULT_RESULTS )
+const DEFAULT_TEXT_OUTPUT = results_to_html( DEFAULT_SETTINGS, DEFAULT_RESULTS, DEFAULT_RESULTS )
 cacheout(DEFAULT_SIMPLE_PARAMS,DEFAULT_RESULTS)
