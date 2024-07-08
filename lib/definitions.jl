@@ -36,7 +36,10 @@ end
 StructTypes.StructType(::Type{SimpleParams}) = StructTypes.Struct()
 
 function loaddefs() :: TaxBenefitSystem 
-    return get_default_system_for_fin_year( 2024; scotland=true )    
+    return get_default_system_for_fin_year( 
+        2024; 
+        scotland = true,
+        autoweekly = false )    
 end
 
 function weeklyparams() :: TaxBenefitSystem
