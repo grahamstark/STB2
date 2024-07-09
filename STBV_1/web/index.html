@@ -32,7 +32,7 @@
         </nav>
         <header>
             <h1>A Budget for Scotland</h1>
-            <h4>2022/3 Version</h4>
+            <h4>2024/5 Version</h4>
         </header>
         
         <form id='mainform' action="thing" method="POST">       
@@ -658,9 +658,9 @@ function submitForm( action, target ){
                             cache: false,     // By default, don't allow caching
                             method: 'POST',    // method; get or post
                             data: '',         // array of values to be passed to the page - e.g. {name: "John", greeting: "hello"}
-                            minTimeout: 1000, // starting value for the timeout in milliseconds
-                            maxTimeout:64000, // maximum length of time between requests
-                            multiplier: 2,    // if set to 2, timerInterval will double each time the response hasn't changed (up to maxTimeout)
+                            minTimeout: 500, // starting value for the timeout in milliseconds was: 1000
+                            maxTimeout:32000, // maximum length of time between requests was: 64000
+                            multiplier: 1,    // if set to 2, timerInterval will double each time the response hasn't changed (up to maxTimeout)
                             maxCalls: 0,      // maximum number of calls. 0 = no limit.
                             maxCallsCallback: null, // The callback to execute when we reach our max number of calls
                             autoStop: 0,      // automatically stop requests after this many returns of the same data. 0 = disabled
