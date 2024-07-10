@@ -105,7 +105,7 @@ function nearest( a :: AbstractArray, v :: Number)
     n = length(a)
     for i in 1:n
         d = abs( a[i]-v )      
-        if d < m
+        if d <= m # <= is a bit of a hack - suppose you have 2 20s...
             m = d
             p = i
         end
@@ -115,7 +115,6 @@ end
 
 function map_simple_to_full( sm :: SimpleParams ) :: TaxBenefitSystem
     sys = deepcopy( DEFAULT_PARAMS )
-    no = size( DEFAULT_PARAMS.it.non_savings_rates )[1]
     sys.it.non_savings_rates = copy(sm.taxrates)
     br = sys.it.non_savings_basic_rate
     orig = DEFAULT_PARAMS.it.non_savings_rates[br]
