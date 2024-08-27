@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+title: STB2 - web interfaces for Scotben using Genie.
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Graham
+    family-names: Stark
+    email: graham.stark@virtual-worlds.scot
+    orcid: 'https://orcid.org/0000-0002-4740-8711'
+repository-code: 'https://github.com/grahamstark/STB2'
+abstract: >-
+  This contains code to build several web interfaces for the Scottish Tax Benefit Model using
+  the Genie (https://genieframework.com/) web library.
+keywords:
+  - microsimulation
+  - economics
+  - taxation
+  - benefits
+license: MIT
