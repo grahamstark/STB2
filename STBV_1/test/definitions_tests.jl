@@ -21,10 +21,10 @@ end
 @testset "rate change examples" begin
    p1 = deepcopy( STBV1.DEFAULT_PARAMS )
    p2 = deepcopy(  STBV1.DEFAULT_PARAMS)
-
-   p2.it.non_savings_rates = [20,20,21,42,45,48] # 1p increase
-   p2.it.non_savings_thresholds = [1000.0,13991,31092,62430,125140] # 1p increase
-   p2.it.non_savings_basic_rate = 1
+   p2.it.non_savings_rates[2] = 21
+   # p2.it.non_savings_rates = [20,20,21,42,45,48] # 1p increase
+   # p2.it.non_savings_thresholds = [1000.0,13991,31092,62430,125140] # 1p increase
+   p2.it.non_savings_basic_rate = 3
    weeklyise!( p1 )
    weeklyise!( p2 )
    exres = STBV1.calc_examples( p1, p2, STBV1.DEFAULT_SETTINGS )
